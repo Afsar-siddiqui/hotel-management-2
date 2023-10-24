@@ -1,0 +1,20 @@
+.geodir-category-img:hover img, .gallery-item:hover img, .geodir-category-img img, .gallery-item img{
+    height: 200px;
+}
+.gallery-item{
+    width: 25%;
+}
+
+@media (max-width: 480px) {
+    .gallery-item{
+        width: 100%;
+    }
+    .listing-item-cat h3{
+        padding-bottom: 0px;
+        margin-bottom: 10px !important;
+    }
+    .listing-item-cat p{
+        font-size: 14px;
+    }
+    
+}

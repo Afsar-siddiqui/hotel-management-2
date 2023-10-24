@@ -1,0 +1,243 @@
+<!--loader-->
+<div class="loader-wrap" *ngIf="loader">
+    <div class="pin">
+        <div class="pulse"></div>
+    </div>
+</div>
+<!--loader end-->
+
+<div class="content content-pt-40">
+    <!--  section-->
+    <section class="grey-blue-bg small-padding" id="sec1">
+        <div class="container">
+            <div class="row">
+                <!--filter sidebar -->
+                <div class="col-md-4">
+                    <div class="mobile-list-controls fl-wrap">
+                        <div class="mlc show-list-wrap-search fl-wrap" (click)="onShowFilter()"><i class="fal fa-filter"></i> Filter</div>
+                    </div>
+                    <div class="fl-wrap filter-sidebar_item fixed-bar">
+                        <div class="filter-sidebar fl-wrap lws_mobile">
+                            <!--col-list-search-input-item -->
+                            <div class="col-list-search-input-item fl-wrap location autocomplete-container">
+                                <label>City</label>
+                                <span class="header-search-input-item-icon"><i class="fal fa-map-marker-alt"></i></span>
+                                <!-- <input type="text" placeholder="City" class="autocomplete-input" id="autocompleteid3" value=""/> -->
+                                <input type="text" [(ngModel)]="cityName" (keyup)="onCityList()" class="autocomplete-input">
+                                <a routerLink="#"><i class="fal fa-dot-circle"></i></a>
+                            </div>
+                            <div class="fl-wrap" *ngIf="show_cityhHotel">
+                                <ul class="filter-city-list-search">
+                                    <li *ngFor="let list of f_cityList" (click)="onSelectCity(list)" class="option">{{list.name}}</li>
+                                </ul>
+                            </div>
+                            <!--col-list-search-input-item end-->                      
+                            <!--col-list-search-input-item -->
+                            <div class="col-list-search-input-item fl-wrap location autocomplete-container">
+                                <label>Destination</label>
+                                <span class="header-search-input-item-icon"><i class="fal fa-map-marker-alt"></i></span>
+                                <input type="text" placeholder="Destination or Hotel Name" [(ngModel)]="address" (keyup)="onAddress()" class="autocomplete-input" id="autocompleteid3" value=""/>
+                                <a routerLink="#"><i class="fal fa-dot-circle"></i></a>
+                            </div>
+                            <div class="fl-wrap" *ngIf="show_address">
+                                <ul class="filter-city-list-search">
+                                    <li *ngFor="let list of addressList" (click)="onSelectAddress(list)" class="option">{{list.address}}</li>
+                                </ul>
+                            </div>
+                            <!--col-list-search-input-item end-->
+                            <!--col-list-search-input-item -->
+                            <div class="col-list-search-input-item in-loc-dec date-container  fl-wrap">
+                                <label>Date In-Out </label>
+                                <span class="header-search-input-item-icon"><i class="fal fa-calendar-check"></i></span>
+                                <input type="text" placeholder="{{bookDate == null ?'When':bookDate}}" bsDaterangepicker [(ngModel)]="bookDate" [minDate]="minDate" (ngModelChange)="onChangeDate()" [bsConfig]="{ showWeekNumbers: false }"/>
+                                
+                            </div>
+                            <!--col-list-search-input-item end-->
+                            <!--col-list-search-input-item -->
+                            <div class="col-list-search-input-item fl-wrap">
+                                <div class="quantity-item">
+                                    <label>Rooms</label>
+                                    <div class="quantity">
+                                        <input type="number" [(ngModel)]="roomsQuantity" min="1" max="20" step="1" value="0">
+                                        <div class="quantity-nav">
+                                            <div class="quantity-button quantity-up" (click)="handelQuantity('plus', 'rooms')">+</div>
+                                            <div class="quantity-button quantity-down" (click)="handelQuantity('min', 'rooms')">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="quantity-item">
+                                    <label>Adults</label>
+                                    <div class="quantity">
+                                        <input type="number" [(ngModel)]="adultsQuantity" min="1" max="20" step="1" value="1">
+                                        <div class="quantity-nav">
+                                            <div class="quantity-button quantity-up" (click)="handelQuantity('plus', 'adults')">+</div>
+                                            <div class="quantity-button quantity-down" (click)="handelQuantity('min', 'adults')">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="quantity-item">
+                                    <label>Children</label>
+                                    <div class="quantity">
+                                        <input type="number" [(ngModel)]="childrenQuantity" min="0" max="10" step="1" value="0">
+                                        <div class="quantity-nav">
+                                            <div class="quantity-button quantity-up" (click)="handelQuantity('plus', 'children')">+</div>
+                                            <div class="quantity-button quantity-down" (click)="handelQuantity('min', 'children')">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--col-list-search-input-item end-->
+                            <!--col-list-search-input-item -->                                            
+                            <div class="col-list-search-input-item fl-wrap">
+                                <div class="range-slider-title">Price range</div>
+                                
+                                <ngx-slider (userChange)="onMinimum()" [(value)]="minValue" [(highValue)]="maxValue" [options]="options"></ngx-slider>
+                            </div>
+                            <!--col-list-search-input-item end-->                                        
+                            <!--col-list-search-input-item -->
+                            <!-- <div class="col-list-search-input-item fl-wrap">
+                                <label>Star Rating</label>
+                                <div class="search-opt-container fl-wrap">
+                                    
+                                    <ul class="fl-wrap filter-tags">
+                                        <li class="five-star-rating" *ngFor="let list of ratingList">
+                                            <input id="rating-{{list.id}}" type="checkbox" [(ngModel)]="list.status" (ngModelChange)="onRating(list)">
+                                            <label for="rating-{{list.id}}"><span class="listing-rating card-popup-rainingvis" data-starrating2="5"><span>{{list.name}}</span></span></label>
+                                        </li>
+                                    </ul>
+                                    
+                                </div>
+                            </div> -->
+                            <!--col-list-search-input-item end--> 
+                            <!--col-list-search-input-item -->
+                            <!-- <div class="col-list-search-input-item fl-wrap">
+                                <label>Facility</label>
+                                <div class="search-opt-container fl-wrap">
+                                    
+                                    <ul class="fl-wrap filter-tags half-tags">
+                                        <li *ngFor="let list of facilityList">
+                                            <input id="facilty-{{list.id}}" type="checkbox" [(ngModel)]="list.stats" (ngModelChange)="onFacility(list)">
+                                            <label for="facilty-{{list.id}}">{{list.name}}</label>
+                                        </li>
+                                    </ul>
+                                    
+                                </div>
+                            </div> -->
+                            <!--col-list-search-input-item end-->  
+                            <!--col-list-search-input-item  -->                                         
+                            <!-- <div class="col-list-search-input-item fl-wrap">
+                                <button class="header-search-button" onclick="window.location.href='listing.html'">Search <i class="far fa-search"></i></button>
+                            </div> -->
+                            <!--col-list-search-input-item end--> 
+                        </div>
+                    </div>
+                </div>
+                <!--filter sidebar end-->
+                <!--listing -->
+                <div class="col-md-8">
+                    <!--col-list-wrap -->
+                    <div class="col-list-wrap fw-col-list-wrap post-container">
+                        <!-- list-main-wrap-->
+                        <div class="list-main-wrap fl-wrap card-listing">
+                            <!-- list-main-wrap-opt-->
+                            <div class="list-main-wrap-opt fl-wrap">
+                                <div class="list-main-wrap-title fl-wrap col-title">
+                                    <h2 *ngIf="hotelList">Results For : <span>{{hotelList[0]?.city_name}} </span></h2>
+                                </div>
+                                <!-- price-opt-->
+                                <div class="price-opt">
+                                    <span class="price-opt-title">Sort results by:</span>
+                                    <div class="listsearch-input-item">
+                                        <select class="chosen-select no-search-select" [(ngModel)]="priceChange" (change)="sortOnprice()">
+                                            <option value="" disabled>Select here...</option>
+                                            <!-- <option>Popularity</option>
+                                            <option>Average rating</option> -->
+                                            <option value="asc">Price: low to high</option>
+                                            <option value="dsc">Price: high to low</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- price-opt end-->
+                                <!-- price-opt-->
+                                <div class="grid-opt">
+                                    <ul>
+                                        <li><span class="one-col-grid act-grid-opt" (click)="onGridChange('single')"><i class="fas fa-bars"></i></span></li>
+                                        <li><span class="two-col-grid" (click)="onGridChange('double')"><i class="fas fa-th-large"></i></span></li>
+                                    </ul>
+                                </div>
+                                <!-- price-opt end-->                               
+                            </div>
+                            <!-- list-main-wrap-opt end-->
+                            <!-- listing-item-container -->
+                            <div class="listing-item-container init-grid-items fl-wrap">
+
+                                <!-- listing-item  -->
+                                <div class="listing-item has_one_column" *ngFor="let list of hotelList">
+                                    <article class="geodir-category-listing fl-wrap">
+                                        <div class="geodir-category-img">
+                                            <a [routerLink]="['/'+list.slug]" (click)="onRouteDetails(list)"><img src="{{list.image}}" alt=""></a>
+                                            <!-- <div class="listing-avatar"><a href="author-single.html"><img src="assets/images/avatar/1.jpg" alt=""></a>
+                                                <span class="avatar-tooltip">Added By  <strong>Alisa Noory</strong></span>
+                                            </div> -->
+                                            <div class="sale-window">Sale {{list.be_discount}}%</div>
+                                            <div class="geodir-category-opt">
+                                                <div class="listing-rating card-popup-rainingvis" data-starrating2="5"></div>
+                                                <div class="rate-class-name">
+                                                    <div class="score"><strong>Very Good</strong>27 Reviews </div>
+                                                    <span>{{list.rating}}</span>                                             
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="geodir-category-content fl-wrap title-sin_item">
+                                            <div class="geodir-category-content-title fl-wrap">
+                                                <div class="geodir-category-content-title-item">
+                                                    <h3 class="title-sin_map"><a [routerLink]="['/'+list.slug]" (click)="onRouteDetails(list)">{{list.hotel_name}}</a></h3>
+                                                    <div class="geodir-category-location fl-wrap"><a [routerLink]="['/'+list.slug]" (click)="onRouteDetails(list)" class="map-item"><i class="fas fa-map-marker-alt"></i> {{list.address}}</a></div>
+                                                </div>
+                                            </div>
+                                            <p>{{list.description | slice:0:250}}</p>
+                                            <ul class="facilities-list fl-wrap">
+                                                <li><i class="fal fa-wifi"></i><span>Free WiFi</span></li>
+                                                <li><i class="fal fa-parking"></i><span>Parking</span></li>
+                                                <li><i class="fal fa-smoking-ban"></i><span>Non-smoking Rooms</span></li>
+                                                <li><i class="fal fa-utensils"></i><span> Restaurant</span></li>
+                                            </ul>
+                                            <div class="geodir-category-footer fl-wrap">
+                                                <div class="geodir-category-price">Room/Night <span>₹ {{list.discount_Price}} <span *ngIf="list.be_discount !=0" class="discount-price">₹ {{list.single_rate}}</span></span></div>
+                                                <div class="geodir-opt-list">
+                                                    <a href="javascript:()" class="single-map-item" data-newlatitude="40.72956781" data-newlongitude="-73.99726866"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>
+                                                    <a href="javascript:()" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Save</span></a>
+                                                    <a href="javascript:()" class="geodir-js-booking"><i class="fal fa-exchange"></i><span class="geodir-opt-tooltip">Find Directions</span></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                                <!-- listing-item end -->
+
+                                <!--Hotel Not found--> 
+                                <div class="listing-item has_one_column" *ngIf="hotelListNull">
+                                    <div class="hotel-not-found">
+                                        <div>
+                                            <i class="far fa-sad-tear"></i>
+                                        </div>
+                                        <p>Hotel Not Found !!!</p>
+                                    </div>
+                                </div>  
+                                <!--End hotel not found-->      
+
+                            </div>
+                            <!-- listing-item-container end-->
+                            <!-- <a class="load-more-button" href="#">Load more <i class="fal fa-spinner"></i> </a> -->
+                        </div>
+                        <!-- list-main-wrap end-->
+                    </div>
+                    <!--col-list-wrap end -->
+                </div>
+                <!--listing  end-->
+            </div>
+            <!--row end-->
+        </div>
+        <div class="limit-box fl-wrap"></div>
+    </section>
+</div>

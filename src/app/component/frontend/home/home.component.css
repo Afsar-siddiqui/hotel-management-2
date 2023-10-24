@@ -1,0 +1,225 @@
+.inpt_dec{
+    top: 15px;
+}
+.qty-dropdown-header{
+    font-weight: 600;
+}
+.fa-users:before{
+    font-size: 13px;
+}
+.inline-facts .fa-users:before{
+    font-size: 54px;
+}
+
+.list-dropdown-content{
+    background: #fff;
+    text-align: left;
+    padding: 5px 15px 15px;
+    font-size: 12px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.recent-home-discription{
+    line-height: 16px;
+}
+
+.search_list_place{
+    z-index: 999;
+}
+
+section.hero-section {
+    padding: 100px 0;
+    z-index: 100;
+}
+.main-search-input{
+    margin-top: 20px;
+}
+.hotel-card .geodir-category-location a{
+    width: 70%;
+}
+
+.geodir-category-img:hover img, .gallery-item:hover img, .geodir-category-img img, .gallery-item img{
+    height: 200px;
+}
+
+
+.big-pad-pr-item p{
+    font-size: 13px;
+    text-align: justify;
+}
+
+.list-dropdown-content li{
+    cursor: pointer;
+    padding: 1px;
+    border-bottom: 1px solid #ddd;
+}
+.list-dropdown-content li:hover{
+    background-color: #f2f2f2;
+}
+
+.geodir-category-location a{
+    font-weight: 400;
+}
+
+.recent-night{
+    padding: 5px 5px;
+    color: #3AACED;
+}
+.recent-night span{
+    font-size: 9px;
+    color: #777;
+    text-transform: capitalize;
+}
+
+.amenities-list li{
+    display: none;
+}
+.amenities-list li:nth-child(1), .amenities-list li:nth-child(2), .amenities-list li:nth-child(3), .amenities-list li:nth-child(4), .amenities-list li:nth-child(5){
+    display: block !important;
+}
+
+
+
+
+
+
+/* modal */
+.main-map-wrap{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    overflow: auto;
+    display: none;
+    transform: translate3d(0,0,0);
+    -webkit-transform: translate3d(0,0,0);
+    background: rgba(0,0,0,0.81);
+}
+
+.main-map-holder{
+    max-width: 70%;
+}
+
+
+
+/* ============ header serch lis =================== */
+.hotel-search{
+    z-index: 99999;
+}
+.header-list-search {
+    background: #fff;
+    text-align: left;
+    padding: 5px 15px 15px;
+    font-size: 12px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.header-list-search .option{
+    cursor: pointer;
+    padding: 1px;
+    border-bottom: 1px solid #ddd;
+}
+.header-list-search .option:hover{
+    background-color: #f2f2f2;
+}
+
+.listing-item-cat p {
+    font-size: 14px;
+}
+.grid-item-holder {
+    cursor: pointer;
+}
+
+.discount-price {
+    display: inline-block;
+    font-size: 9px !important;
+    color: red !important;
+    text-align: right;
+    padding-left: 0px;
+    text-decoration: line-through;
+}
+.p-discount-price{
+    display: inline-block;
+    font-size: 9px !important;
+    color: #fff !important;
+    text-align: right;
+    padding-left: 10px;
+    text-decoration: line-through;
+    font-weight: 400;
+}
+
+
+
+.recent-night {
+    padding: 8px 0px;
+    color: #3AACED;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    float: left;
+    left: 0;
+    margin-top: 40px;
+}
+.geodir-opt-list{
+    top: 10px;
+}
+.geodir-opt-list{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.geodir-category-price{
+    font-size: 14px;
+}
+.geodir-opt-list a {
+    float: none;
+    width: auto;
+    height: auto;
+    line-height: 0;
+    margin-left: 5px;
+    background: #ECF6F8;
+    position: relative;
+    color: #999;
+    border-radius: 4px;
+    font-size: 15px;
+    padding: 8px 20px;
+}
+.recent-night span:nth-child(2){
+    padding-left: 10px;
+}
+
+@media (max-width: 480px) {
+    .discount-price{
+        padding-left: 0px;
+        padding-right: 0px;
+        font-size: 10px;
+    }
+    .p-discount-price{
+        font-size: 10px;
+    }
+    .recent-night{
+        margin-top: 30px;
+    }
+}
+
+
+
+
+.box-container{
+    display: flex;
+    flex-wrap: wrap;
+}
+.item-box{
+    flex-grow: 1;
+    background: #fff;
+    flex-basis: 200px;
+    padding: 20px;
+    margin: 8px;
+    border-radius: 5px;
+}

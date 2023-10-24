@@ -1,0 +1,520 @@
+<!--loader-->
+<div class="loader-wrap" *ngIf="loader">
+    <div class="pin">
+        <div class="pulse"></div>
+    </div>
+</div>
+<!--loader end-->
+
+<div class="content">
+    <!--section -->
+    <section class="hero-section" data-scrollax-parent="true" id="sec1">
+        <div class="hero-parallax">
+            <!-- <div class="bg"  data-bg="assets/images/bg/22.jpg" data-scrollax="properties: { translateY: '200px' }"></div> -->
+            <img class="bg"  src="assets/images/bg/25.jpeg" >
+            <div class="overlay op7"></div>
+        </div>
+        <div class="hero-section-wrap fl-wrap">
+            <div class="container">
+                <div class="home-intro">
+                    <div class="section-title-separator"><span></span></div>
+                    <h2>Book Hotel From RevTrip Hotels</h2>
+                    <span class="section-separator"></span>
+                    <h3>Let's start exploring the world together with RevTrip Hotels</h3>
+                </div>
+                <div class="main-search-input-wrap">
+                    <div class="main-search-input fl-wrap">
+                        <div class="main-search-input-item location" id="autocomplete-container" (click)="onDropDown('.list-dropdown-content', 'hide')"><!-- (click)="onDropDown('.list-dropdown-content', 'hide')" -->
+                            <span class="inpt_dec"><i class="fal fa-map-marker"></i></span>
+                            <input type="text" placeholder="Hotel , City..." class="autocomplete-input" [(ngModel)]="place" (keyup)="onPlace()"  /><!-- (blur)="onDropDown('.list-dropdown-content', 'hide')" -->
+                            <a routerLink="#"><i class="fal fa-dot-circle"></i></a>
+                            <!---->
+                            <div class="fl-wrap hotel-search" *ngIf="show_searchHotel" #searchList ><!-- *ngIf="show_searchHotel" -->
+                                <ul class="header-list-search">
+                                    <li *ngFor="let list of cityList" (click)="onSelectPlace(list)" class="option">{{list.name}} <span class="badge-city">City</span></li>
+                                    <li *ngFor="let list of hotelList" (click)="onSelectPlace(list)" class="option">{{list.name}} <span class="badge-hotel">Hotel</span></li>
+                                </ul>
+                            </div>
+                            <!-- <div class="fl-wrap search_list_place" *ngIf="hideDummyContent">
+                                <ul class="list-dropdown-content search-drop-list list hide">
+                                    <li *ngFor="let list of cityList" (click)="onSelectPlace(list)" class="option">{{list.name}} <span class="badge-city">City</span></li>
+                                    <li *ngFor="let list of hotelList" (click)="onSelectPlace(list)" class="option">{{list.name}} <span class="badge-hotel">Hotel</span></li>
+                                </ul>
+                            </div> -->
+                            <!---->
+                        </div>
+                        <div class="main-search-input-item main-date-parent main-search-input-item_small">
+                            <span class="inpt_dec">
+                            <i class="fal fa-calendar-check"></i></span> 
+                            <input type="text" placeholder="{{bookDate == null ?'When':bookDate}}" bsDaterangepicker [(ngModel)]="bookDate" [minDate]="minDate" (ngModelChange)="onBookDate()" [bsConfig]="{ showWeekNumbers: false }"/>
+                        </div>
+                        <div class="main-search-input-item">
+                            <div class="qty-dropdown fl-wrap">
+                                <div class="qty-dropdown-header fl-wrap" (click)="onDropDownAttributes('.qty-dropdown-content')"><i class="fal fa-users"></i> Rooms {{rooms}}, Adults {{adults}}, Child {{children}}</div>
+                                <div class="qty-dropdown-content fl-wrap">
+                                    <div class="quantity-item">
+                                        <label><i class="fas fa-male"></i> Adults</label>
+                                        <div class="quantity">
+                                            <input type="number" [(ngModel)]="adultsQuantity" min="1" max="20" step="1" value="1">
+                                            <div class="quantity-nav">
+                                                <div class="quantity-button quantity-up" (click)="handelQuantity('plus', 'adults')">+</div>
+                                                <div class="quantity-button quantity-down" (click)="handelQuantity('min', 'adults')">-</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="quantity-item">
+                                        <label><i class="fas fa-child"></i> Children</label>
+                                        <div class="quantity">
+                                            <input type="number" [(ngModel)]="childrenQuantity" min="0" max="10" step="1" value="0">
+                                            <div class="quantity-nav">
+                                                <div class="quantity-button quantity-up" (click)="handelQuantity('plus', 'children')">+</div>
+                                                <div class="quantity-button quantity-down" (click)="handelQuantity('min', 'children')">-</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="quantity-item">
+                                        <label><i class="fas fa-home"></i> Rooms</label>
+                                        <div class="quantity">
+                                            <input type="number" [(ngModel)]="roomsQuantity" min="1" max="20" step="1" value="0">
+                                            <div class="quantity-nav">
+                                                <div class="quantity-button quantity-up" (click)="handelQuantity('plus', 'rooms')">+</div>
+                                                <div class="quantity-button quantity-down" (click)="handelQuantity('min', 'rooms')">-</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="main-search-button color2-bg" (click)="onSearch()">Search <i class="fal fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-sec-link">
+            <div class="container"><a href="#sec2" class="custom-scroll-link color-bg"><i class="fal fa-angle-double-down"></i></a></div>
+        </div>
+    </section>
+    <!-- section end -->
+    <!--section -->
+    <section id="sec2">
+        <div class="container">
+                <div class="section-title">
+                    <div class="section-title-separator"><span></span></div>
+                    <h2>Popular Destination</h2>
+                    <span class="section-separator"></span>
+                    <p>Explore some of the best tips from around the city from our partners and friends.</p>
+                </div>
+            </div>
+            <!-- portfolio start -->
+            <div class="gallery-items fl-wrap mr-bot spad home-grid">
+                <!-- gallery-item-->
+                <div class="gallery-item" *ngFor="let list of popularDestinationList">
+                    <div class="grid-item-holder" (click)="navigateToHotel_By_city(list)" [routerLink]="'/city/'+list.slug">
+                        <div class="listing-item-grid">
+                            <div class="listing-counter"><span>{{list.total_hotel}}</span> Hotels</div>
+                            <img  [src]="list.image"   [alt]="list.slug">
+                            <div class="listing-item-cat">
+                                <h3><a (click)="navigateToHotel_By_city(list)" [routerLink]="'/city/'+list.slug">{{list.name}} - {{list.state_name}}</a></h3>
+                                <div class="clearfix"></div>
+                                <p>{{list.description | slice:0:50}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- gallery-item end-->
+            </div>
+            <!-- portfolio end -->
+            <a routerLink="/city-list" class="btn color-bg">Explore All Cities<i class="fas fa-caret-right"></i></a>
+
+    </section>
+    <!-- section end -->
+
+    
+
+    <!-- section-->
+    <section class="grey-blue-bg">
+        <!-- container-->
+        <div class="container">
+            <div class="section-title">
+                <div class="section-title-separator"><span></span></div>
+                <h2>Recently Added Hotels</h2>
+                <span class="section-separator"></span>
+                <p class="cus-discription">As dedicated travelers ourselves, we understand the thrill of uncovering hidden treasures and new horizons. That's why we're excited to introduce the latest additions to our curated collection of accommodations. These freshly added hotels bring a breath of fresh air to your travel plans, offering you unique experiences and uncharted memories. Here are the newest gems waiting to be explored</p>
+            </div>
+        </div>
+        <!-- container end-->
+        
+        <!---->
+        
+        <!---->
+
+        <div class="container-fluid recent-hotel">
+            
+            <!---->
+            <div class="container recent-hotel">
+                <ngx-slick-carousel class="carousel" 
+        #slickModal="slick-carousel" 
+        [config]="slideConfig">
+        <div ngxSlickItem *ngFor="let list of recentHotel" class="slide">
+            <!-- <img src="{{ slide.img }}" alt="" width="100%"> -->
+            <div class="slick-slide-item">
+                <!-- listing-item  -->
+                <div class="listing-item">
+                    <article class="geodir-category-listing fl-wrap">
+                        <div class="geodir-category-img">
+                            <a [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)"><img src="{{list.image}}" alt=""></a>
+                            <!-- <div class="listing-avatar"><a href="author-single.html"><img src="assets/images/avatar/1.jpg" alt=""></a>
+                                <span class="avatar-tooltip">Added By  <strong>Alisa Noory</strong></span>
+                            </div> -->
+                            <div class="sale-window">Sale {{list.be_discount}}%</div>
+                            <div class="geodir-category-opt">
+                                <div class="listing-rating card-popup-rainingvis" data-starrating2="5"></div>
+                                <div class="rate-class-name">
+                                    <div class="score"><strong>Very Good</strong>27 Reviews </div>
+                                    <span>{{list.rating}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="geodir-category-content fl-wrap title-sin_item">
+                            <div class="geodir-category-content-title fl-wrap">
+                                <div class="geodir-category-content-title-item">
+                                    <h3 class="title-sin_map"><a [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)">{{list.hotel_name}}</a></h3>
+                                    <div class="geodir-category-location fl-wrap"><a [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)" class="map-item"><i class="fas fa-map-marker-alt"></i>{{list.address}}</a></div>
+                                </div>
+                            </div>
+                            <p class="recent-home-discription">{{list.description | slice: 0:50}}</p>
+                            <ul class="facilities-list amenities-list fl-wrap">
+                                <li *ngFor="let item of list?.amenities"><i class="fal {{item.icon}}"></i><span>{{item.name}}</span></li>
+                                <!-- <li><i class="fal fa-parking"></i><span>Parking</span></li>
+                                <li><i class="fal fa-smoking-ban"></i><span>Non-smoking Rooms</span></li>
+                                <li><i class="fal fa-utensils"></i><span> Restaurant</span></li> -->
+                            </ul>
+                            <div class="geodir-category-footer fl-wrap">
+                                <div class="geodir-opt-list">
+                                    <a href="javascript:()" (click)="onMapModel(); setMap_Lat_Long(list)" class="single-map-item"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>
+                                    <a href="javascript:()" (click)="addToWishlist(list)" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Save</span></a>
+                                    <a href="javascript:()" (click)="getDirection(list)" class="geodir-js-booking"><i class="fal fa-exchange"></i><span class="geodir-opt-tooltip">Find Directions</span></a>
+                                </div>
+                            </div>
+                            <div class="geodir-category-price recent-night">₹ {{list.discount_Price}} <span *ngIf="list.be_discount !=0" class="discount-price">₹ {{list.single_rate}}</span> <span>Room/Night</span></div>
+                            
+                            
+                        </div>
+                    </article>
+                </div>
+                <!-- listing-item end -->
+            </div>
+            
+        </div>
+        <!---->
+        
+        <!---->
+        </ngx-slick-carousel>
+            </div>
+            <!---->
+            <div >
+                <!-- <div class="item-box">
+
+                </div> -->
+                <!-- <div class=" box-container">
+                    <ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig">
+                        <div ngxSlickItem *ngFor="let list of recentHotel" class="slide">
+                            <h3 class="title-sin_map"><a [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)">{{list.hotel_name}}</a></h3>
+                        </div>
+                    </ngx-slick-carousel>
+                </div> -->
+        </div>
+            <!-- <ngx-slick-carousel class="carousel" 
+    #slickModal="slick-carousel" 
+    [config]="slideConfig">
+    <div ngxSlickItem *ngFor="let list of recentHotel" class="slide">
+        <div class="slick-slide-item">
+            
+            <div class="listing-item">
+                <article class="geodir-category-listing fl-wrap">
+                    <div class="geodir-category-img">
+                        <a [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)"><img src="{{list.image}}" alt=""></a>
+                        <div class="sale-window">Sale {{list.be_discount}}%</div>
+                        <div class="geodir-category-opt">
+                            <div class="listing-rating card-popup-rainingvis" data-starrating2="5"></div>
+                            <div class="rate-class-name">
+                                <div class="score"><strong>Very Good</strong>27 Reviews </div>
+                                <span>{{list.rating}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="geodir-category-content fl-wrap title-sin_item">
+                        <div class="geodir-category-content-title fl-wrap">
+                            <div class="geodir-category-content-title-item">
+                                <h3 class="title-sin_map"><a [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)">{{list.hotel_name}}</a></h3>
+                                <div class="geodir-category-location fl-wrap"><a [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)" class="map-item"><i class="fas fa-map-marker-alt"></i>{{list.address}}</a></div>
+                            </div>
+                        </div>
+                        <p class="recent-home-discription">{{list.description | slice: 0:50}}</p>
+                        <ul class="facilities-list amenities-list fl-wrap">
+                            <li *ngFor="let item of list?.amenities"><i class="fal {{item.icon}}"></i><span>{{item.name}}</span></li>
+                            
+                        </ul>
+                        <div class="geodir-category-footer fl-wrap">
+                            <div class="geodir-opt-list">
+                                <a href="javascript:()" (click)="onMapModel(); setMap_Lat_Long(list)" class="single-map-item"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>
+                                <a href="javascript:()" (click)="addToWishlist(list)" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Save</span></a>
+                                <a href="javascript:()" (click)="getDirection(list)" class="geodir-js-booking"><i class="fal fa-exchange"></i><span class="geodir-opt-tooltip">Find Directions</span></a>
+                            </div>
+                        </div>
+                        <div class="geodir-category-price recent-night">₹ {{list.discount_Price}} <span *ngIf="list.be_discount !=0" class="discount-price">₹ {{list.single_rate}}</span> <span>Room/Night</span></div>
+                        
+                        
+                    </div>
+                </article>
+            </div>
+            
+        </div>
+        
+    </div>
+    
+    </ngx-slick-carousel> -->
+        </div>
+
+    </section>
+    <!-- section end -->
+    <!--section -->
+    <section class="parallax-section" data-scrollax-parent="true">
+        <div class="bg"  data-bg="images/bg/2.jpg" data-scrollax="properties: { translateY: '100px' }"></div>
+        <div class="overlay op7"></div>
+        <!--container-->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="colomn-text fl-wrap pad-top-column-text_small">
+                        <div class="colomn-text-title">
+                            <h3>Most Popular Hotels</h3>
+                            <p class="cus-discription">Discover Our Most Popular Hotels – Where Luxury Meets Unforgettable Experiences!</p>
+                            <a href="javascript:()" (click)="allHotels()" class="btn  color2-bg float-btn">View All Hotels<i class="fas fa-caret-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                     <!--light-carousel-wrap-->
+                     <div class="light-carousel-wrap fl-wrap">
+                        <!--light-carousel-->
+                        <div class="light-carousel">
+                            <ngx-slick-carousel #slickModal="slick-carousel" [config]="slideConfigPopular">
+                            <!--slick-slide-item repeate-->
+                            <div class="slick-slide-item" ngxSlickItem *ngFor="let list of popularHotel" [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)"><!-- (click)="onRouteDetails(list) -->
+                                <div class="hotel-card fl-wrap title-sin_item">
+                                    <div class="geodir-category-img card-post">
+                                        <a [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)"><img src="{{list.image}}" alt=""></a>
+                                        <div class="listing-counter">Room/Night <strong>₹{{list.discount_Price}} </strong> <span *ngIf="list.be_discount !=0" class="p-discount-price">₹ {{list.single_rate}}</span></div>
+                                        <div class="sale-window">Sale 20%</div>
+                                        <div class="geodir-category-opt">
+                                            <div class="listing-rating card-popup-rainingvis" data-starrating2="5"></div>
+                                            <h4 class="title-sin_map"><a [routerLink]="['/'+list.slug]" (click)="navigateToHotel_By_name(list)">{{list.hotel_name}}</a></h4>
+                                            <div class="geodir-category-location"><a href="#" class="single-map-item" data-newlatitude="40.90261483" data-newlongitude="-74.15737152"><i class="fas fa-map-marker-alt"></i>{{list.address}}</a></div>
+                                            <div class="rate-class-name">
+                                                <div class="score"><strong> Good</strong>8 Reviews </div>
+                                                <span>{{list.rating}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--slick-slide-item end-->
+                            </ngx-slick-carousel>
+                        </div>
+                        <!--light-carousel end-->
+                    </div>
+                    <!--light-carousel-wrap end-->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- section end -->
+    <!--section -->
+    <section>
+        <div class="container">
+            <div class="section-title">
+                <div class="section-title-separator"><span></span></div>
+                <h2>Why Choose Us</h2>
+                <span class="section-separator"></span>
+                <p class="cus-discription">Planning your next adventure is more than just reserving a room; it's about crafting unforgettable memories that last a lifetime. At revtriphotels.com, we're not just another booking platform – we're your dedicated partner in curating journeys that exceed expectations. Here's why you should choose us for your online hotel booking needs</p>
+            </div>
+            <!-- -->
+            <div class="row">
+                <div class="col-md-4">
+                    <!-- process-item-->
+                    <div class="process-item big-pad-pr-item">
+                        <span class="process-count"> </span>
+                        <div class="time-line-icon"><i class="fal fa-headset"></i></div>
+                        <h4><a href="#"> Best service guarantee</a></h4>
+                        <p>At revtriphotels.com, we understand that your travel plans are not just trips but moments that matter. That's why we're proud to introduce our Best Service Guarantee, a promise that your stay experience with us will be exceptional in every way.</p>
+                    </div>
+                    <!-- process-item end -->
+                </div>
+                <div class="col-md-4">
+                    <!-- process-item-->
+                    <div class="process-item big-pad-pr-item">
+                        <span class="process-count"> </span>
+                        <div class="time-line-icon"><i class="fal fa-gift"></i></div>
+                        <h4> <a href="#">Exclusive gifts</a></h4>
+                        <p>When you choose revtriphotels.com for your next adventure, you're not just booking a stay – you're embarking on a journey of unparalleled hospitality and unforgettable experiences. As a token of our appreciation, we're thrilled to offer you exclusive gifts that will make your stay even more remarkable.</p>
+                    </div>
+                    <!-- process-item end -->
+                </div>
+                <div class="col-md-4">
+                    <!-- process-item-->
+                    <div class="process-item big-pad-pr-item nodecpre">
+                        <span class="process-count"> </span>
+                        <div class="time-line-icon"><i class="fal fa-credit-card"></i></div>
+                        <h4><a href="#"> Get more from your card</a></h4>
+                        <p>Your journey deserves more than just a booking – it deserves an experience that leaves you with unforgettable memories. At revtriphotels.com, we're thrilled to introduce an array of exclusive benefits that will take your travel experience to the next level. By using your card to book with us...</p><!-- , you're not just reserving a stay; you're gaining access to a world of unparalleled advantages. -->
+                    </div>
+                    <!-- process-item end -->
+                </div>
+            </div>
+            <!--process-wrap   end-->
+            <div class=" single-facts fl-wrap mar-top">
+                <!-- inline-facts -->
+                <div class="inline-facts-wrap">
+                    <div class="inline-facts">
+                        <i class="fal fa-users"></i>
+                        <div class="milestone-counter">
+                            <div class="stats animaper">
+                                <div class="num" data-content="0" data-num="254">154</div>
+                            </div>
+                        </div>
+                        <h6>New Visiters Every Week</h6>
+                    </div>
+                </div>
+                <!-- inline-facts end -->
+                <!-- inline-facts  -->
+                <div class="inline-facts-wrap">
+                    <div class="inline-facts">
+                        <i class="fal fa-thumbs-up"></i>
+                        <div class="milestone-counter">
+                            <div class="stats animaper">
+                                <div class="num" data-content="0" data-num="12168">12168</div>
+                            </div>
+                        </div>
+                        <h6>Happy customers every year</h6>
+                    </div>
+                </div>
+                <!-- inline-facts end -->
+                <!-- inline-facts  -->
+                <div class="inline-facts-wrap">
+                    <div class="inline-facts">
+                        <i class="fal fa-award"></i>
+                        <div class="milestone-counter">
+                            <div class="stats animaper">
+                                <div class="num" data-content="0" data-num="172">172</div>
+                            </div>
+                        </div>
+                        <h6>Won Awards</h6>
+                    </div>
+                </div>
+                <!-- inline-facts end -->
+                <!-- inline-facts  -->
+                <div class="inline-facts-wrap">
+                    <div class="inline-facts">
+                        <i class="fal fa-hotel"></i>
+                        <div class="milestone-counter">
+                            <div class="stats animaper">
+                                <div class="num" data-content="0" data-num="732">732</div>
+                            </div>
+                        </div>
+                        <h6>New Listing Every Week</h6>
+                    </div>
+                </div>
+                <!-- inline-facts end -->
+            </div>
+        </div>
+    </section>
+    <!-- section end -->
+    
+    <!--section -->
+    <section *ngIf="hideDummyContent">
+        <div class="container">
+            <div class="section-title">
+                <div class="section-title-separator"><span></span></div>
+                <h2>Testimonials</h2>
+                <span class="section-separator"></span>
+                <p class="cus-discription">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar.</p>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <!--slider-carousel-wrap -->
+        <div class="slider-carousel-wrap text-carousel-wrap fl-wrap">
+            <div class="text-carousel single-carousel fl-wrap">
+                <ngx-slick-carousel #slickModal="slick-carousel" [config]="slideConfigPopular">
+                    <!--slick-slide-item repeate-->
+                    <div class="slick-slide-item" ngxSlickItem *ngFor="let list of popularHotel">
+                        <div class="slick-item">
+                            <div class="text-carousel-item">
+                                <div class="popup-avatar"><img src="assets/images/avatar/1.jpg" alt=""></div>
+                                <div class="listing-rating card-popup-rainingvis" data-starrating2="5"> </div>
+                                <div class="review-owner fl-wrap">Milka Antony  - <span>Happy Client</span></div>
+                                <p> "In ut odio libero, at vulputate urna. Nulla tristique mi a massa convallis cursus. Nulla eu mi magna. Etiam suscipit commodo gravida. Lorem ipsum dolor sit amet, conse ctetuer adipiscing elit, sed diam nonu mmy nibh euismod tincidunt ut laoreet dolore magna aliquam erat."</p>
+                                <a href="#" class="testim-link">Via Facebook</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!--end slick-slide-item repeate-->
+                </ngx-slick-carousel>
+            </div>
+        </div>
+        <!--slider-carousel-wrap end-->
+    </section>
+    
+    <!--section -->
+    <section class=" middle-padding">
+        
+        <div class="section-decor"></div>
+    </section>
+</div>
+
+
+
+
+<!--Open map modal-->
+<div class="main-map-wrap modal" id="main-map-wrap">
+    <div class="reg-overlay"></div>
+    <div class="main-register-holder main-map-holder">
+        <div class="close-reg color-bg" (click)="onMapModelClose()"><i class="fal fa-times"></i></div>
+        <div class="main-register fl-wrap">
+            <!---->
+            <div class="container">
+                <google-map height="500px" width="100%"
+            [center]="center"
+            [zoom]="zoom"
+            (mapClick)="moveMap($event)"
+            (mapMousemove)="move($event)">
+                <map-marker *ngFor="let markerPosition of markerPositions" [position]="markerPosition" [options]="markerOptions"></map-marker>
+            </google-map>
+            
+            </div>
+            <!---->
+            
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<!-- <google-map height="500px" width="100%"
+            [center]="center"
+            [zoom]="zoom"
+            (mapClick)="moveMap($event)"
+            (mapMousemove)="move($event)">
+            <map-marker *ngFor="let markerPosition of markerPositions" [position]="markerPosition" [options]="markerOptions"></map-marker>
+</google-map>
+
+<google-map height="400px"
+            width="750px"
+            [center]="center"
+            [zoom]="zoom">
+  <map-directions-renderer *ngIf="(directionsResults$ | async) as directionsResults"
+                           [directions]="directionsResults"></map-directions-renderer>
+</google-map>   -->      

@@ -1,0 +1,111 @@
+<div class="content">
+    <!-- map-view-wrap --> 
+    <div class="map-view-wrap">
+        <div class="container">
+            <div class="map-view-wrap_item">
+                <div class="list-single-main-item-title fl-wrap">
+                    <h3>Contacts</h3>
+                </div>
+                <div class="box-widget-list mar-top">
+                    <ul>
+                        <li><span><i class="fal fa-map-marker"></i> Adress :</span> <a routerLink="#">Level 3, Office No. 5, Varun Tower, Sector-20 B, Near by Neelam Ajronda Chowk, Faridabad, Haryana 121001</a></li>
+                        <li><span><i class="fal fa-phone"></i> Phone :</span> <a href="tel:+91 98704 70966">+91 98704 70966</a></li>
+                        <li><span><i class="fal fa-envelope"></i> Mail :</span> <a href="mailto:info@revtriphotels.com">info@revtriphotels.com</a></li>
+                        <li><span><i class="fal fa-browser"></i> Website :</span> <a href="https://revtriphotels.com/" target="_blank">www.revtriphotels.com</a></li>
+                    </ul>
+                </div>
+                <div class="list-widget-social">
+                    <ul>
+                        <li><a routerLink="#" target="_blank" ><i class="fab fa-facebook-f"></i></a></li>
+                        <li><a routerLink="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
+                        <li><a routerLink="#" target="_blank" ><i class="fab fa-vk"></i></a></li>
+                        <li><a routerLink="#" target="_blank" ><i class="fab fa-instagram"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--map-view-wrap end --> 
+    <!-- Map -->
+    <div class="map-container fw-map2">
+        <google-map height="430px" width="100%"
+            [center]="center"
+            [zoom]="zoom"
+            (mapClick)="moveMap($event)"
+            (mapMousemove)="move($event)">
+                <map-marker [position]="position"></map-marker>
+            </google-map>
+    </div>
+    <!-- Map end --> 
+    <section  id="sec1" class="grey-b lue-bg middle-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <!--   list-single-main-item -->
+                    <div class="list-single-main-item fl-wrap">
+                        <!-- <div class="list-single-main-item-title fl-wrap">
+                            <h3>Our Office </h3>
+                        </div>
+                        <div class="list-single-main-media fl-wrap">
+                            <img src="images/all/8.jpg" alt="" class="respimg">
+                        </div>
+                        <p>Praesent eros turpis, commodo vel justo at, pulvinar mollis eros. Mauris aliquet eu quam id ornare. Morbi ac quam enim. Cras vitae nulla condimentum, semper dolor non, faucibus dolor.   </p> -->
+                        <div class="list-single-main-item-title fl-wrap ">
+                            <h3>Working Hours </h3>
+                        </div>
+                        <ul class="cat-item">
+                            <li><a href="#">Monday to Friday</a> <span>9am - 7pm</span></li>
+                            <li><a href="#">Saturday to Sunday </a> <span>Closed</span></li>
+                        </ul>
+                    </div>
+                    <!--   list-single-main-item end -->
+                </div>
+                <div class="col-md-8">
+                    <div class="list-single-main-item fl-wrap">
+                        <div class="list-single-main-item-title fl-wrap">
+                            <h3>Get In Touch</h3>
+                        </div>
+                        <div id="contact-form">
+                            <div id="message"></div>
+                            <form  class="custom-form" [formGroup]="contactForm" (ngSubmit)="onSubmit()" id="contactform">
+                                <fieldset>
+                                    <label><i class="fal fa-user"></i></label>
+                                    <input type="text" formControlName="name" id="name" placeholder="Your Name *" />
+                                    <div class="error-message" *ngIf="contactForm.get('phone')?.touched && contactForm.get('phone')?.hasError('required')">
+                                        name is required.
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <label><i class="fal fa-envelope"></i>  </label>
+                                    <input type="email"  formControlName="email" id="email" placeholder="Email Address*" />
+                                    <div class="error-message" *ngIf="contactForm.get('phone')?.touched && contactForm.get('phone')?.hasError('required')">
+                                        Email is required.
+                                    </div>
+                                    <label><i class="fal fa-envelope"></i>  </label>
+                                    <input type="number"  formControlName="phone" id="phone" placeholder="phone*" />
+                                    <div class="error-message" *ngIf="contactForm.get('phone')?.touched && contactForm.get('phone')?.hasError('required')">
+                                        Mobile number is required.
+                                    </div>
+                                    <textarea formControlName="message"  id="comments" cols="40" rows="3" placeholder="Your Message:"></textarea>
+                                    <div class="error-message" style="margin-top: 0px;" *ngIf="contactForm.get('phone')?.touched && contactForm.get('phone')?.hasError('required')">
+                                        Message is required.
+                                    </div>
+                                </fieldset>
+                                <div class="captcha">
+                                    <p>
+                                        <strong>Captcha Code:</strong> 
+                                        <span>{{ captchaText }}</span>
+                                        <input type="text"  [(ngModel)]="userAnswer" [ngModelOptions]="{standalone:true}" id="captcha-id" placeholder="Enter the CAPTCHA *" />
+                                    </p>
+                                </div>
+                                <button type="submit" class="log-submit-btn login-btn-submit color-bg">Send Message</button>
+                            </form>
+                        </div>
+                        <!-- contact form  end--> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="section-decor"></div>
+    </section>
+    <!-- section end -->
+</div>

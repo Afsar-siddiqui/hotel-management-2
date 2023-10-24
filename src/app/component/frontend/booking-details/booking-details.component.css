@@ -1,0 +1,239 @@
+.scroll-nav-container{
+    padding-top: 70px;
+}
+.mt-20{
+    margin-bottom: 20px;
+}
+.rooms-details{
+    float: right;
+}
+.rooms-details-header{
+    padding-bottom: 10px;
+}
+.rooms-details-header h3{
+    margin-bottom: 5px;
+}
+.rooms-details-header h5 i{
+    padding-right: 5px;
+}
+.list-single-main-item-title{
+    padding-bottom: 0px;
+}
+.flat-hero-container .box-widget-item-header{
+    padding-bottom: 0px;
+}
+.rooms-media .room-description{
+    font-size: 12px;
+}
+.room_night{
+    margin-left: -13px;
+}
+
+.slick-slide-img>img{
+    width: 178px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.flat-hero-container .rate-class-name-wrap{
+    border-bottom: 0;
+     padding: 0;
+}
+
+
+/*  */
+.fl-wrap{
+    padding: 10px;
+    margin-bottom: 20px;
+}
+.box-widget-item-header:before{
+    display: none;
+}
+.rate-price{
+    float: right;
+    font-weight: 600;
+}
+.rate-price_d{
+    color: #F06811;
+}
+.rate-price_bold{
+    font-size: 14px;
+    font-weight: 700;
+}
+.total-price{
+    color: #183c7d;
+    font-size: 16px;
+    font-weight: 800;
+}
+.per-night {
+    display: block;
+    font-size: 12px;
+    font-weight: 300;
+}
+.review-score-detail-list .rate-item {
+    margin-bottom: 0px;
+}
+.list-single-main-item-title h3{
+    margin-bottom: 0 !important;
+}
+.list-single-main-item-title .address{
+    font-size: 12px;
+}
+
+.hotel-img img{
+    width: 100%;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+.list-single-main-item .h_description{
+    font-size: 12px;
+}
+.book-details p{
+    font-size: 12px;
+    font-weight: 700;
+    color: #F9B90F;
+}
+.book-details p span{
+    font-weight: 300;
+    color: #3AACED;
+    font-size: 11px;
+}
+
+.btn-coupon-code{
+    padding: 7px;
+}
+.couponcode-container{
+    right: 15px;
+    bottom: 41px;
+}
+.book-form .bookdate-container input {
+    padding-left: 15px;
+}
+.box-widget-item-header{
+    padding: 0 0 0px;
+    margin: 0 0 10px;
+}
+
+.login-section h3{
+    float: left;
+    font-weight: 600;
+    color: #183c7d;
+    margin-bottom: 5px;
+}
+.btn-login{
+    padding: 10px;
+    border-radius: 4px;
+    float: left;
+    color: #fff;
+    margin-top: 5px;
+    border: 0;
+    cursor: pointer;
+}
+
+
+.booking-info{
+    font-size: 12px;
+    padding: 0px 0px 0px 15px;
+}
+
+.hotel_name{
+    cursor: pointer;
+}
+.hotel_name:hover{
+    color: #3AACED;
+}
+
+.btn-back{
+    padding: 5px;
+    border: none;
+    border-radius: 3px;
+    color: #fff;
+    background: #18458b;
+    float: right;
+    cursor: pointer;
+}
+.btn-back:hover{
+    background: #3AACED;
+}
+.list-single-main-item-title:before{
+    display: none;
+}
+
+.custom-form-1{
+    float: none;
+    width: auto;
+    padding: 10px;
+}
+
+.custom-form textarea, .custom-form input[type="text"], .custom-form input[type="number"], .custom-form input[type=email], .custom-form input[type=password], .custom-form input[type=button]{
+    padding: 14px 20px 14px 20px;
+}
+
+
+.d-flex{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.ml-1{
+    margin-right: 10px;
+}
+
+.sold-out{
+    text-align: center;
+    font-size: 16px;
+    font-weight: 800;
+    color: red;
+}
+
+.coupon-code-list{
+    float: left;
+    border: 1px dashed;
+    width: 100%;
+    padding: 8px;
+}
+.coupon-code-list div{
+    text-align: left;
+}
+.coupon-code-list input[type="radio"]{
+    display: inline-block;
+}
+.coupon-code-list h4{
+    display: inline;
+    padding-left: 10px;
+    font-weight: 600;
+}
+.coupon-code-list h4 span{
+    float: right;
+}
+.coupon-code-list p{
+    font-size: 12px;
+    padding-left: 24px;
+}
+
+.coupon-code-error{
+    float: left;
+    font-size: 12px;
+    color: red;
+    margin-top: -12px;
+    margin-left: 9px;
+}
+
+
+
+
+
+@media only screen and (max-width: 540px){
+    .book-details-mobile p span{
+        display: block;
+    }
+
+    .btn-footer-mobile .fa-paper-plane{
+        padding-left: 5px;
+    }
+
+    
+}
+

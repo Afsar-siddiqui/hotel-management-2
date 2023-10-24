@@ -1,0 +1,126 @@
+.main-register .custom-form input[type=number]{
+    padding-left: 20px;
+}
+.tab-content{
+    display: none;
+}
+
+.login-loader{
+    z-index: 9999;
+}
+
+.mt-1{
+    margin-top: 10px;
+}
+
+
+/* OTP */
+.main-otp-wrap, .reg-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    overflow: auto;
+    display: none;
+    transform: translate3d(0,0,0);
+    -webkit-transform: translate3d(0,0,0);
+    background: rgba(0,0,0,0.81);
+}
+
+  
+.title{
+font-weight:600;
+margin-top:20px;
+font-size:24px;
+}
+
+
+.customBtn{
+border-radius:0px;
+padding:10px;
+}
+
+.otp-form{
+    padding-top: 20px;
+}
+.otp-form input{
+    padding-left: 3px;
+    display:inline-block;
+    width:40px;
+    height:40px;
+    margin: 5px;
+    text-align:center;
+}
+
+.otp-custom-box{
+    position: relative;
+    width: 37%;
+}
+
+.customBtn {
+    width: 88%;
+    border: 0;
+    margin-top: 10px;
+    border-radius: 5px;
+    background: #18458B;
+    color: #fff;
+    cursor: pointer;
+}
+
+.customBtn:hover{
+    background: #3AACED;
+}
+.customBtn:disabled, .sign-up-btn:disabled, .login-btn-submit:disabled{
+    opacity: 0.8;
+}
+
+.invalid-feedback div{
+    font-size: 10px;
+    color: red;
+    float: left;
+    padding-left: 5px;
+    margin-top: -11px;
+}
+.error-message{
+    font-size: 10px;
+    color: red;
+    float: left;
+    padding-left: 5px;
+    margin-top: -2px;
+}
+
+.login-form .error-message, .error-message1{
+    font-size: 10px;
+    color: red;
+    float: left;
+    padding-left: 5px;
+    margin-top: -11px;
+}
+
+.login-form .log-submit-btn{
+    margin-left: 16px;
+}
+
+.tab-content {
+    padding: 0px;
+}
+.main-register h3{
+    margin-bottom: 10px;
+    padding: 10px 0;
+}
+.main-register-holder{
+    margin: 50px auto 50px;
+}
+
+@media (max-width: 480px) {
+    .tab-content {
+        padding: 0px;
+    }
+    .main-register h3{
+        margin-bottom: 10px;
+        padding: 10px 0;
+    }
+}
+

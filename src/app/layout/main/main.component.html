@@ -1,0 +1,44 @@
+<!--loader-->
+<!-- <div class="loader-wrap">
+    <div class="pin">
+        <div class="pulse"></div>
+    </div>
+</div> -->
+<!--loader end-->
+
+<!-- header-->
+<app-header></app-header>
+<!--End header-->
+
+<!--  wrapper  -->
+<div id="wrapper">
+    <!-- content-->
+    <router-outlet></router-outlet>
+    <!-- content end-->
+</div>
+<!--wrapper end -->
+
+<!--footer-->
+<app-footer></app-footer>
+ <!--footer end -->
+
+<!--map-modal -->
+<div class="map-modal-wrap">
+    <div class="map-modal-wrap-overlay"></div>
+    <div class="map-modal-item">
+        <div class="map-modal-container fl-wrap">
+            <div class="map-modal fl-wrap">
+                <div id="singleMap" data-latitude="40.7" data-longitude="-73.1"></div>
+            </div>
+            <h3><i class="fal fa-location-arrow"></i><a href="#">Hotel Title</a></h3>
+            <input id="pac-input" class="controls fl-wrap controls-mapwn" type="text" placeholder="What Nearby ?   Bar , Gym , Restaurant ">
+            <div class="map-modal-close"><i class="fal fa-times"></i></div>
+        </div>
+    </div>
+</div>
+<!--map-modal end -->
+
+<app-login></app-login>
+
+<a class="to-top"><i class="fas fa-caret-up"></i></a>
+

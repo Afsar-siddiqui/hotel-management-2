@@ -1,0 +1,34 @@
+<div class="content">
+    <!--section -->
+    <section id="sec2">
+        <div class="container">
+                <div class="section-title">
+                    <div class="section-title-separator"><span></span></div>
+                    <h2>Popular Destination</h2>
+                    <span class="section-separator"></span>
+                    <p>Explore some of the best tips from around the city from our partners and friends.</p>
+                </div>
+            </div>
+            <!-- portfolio start -->
+            <div class="gallery-items fl-wrap mr-bot spad home-grid">
+                <!-- gallery-item-->
+                <div class="gallery-item" *ngFor="let list of popularDestinationList">
+                    <div class="grid-item-holder" (click)="navigateToHotel_By_city(list)" [routerLink]="'/city/'+list.slug">
+                        <div class="listing-item-grid">
+                            <div class="listing-counter"><span>{{list.total_hotel}}</span> Hotels</div>
+                            <img  [src]="list.image"   [alt]="list.slug">
+                            <div class="listing-item-cat">
+                                <h3><a (click)="navigateToHotel_By_city(list)" [routerLink]="'/city/'+list.slug">{{list.name}} - {{list.state_name}}</a></h3>
+                                <div class="clearfix"></div>
+                                <p>{{list.description | slice:0:50}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- gallery-item end-->
+            </div>
+            <!-- portfolio end -->
+
+    </section>
+    <!--end section-->
+</div>

@@ -1,0 +1,42 @@
+.bg-confirm{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+
+  .bg-confirm .card{
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 4px 4px 22px 10px rgba(207, 212, 222, 1);
+    transition: all 0.3s ease;
+  }
+
+  .bg-confirm .card-title{
+    font-size: 20px;
+  }
+
+  .bg-confirm .btn-back{
+    margin-top: 30px;
+    margin-bottom: 15px;
+  }
+  .bg-confirm .color6-bg{
+    background-color: #18458B;
+    padding: 8px 15px;
+    margin: 5px;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 14px;
+  }
+  
+  .card-text strong{
+    font-weight: 600;
+    font-size: 14px;
+    color: #18458b;
+}
+p.card-text {
+    font-size: 12px;
+    font-weight: 400;
+}
+
+  

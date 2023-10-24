@@ -1,0 +1,341 @@
+
+
+/* Date range picker */
+.bs-datepicker-head{
+    height: 30px !important;
+    padding: 0px 10px !important;
+}
+
+/* .bs-datepicker-head button{
+    height: 20px !important;
+    vertical-align: middle !important;
+    line-height: 20px !important;
+} */
+
+/* Search Bar */
+.badge-city, .badge-hotel{
+    padding: 0px 5px;
+    border-radius: 50px;
+    float: right;
+    font-size: 9px;
+    font-weight: 600;
+}
+.badge-city{
+    color: #3AACED;
+}
+.badge-hotel{
+    color: #0dbb0d;
+}
+.search-drop-list li{
+    border-bottom: 1px solid #e1dcdc;
+    padding-top: 3px;
+}
+
+.cus-discription{
+    font-size: 14px;
+}
+
+
+/* View Details */
+.room_night{
+    font-size: 9px !important;
+    color: #F9B90F !important;
+}
+
+
+/* Slider */
+.slick-prev {
+    padding-top: 3px;
+    left: 0px;
+    color: #fff;
+    background-color: #18458B;
+    border-radius: 100%;
+    width: 35px;
+    height: 35px;
+    box-shadow: 0px 0px 0px 9px rgba(255,255,255,0.4);
+    z-index: 120;
+}
+.slick-next{
+    padding-top: 3px;
+    right: 0px;
+    color: #fff;
+    background-color: #18458B;
+    border-radius: 100%;
+    width: 35px;
+    height: 35px;
+    box-shadow: 0px 0px 0px 9px rgba(255,255,255,0.4);
+    z-index: 120;
+}
+.slick-next:hover, .slick-prev:hover{
+    background-color: #2C3B5A;
+}
+
+@media (max-width: 480px) {
+    /* Mobile responsive */
+    section{
+        padding: 20px 0;
+    }
+    .section-title h2{
+        font-size: 18px;
+    }
+    .cus-discription{
+        font-size: 12px;
+    }
+
+    .pad-top-column-text_small {
+        padding-top: 0px;
+    }
+
+    section.parallax-section{
+        padding: 30px 0px;
+    }
+    .colomn-text{
+        padding: 0px;
+    }
+
+    .colomn-text-title h3{
+        font-size: 18px;
+        margin-bottom: 0px;
+    }
+    
+
+
+    .slick-prev {
+        padding-top: 2px;
+        width: 20px;
+        height: 20px;
+        box-shadow: 0px 0px 0px 5px rgba(255,255,255,0.4);
+        
+    }
+    .slick-next{
+        padding-top: 2px;
+        width: 25px;
+        height: 25px;
+        box-shadow: 0px 0px 0px 5px rgba(255,255,255,0.4);
+    }
+    .slick-prev:before, .slick-next:before{
+        font-size: 16px;
+    }
+    .logo-holder img{
+        height: 80%;
+        margin-top: 6px;
+    }
+    .header-user-name span {
+        width: 25px;
+        height: 25px;
+        top: 5px;
+        left: -30px;
+    }
+    .show-search-button {
+        width: 40px;
+    }
+    .wishlist-link{
+        width: 40px;
+        height: 50px;
+        line-height: 50px;
+    }
+    .wishlist-link span.wl_counter{
+        left: 4px;
+        width: 10px;
+        height: 10px;
+        line-height: 10px;
+        font-size: 9px;
+    }
+  }
+
+
+/* 
+
+*/
+.listsearch-input-item .chosen-select:before {
+    font-family: Font Awesome\ 5 Pro;
+    content: "\f0c9";
+    font-size: 12px;
+    font-weight: 400;
+    position: absolute;
+    left: 16px;
+    top: 0;
+    z-index: 10;
+}
+.listsearch-input-item label i{
+    position: absolute;
+    top: 46px;
+}
+.listsearch-input-item .chosen-select{
+    background-color: #F7F9FB;
+    padding: 14px 20px 14px 45px;
+    border-radius: 6px;
+    float: left;
+    width: 100%;
+    color: #666;
+    border: solid 1px #eee;
+}
+
+
+.previous-rate-cut{
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+    text-decoration-color: red;
+}
+.discount-available{
+    text-decoration: none;
+}
+
+section.parallax-section .bg{
+    background: url('/assets/images/bg/4.jpg') repeat;
+}
+
+.custom-form input[type="number"]{
+    float: left;
+    border: 1px solid #eee;
+    background: #F7F9FB;
+    width: 100%;
+    padding: 14px 20px 14px 45px;
+    border-radius: 6px;
+    color: #666;
+    font-size: 13px;
+    
+}
+
+/* Booking details */
+.mt-2{
+    margin-top: 10px;
+}
+.mt-3{
+    margin-top: 15px;
+}
+
+.mb-2{
+    margin-top: 10px;
+}
+.mb-3{
+    margin-top: 15px;
+}
+
+
+
+/* ========================
+    Swal Fire
+===========================*/
+div:where(.swal2-container) div:where(.swal2-popup){
+    font-size: 0.7rem !important;
+}
+
+
+.privacy-policy{
+    background-color: #fff !important;
+}
+gallery-core[imageSize=contain] gallery-item .g-image-item{
+    object-fit: cover !important;
+}
+
+
+/* ngx slider  */
+.ngx-slider .ngx-slider-bubble{
+    font-size: 9px !important;
+}
+.ngx-slider .ngx-slider-pointer{
+    width: 15px !important;
+    height: 15px !important;
+    top: -6px !important;
+}
+.ngx-slider .ngx-slider-pointer.ngx-slider-active:after {
+    background-color: transparent !important;
+}
+
+
+
+
+.badge{
+    float: right;
+    padding: 2px 5px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-success{
+    background: #28a745;
+    color: #fff;
+}
+.badge-danger {
+    color: #fff;
+    background-color: #dc3545;
+}
+.badge-warning {
+    color: #212529;
+    background-color: #ffc107;
+}
+
+
+.change-details{
+    float: left;
+    margin-top: 10px;
+}
+
+.change-details button{
+    background: transparent;
+    border: 0;
+    color: #205ebe;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.mt-1{
+    margin-top: 0.3rem;
+}
+
+
+@media only screen and (max-width: 540px){
+
+    .rooms-details{
+        margin-top: 0px;
+    }
+   
+    .booking-footer {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background: #333333de;
+        z-index: 99;
+        width: 100%;
+        padding: 5px;
+    }
+    .rate-on-mobile{
+        float: left;
+        color: #fff;
+        padding-left: 10px;
+    }
+    .rate-price-mobile{
+        font-weight: 800;
+        font-size: 12px !important;
+        /* display: block; */
+    }
+    .rate-price-mobile span{
+        font-size: 10px !important;
+        padding-left: 5px;
+        font-weight: 400;
+    }
+    .per-night-mobile{
+        font-size: 10px !important;
+        /* display: block; */
+    }
+    a.price_summary {
+        display: block;
+        font-size: 12px;
+        color: #bfc1c4;
+        text-align: left;
+    }
+    .btn-footer-mobile{
+        background: #f8bb11;
+        padding: 8px;
+        border-radius: 4px;
+        border: 0;
+        color: #fff;
+        font-size: 12px;
+        float: right;
+        margin-right: 8px;
+        margin-top: 4px;
+    }
+}

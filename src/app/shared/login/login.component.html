@@ -1,0 +1,150 @@
+<!--loader-->
+<div class="loader-wrap login-loader" *ngIf="loader">
+    <div class="pin">
+        <div class="pulse"></div>
+    </div>
+</div>
+<!--loader end-->
+<!--register form -->
+<div class="main-register-wrap modal" id="main-register-wrap">
+    <div class="reg-overlay"></div>
+    <div class="main-register-holder">
+        <div class="main-register fl-wrap">
+            <div class="close-reg color-bg" (click)="onModelClose()"><i class="fal fa-times"></i></div>
+            <ul class="tabs-menu">
+                <li class="current"><a id="current" href="javascript: void(0);" (click)="onChangeTab('tab1')"><i class="fal fa-sign-in-alt"></i> Login</a></li>
+                <li><a href="javascript: void(0);" id="current1" (click)="onChangeTab('tab2')"><i class="fal fa-user-plus"></i> Register</a></li>
+            </ul>
+            <!--tabs -->
+            <div id="tabs-container">
+                <div class="tab">
+                    <!--tab -->
+                    <div id="tab-1" class="tab-content">
+                        <h3>Sign In <span>Rev trip<strong> Hotels</strong></span></h3>
+                        <div class="custom-form login-form">
+                            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                                <div class="col-md-12">
+                                    <label>Username or Email Address <span>*</span> </label>
+                                    <input name="email" type="text"  formControlName="mobile">
+                                    <div class="error-message" *ngIf="loginForm.get('mobile')?.touched && loginForm.get('mobile')?.hasError('required')">
+                                        Mobile number is required.
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <label >Password <span>*</span> </label>
+                                    <input name="password" type="password"  formControlName="password" >
+                                    <div class="error-message" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')">
+                                        Password is required.
+                                    </div>
+                                </div>
+                                <button type="submit"  class="log-submit-btn login-btn-submit color-bg"><span>Log In</span></button>
+                                <div class="clearfix"></div>
+                                <div class="filter-tags">
+                                    <input id="check-a" type="checkbox" name="check">
+                                    <label for="check-a">Remember me</label>
+                                </div>
+                            </form>
+                            <div class="lost_password">
+                                <a href="javascript:()">Lost Your Password?</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!--tab end -->
+                    <!--tab -->
+                    <div class="tab">
+                        <div id="tab-2" class="tab-content">
+                            <h3>Sign Up <span>Rev trip<strong> Hotels</strong></span></h3>
+                            <div class="custom-form">
+                                <form [formGroup]="signUpForm" (ngSubmit)="onSignUp()" class="main-register-form" id="main-register-form2">
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mt-1">
+                                            <label>First Name <span>*</span> </label>
+                                            <input formControlName="first_name" type="text" >
+                                            <div class="error-message1" *ngIf="signUpForm.get('first_name')?.touched && signUpForm.get('first_name')?.hasError('required')">
+                                                First name is required.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mt-1">
+                                            <label>Last Name <span>*</span> </label>
+                                            <input formControlName="last_name" type="text" >
+                                            <div class="error-message1" *ngIf="signUpForm.get('last_name')?.touched && signUpForm.get('last_name')?.hasError('required')">
+                                                Last name is required.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mt-1">
+                                            <label>Email Address <span>*</span></label>
+                                            <input formControlName="email" type="email">
+                                            <div class="error-message1" *ngIf="signUpForm.get('email')?.touched && signUpForm.get('email')?.hasError('required')">
+                                                Email is required.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mt-1">
+                                            <label>Mobile No <span>*</span></label>
+                                            <input formControlName="mobile" type="number" (keyup)="onCehckNo()">
+                                            <div class="invalid-feedback" *ngIf="mobile_exist">
+                                                <div>Already Exist</div>
+                                            </div>
+                                            <div class="error-message" *ngIf="signUpForm.get('mobile')?.touched && signUpForm.get('mobile')?.hasError('required')">
+                                                Mobile number is required.
+                                            </div>
+                                              <div class="error-message" *ngIf="signUpForm.get('mobile')?.touched && signUpForm.get('mobile')?.hasError('pattern')">
+                                                Mobile no must be at least 10 digits.
+                                              </div>
+                                        </div>
+                                        <div class="col-md-12 mt-1">
+                                            <label >Password <span>*</span></label>
+                                            <input formControlName="password" type="password">
+                                            <div class="error-message1" *ngIf="signUpForm.get('password')?.touched && signUpForm.get('password')?.hasError('required')">
+                                                Password is required.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="log-submit-btn sign-up-btn color-bg" ><span>Register</span></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!--tab end -->
+                </div>
+                <!--tabs end -->
+                <!-- <div class="log-separator fl-wrap"><span>or</span></div>
+                <div class="soc-log fl-wrap">
+                    <p>For faster login or register use your social account.</p>
+                    <a href="#" class="facebook-log"><i class="fab fa-facebook-f"></i>Connect with Facebook</a>
+                </div> -->
+            </div>
+        </div>
+    </div>
+</div>
+<!--register form end -->
+
+
+
+<div class="main-otp-wrap modal" id="main-otp-wrap">
+    <div class="reg-overlay"></div>
+    <div class="main-register-holder">
+        <div class="close-reg color-bg" (click)="onOTPModelClose()"><i class="fal fa-times"></i></div>
+        <div class="main-register fl-wrap">
+            <!---->
+            <div class="container">
+                <div class="row">
+                <div class="otp-custom-box">
+                    <div class="title"> Verify OTP</div>
+                    
+                    <form [formGroup]="otpForm" class="mt-5 otp-form">
+                    <input class="otp" type="number" formControlName="digit1" maxlength="1"  (input)="onInput($event, 'digit2')" (keydown)="onKeyDown($event, 'digit2')">
+                    <input class="otp" type="number" formControlName="digit2" maxlength="1" (input)="onInput($event, 'digit3')" (keydown)="onKeyDown($event, 'digit3')">
+                    <input class="otp" type="number" formControlName="digit3" maxlength="1" (input)="onInput($event, 'digit4')" (keydown)="onKeyDown($event, 'digit4')">
+                    <input class="otp" type="number" formControlName="digit4" maxlength="1" (input)="onInput($event)">
+                    </form>
+                    <hr class="mt-4">
+                    <button type="submit" class='customBtn' (click)="onOTPSubmit()" [disabled]="otpForm.invalid">Verify</button>
+                </div>
+                </div>
+            </div>
+            <!---->
+            
+        </div>
+    </div>
+</div>

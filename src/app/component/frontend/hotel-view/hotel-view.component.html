@@ -1,0 +1,629 @@
+
+<!--loader-->
+<div class="loader-wrap" *ngIf="loader">
+    <div class="pin">
+        <div class="pulse"></div>
+    </div>
+</div>
+<!--loader end-->
+
+<div class="content" *ngIf="!loader">
+    <!--  section  -->
+    <section class="grey-blue-bg small-padding scroll-nav-container">
+        <div class="top-dec"></div>
+        <!--  scroll-nav-wrapper  -->
+        <div class="scroll-nav-wrapper fl-wrap mt-20" [ngClass]="{'fixed-nav': isFixed}">
+            <div class="hidden-map-container fl-wrap">
+                <input id="pac-input" class="controls fl-wrap controls-mapwn" type="text" placeholder="What Nearby ?   Bar , Gym , Restaurant ">
+                <div class="map-container">
+                    <div id="singleMap" data-latitude="40.7427837" data-longitude="-73.11445617675781"></div>
+                </div>
+                <!-- Map APP -->
+                <!-- <app-map [lat]="latitude" [lng]="longitude"></app-map> -->
+                <!---->
+            </div>
+
+            <div class="clearfix"></div>
+            <div class="container">
+                <nav class="scroll-nav scroll-init">
+                    <ul>
+                        <li><a [class.act-scrlink]="activeSection === 'sec1'" (click)="scrollToSection('sec1')">Gallery</a></li>
+                        <li><a [class.act-scrlink]="activeSection === 'sec2'" (click)="scrollToSection('sec2')">Details</a></li>
+                        <li><a [class.act-scrlink]="activeSection === 'sec3'" (click)="scrollToSection('sec3')">Amenities</a></li>
+                        <li><a [class.act-scrlink]="activeSection === 'sec4'" (click)="scrollToSection('sec4')">Rooms</a></li>
+                        <li><a [class.act-scrlink]="activeSection === 'sec6'" (click)="scrollToSection('sec6')">Reviews</a></li>
+                    </ul>
+                </nav>
+                <a href="javascript:()" class="show-hidden-map" *ngIf="!showMap" (click)="onShowMap()">  <span>On The Map</span> <i class="fal fa-map-marked-alt"></i></a>
+                <a href="javascript:()" class="show-hidden-map" *ngIf="showMap" (click)="onCloseMap()">  <span>Close Map</span> <i class="fal fa-map-marked-alt"></i></a>
+            </div>
+        </div>
+
+        <div class="container map" *ngIf="showMap">
+
+            <google-map height="500px" width="100%"
+            [center]="center"
+            [zoom]="zoom"
+            (mapClick)="moveMap($event)"
+            (mapMousemove)="move($event)">
+            <!-- Disable the default Google Maps marker by setting clickable to false -->
+            <map-marker [position]="position" [clickable]="false"></map-marker>
+                <!-- <map-marker [position]="position"></map-marker> -->
+                <map-marker *ngFor="let markerPosition of markerPositions" [icon]="icon" [label]="label" [position]="markerPosition"></map-marker>
+            </google-map>
+        </div>
+
+        <!--  scroll-nav-wrapper end  -->                    
+        <!--   container  -->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="list-single-main-container ">
+                        <!-- fixed-scroll-column  -->
+                        <div class="fixed-scroll-column scroll-to-share">
+                            <div class="fixed-scroll-column-item fl-wrap" [ngClass]="{'scroll-to-fixed-share': isFixedShareIcon}">
+                                <div class="showshare sfcs fc-button"><i class="far fa-share-alt"></i><span>Share </span></div>
+                                <div class="share-holder fixed-scroll-column-share-container">
+                                    <div class="share-container  isShare"></div>
+                                </div>
+                                <a class="fc-button custom-scroll-link" [class.act-scrlink]="activeSection === 'sec6'" (click)="scrollToSection('sec6')"><i class="far fa-comment-alt-check"></i> <span>  Add review </span></a>
+                                <a class="fc-button" href="javascript:()" (click)="addToWishlist(listDetails)"><i class="far fa-heart"></i> <span>Save</span></a>
+                                <a *ngIf="!soldOut" class="fc-button" href="javascript:()"  (click)="onRouteBooking('room-plan')"><i class="far fa-bookmark"></i> <span> Book Now </span></a>
+                            </div>
+                        </div>
+                        <!-- fixed-scroll-column end   -->                                          
+                        <div class="list-single-main-media fl-wrap" id="sec1">
+                            <div class="single-slider-wrapper fl-wrap">
+                                <div class="slider-for fl-wrap"  >
+                                    <gallery [items]="images"></gallery>
+                                </div>
+                            </div>
+                            <div class="single-slider-wrapper fl-wrap">
+                                <div class="slider-nav fl-wrap">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <!--  flat-hero-container -->
+                    <div class="flat-hero-container fl-wrap">
+                        <div class="box-widget-item-header fl-wrap ">
+                            <h3 class="header-name">{{listDetails?.hotel_name}}</h3>
+                            <div class="listing-rating card-popup-rainingvis" style="text-align: left;"><rating [(ngModel)]="listDetails.rating" [max]="max" [readonly]="isReadonly"></rating></div>
+                            <p class="header-address"><i class="fas fa-map-marker-alt"></i> {{listDetails?.address}}</p>
+                            <div class="listing-rating-wrap">
+                                <div class="listing-rating card-popup-rainingvis" data-starrating2="5"></div>
+                            </div>
+                        </div>
+                        <!---->
+                        <div class="list-single-hero-details fl-wrap ">
+                            <div class="row book-details">
+                                <div class="col-md-6">
+                                    <p>Room Type: <span>{{listDetails?.room_name}}</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>Plan Name: <span>{{listDetails?.plan_name}}</span></p>
+                                </div>
+                            </div>
+                        
+                            <div class="row book-details">
+                                <div class="col-md-6 col-xs-6">
+                                    <p>Check In: <span>{{checkin}}</span></p>
+                                </div>
+                                <div class="col-md-6 col-xs-6">
+                                    <p>Check Out: <span>{{checkout}}</span></p>
+                                </div>
+                                <div class="col-md-6 col-xs-6">
+                                    <p>Guests: <span>{{adults}}Adult</span><span *ngIf="child>0">/{{child}}Child</span></p>
+                                </div>
+                                <div class="col-md-6 col-xs-6">
+                                    <p>Room: <span>{{num_rooms}}</span></p>
+                                </div>
+                            </div>
+
+                            <div class="change-details" (click)="onShowSearch()">
+                                <button class="change-btn">Change Date</button>
+                            </div>
+
+                        </div>
+                        <!---->
+                        <div *ngIf="!soldOut" class="list-single-hero-price fl-wrap" style="font-weight: 600;">Average Price <!-- inventory != 0  -->
+                            <span class="room_previous_price" *ngIf="listDetails?.be_discount !=0"> ₹ {{price}}</span><!-- listDetails?.single_rate -->
+                            <span class="single-rate"> ₹ {{discountPrice}} 
+                                <span class="room_night">Room/Night</span>
+                            </span>
+                            <div *ngIf="listDetails?.be_discount !=0" class="discount-price price-details-tag mt-2">Discount {{listDetails?.be_discount}}% 
+                                <span class="discount"> 
+                                    ₹  {{price - discountPrice}} 
+                                </span>
+                            </div>
+                        </div>
+                        <div *ngIf="soldOut" class="list-single-hero-price fl-wrap" [ngClass]="soldOut == true?'sold-out':null"><i class="far fa-sad-tear"></i> Sold Out</div> <!-- *ngIf="inventory.length==0" -->
+                        <!--reviews-score-wrap-->   
+                        <div class="reviews-score-wrap fl-wrap" *ngIf="hideDummyContent">
+                            <div class="rate-class-name-wrap fl-wrap">
+                                <div class="rate-class-name">
+                                    <span>{{listDetails?.rating}}</span> 
+                                    <div class="score"><strong>Very Good</strong>2 Reviews </div>
+                                </div>
+                                <a href="javascript:()" class="color-bg  custom-scroll-link">Add Review <i class="far fa-comment-alt-check"></i></a>
+                            </div>
+                            <div class="review-score-detail" *ngIf="hideDummyContent">
+                                <!-- review-score-detail-list-->
+                                <div class="review-score-detail-list">
+                                    <!-- rate item-->
+                                    <div class="rate-item fl-wrap">
+                                        <div class="rate-item-title fl-wrap"><span>Cleanliness</span></div>
+                                        <div class="rate-item-bg" data-percent="100%">
+                                            <div class="rate-item-line color-bg"></div>
+                                        </div>
+                                        <div class="rate-item-percent">5.0</div>
+                                    </div>
+                                    <!-- rate item end-->
+                                    <!-- rate item-->
+                                    <div class="rate-item fl-wrap">
+                                        <div class="rate-item-title fl-wrap"><span>Comfort</span></div>
+                                        <div class="rate-item-bg" data-percent="90%">
+                                            <div class="rate-item-line color-bg"></div>
+                                        </div>
+                                        <div class="rate-item-percent">5.0</div>
+                                    </div>
+                                    <!-- rate item end-->                                                        
+                                    <!-- rate item-->
+                                    <div class="rate-item fl-wrap">
+                                        <div class="rate-item-title fl-wrap"><span>Staf</span></div>
+                                        <div class="rate-item-bg" data-percent="80%">
+                                            <div class="rate-item-line color-bg"></div>
+                                        </div>
+                                        <div class="rate-item-percent">4.0</div>
+                                    </div>
+                                    <!-- rate item end-->  
+                                    <!-- rate item-->
+                                    <div class="rate-item fl-wrap">
+                                        <div class="rate-item-title fl-wrap"><span>Facilities</span></div>
+                                        <div class="rate-item-bg" data-percent="90%">
+                                            <div class="rate-item-line color-bg"></div>
+                                        </div>
+                                        <div class="rate-item-percent">4.5</div>
+                                    </div>
+                                    <!-- rate item end--> 
+                                </div>
+                                <!-- review-score-detail-list end-->
+                            </div>
+                        </div>
+                        <!-- reviews-score-wrap end -->   
+                        <a *ngIf="!soldOut" href="javascript:()" (click)="onRouteBooking('room-plan')" class="btn flat-btn color2-bg big-btn float-btn image-popup">Book Now<i class="far fa-bookmark"></i></a>
+                    </div>
+                    <!--   flat-hero-container end -->
+                </div>
+            </div>
+            
+            <!--   row  -->
+            <div class="row">
+                <!--   datails -->
+                <div class="col-md-8">
+                    <div class="list-single-main-container ">
+                        <!-- list-single-header end -->
+                        <div class="list-single-facts fl-wrap" id="sec2">
+                            <!-- inline-facts -->
+                            <div class="inline-facts-wrap">
+                                <div class="inline-facts">
+                                    <i class="fal fa-bed"></i>
+                                    <div class="milestone-counter">
+                                        <div class="stats animaper">
+                                            18
+                                        </div>
+                                    </div>
+                                    <h6>Hotel Rooms</h6>
+                                </div>
+                            </div>
+                            <!-- inline-facts end -->
+                            <!-- inline-facts  -->
+                            <div class="inline-facts-wrap">
+                                <div class="inline-facts">
+                                    <i class="fal fa-users"></i>
+                                    <div class="milestone-counter">
+                                        <div class="stats animaper">
+                                            1278
+                                        </div>
+                                    </div>
+                                    <h6>Customers Every Year</h6>
+                                </div>
+                            </div>
+                            <!-- inline-facts end -->
+                            <!-- inline-facts -->
+                            <div class="inline-facts-wrap">
+                                <div class="inline-facts">
+                                    <i class="fal fa-taxi"></i>
+                                    <div class="milestone-counter">
+                                        <div class="stats animaper">
+                                            15
+                                        </div>
+                                    </div>
+                                    <h6>Distance to Center</h6>
+                                </div>
+                            </div>
+                            <!-- inline-facts end -->
+                            <!-- inline-facts -->
+                            <div class="inline-facts-wrap">
+                                <div class="inline-facts">
+                                    <i class="fal fa-plane"></i>
+                                    <div class="milestone-counter">
+                                        <div class="stats animaper">
+                                            4
+                                        </div>
+                                    </div>
+                                    <h6>Near By Airport/Railway</h6>
+                                </div>
+                            </div>
+                            <!-- inline-facts end -->                                                                        
+                        </div>
+                        <!--   list-single-main-item -->
+                        <div class="list-single-main-item fl-wrap">
+                            <div class="list-single-main-item-title fl-wrap">
+                                <h3>About Hotel </h3>
+                            </div>
+                            <p>{{listDetails?.description}}</p>
+                            <!-- <a href="javascript:()" class="btn flat-btn color-bg big-btn float-btn image-popup">Video Presentation <i class="fal fa-play"></i></a> -->
+                        </div>
+                        <!--   list-single-main-item end -->
+                        <!--   list-single-main-item -->
+                        <div class="list-single-main-item fl-wrap" id="sec3">
+                            <div class="list-single-main-item-title fl-wrap">
+                                <h3>Amenities</h3>
+                            </div>
+                            <div class="listing-features fl-wrap">
+                                <ul>
+                                    <li *ngFor="let list of listDetails?.amenities"><i class="{{list?.icon}}"></i> {{list?.name}}</li>
+                                </ul>
+                            </div>
+                            <!-- <span class="fw-separator"></span>
+                            <div class="list-single-main-item-title no-dec-title fl-wrap">
+                                <h3>Tags</h3>
+                            </div>
+                            <div class="list-single-tags tags-stylwrap">
+                                <a href="#">Hotel</a>
+                                <a href="#">Hostel</a>
+                                <a href="#">Room</a>
+                                <a href="#">Spa</a>
+                                <a href="#">Restourant</a>
+                                <a href="#">Parking</a>                                                                               
+                            </div> -->
+                        </div>
+                        <!--   list-single-main-item end -->     
+                        <!-- accordion-->
+                        <!-- <div class="accordion mar-top" >
+                            <a class="toggle act-accordion" href="javascript:()" style="display:block" (click)="onAccordian('.accordion-inner')"> Details option   <span></span></a>
+                            <div class="accordion-inner visible">
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar nisi tincidunt. Aliquam erat volutpat. Curabitur convallis fringilla diam sed aliquam. Sed tempor iaculis massa faucibus feugiat. In fermentum facilisis massa, a consequat purus viverra.</p>
+                            </div>
+                            <a class="toggle" href="javascript:()" (click)="onAccordian('.accordion-inner')"> Details option 2  <span></span></a>
+                            <div class="accordion-inner">
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar nisi tincidunt. Aliquam erat volutpat. Curabitur convallis fringilla diam sed aliquam. Sed tempor iaculis massa faucibus feugiat. In fermentum facilisis massa, a consequat purus viverra.</p>
+                            </div>
+                            <a class="toggle" href="javascript:()" (click)="onAccordian('.accordion-inner')"> Details option 3  <span></span></a>
+                            <div class="accordion-inner">
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar nisi tincidunt. Aliquam erat volutpat. Curabitur convallis fringilla diam sed aliquam. Sed tempor iaculis massa faucibus feugiat. In fermentum facilisis massa, a consequat purus viverra.</p>
+                            </div>
+                        </div> -->
+                        <!-- accordion end -->                                                     
+                        <!--   list-single-main-item -->
+                        <div class="list-single-main-item fl-wrap" id="sec4">
+                            <div class="list-single-main-item-title fl-wrap">
+                                <h3>Available Rooms</h3>
+                            </div>
+                            <!--   rooms-container -->
+                            <div class="rooms-container fl-wrap">
+                                <!--  rooms-item -->
+                                <div class="rooms-item fl-wrap" *ngFor="let room of rooms; let i=index" id="{{i}}">
+                                    <div class="rooms-media">
+                                        <div class="more-room-images">
+                                            <img [src]="room[1][0]?.image == '' ?'assets/images/bg/dummy-room.jpeg':room[1][0]?.image" alt="{{[i]}}">
+                                        <!-- <div class="dynamic-gal more-photos-button" data-dynamicPath="[{'src': 'images/gal/slider/1.jpg'}, {'src': 'images/gal/slider/2.jpg'},{'src': 'images/gal/slider/3.jpg'}]">  View Gallery <span>3 photos</span> <i class="far fa-long-arrow-right"></i></div> -->
+                                        </div>
+                                        <div class="rooms-details-header fl-wrap" *ngIf="!isMobileView">
+                                            <!-- <h3>{{room[1][0]?.name}}</h3> -->
+                                            <h5><i class="fal fa-user"></i>Max Guests: <span>{{room[1][i]?.max_adults}} Adults, {{room[1][i]?.max_child}} Child</span></h5>
+                                        </div>
+                                    </div>
+                                    <div class="rooms-details" *ngFor="let val of room[1]">
+                                        <div class="rooms-details-header fl-wrap">
+                                            <span class="rooms-price" *ngIf="!isMobileView">₹ {{val?.single_rate - (val?.single_rate * listDetails?.be_discount)/100 | number: '1.0-0'}} <span class="discount-price" *ngIf="listDetails?.be_discount != 0">{{val?.single_rate}}</span> <strong> per/person</strong></span>
+                                            <h3>{{val?.name}}</h3>
+                                            <h5><i class="fa fa-bed" aria-hidden="true"></i>  <span>{{val?.plan_name}}</span></h5>
+                                            <h5 class="mt-1" *ngIf="isMobileView"><i class="fal fa-user"></i>Max Guests: <span>{{room[1][i]?.max_adults}} Adults, {{room[1][i]?.max_child}} Child</span></h5>
+                                        </div>
+                                        <div class="facilities-list fl-wrap">
+                                            <ul>
+                                                <li><i class="fal fa-wifi"></i><span>Free WiFi</span></li>
+                                                <li><i class="fal fa-bath"></i><span>1 Bathroom</span></li>
+                                                <li><i class="fal fa-snowflake"></i><span>Air conditioner</span></li>
+                                                <li><i class="fal fa-tv"></i><span> Tv Inside</span></li>
+                                                <li><i class="fas fa-concierge-bell"></i><span>Breakfast</span></li>
+                                            </ul>
+                                            <a href="javascript:()" (click)="onRouteBooking(val)" class="btn color-bg ajax-link">Book Now <span class="rooms-price" *ngIf="isMobileView">₹ {{val?.single_rate - (val?.single_rate * listDetails?.be_discount)/100 | number: '1.0-0'}} <span class="discount-price" *ngIf="listDetails?.be_discount != 0">{{val?.single_rate}}</span> <strong> per/person</strong></span></a>
+                                        </div>
+                                        <p class="room-description">{{room[1][i]?.description}}</p>
+                                    </div>
+                                </div>
+                                <!--  rooms-item end -->                      
+                            </div>
+                            <!--   rooms-container end -->
+                        </div>
+                        <!-- list-single-main-item end -->
+                        <!-- list-single-main-item -->   
+                        <div class="list-single-main-item fl-wrap" id="sec5" *ngIf="hideDummyContent">
+                            <div class="list-single-main-item-title fl-wrap">
+                                <h3>Item Reviews -  <span> 2 </span></h3>
+                            </div>
+                            <div class="reviews-comments-wrap">
+                                <!-- reviews-comments-item -->  
+                                <div class="reviews-comments-item">
+                                    <div class="review-comments-avatar">
+                                        <img src="assets/images/avatar/2.jpg" alt=""> 
+                                    </div>
+                                    <div class="reviews-comments-item-text">
+                                        <h4><a href="#">Liza Rose</a></h4>
+                                        <div class="review-score-user">
+                                            <span>4.4</span>
+                                            <strong>Good</strong>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <p>" Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. "</p>
+                                        <div class="reviews-comments-item-date"><span><i class="far fa-calendar-check"></i>12 April 2018</span><a href="#"><i class="fal fa-reply"></i> Reply</a></div>
+                                    </div>
+                                </div>
+                                <!--reviews-comments-item end-->                         
+                            </div>
+                        </div>
+                        <!-- list-single-main-item end -->   
+                        <!-- list-single-main-item -->   
+                        <div class="list-single-main-item fl-wrap" id="sec6" *ngIf="hideDummyContent">
+                            <div class="list-single-main-item-title fl-wrap">
+                                <h3>Add Review</h3>
+                            </div>
+                            <!-- Add Review Box -->
+                            <div id="add-review" class="add-review-box">
+                                <!-- Review Comment -->
+                                <form id="add-comment" class="add-comment  custom-form" name="rangeCalc" >
+                                    <fieldset>
+                                        <div class="review-score-form fl-wrap">
+                                            <div class="review-range-container">
+                                                <!-- review-range-item-->
+                                                <div class="review-range-item">
+                                                    <div class="range-slider-title">Cleanliness</div>
+                                                    <div class="range-slider-wrap ">
+                                                        <input type="text" class="rate-range" data-min="0" data-max="5"  name="rgcl"  data-step="1" value="4">
+                                                    </div>
+                                                </div>
+                                                <!-- review-range-item end --> 
+                                                <!-- review-range-item-->
+                                                <div class="review-range-item">
+                                                    <div class="range-slider-title">Comfort</div>
+                                                    <div class="range-slider-wrap ">
+                                                        <input type="text" class="rate-range" data-min="0" data-max="5"  name="rgcl"  data-step="1"  value="1">
+                                                    </div>
+                                                </div>
+                                                <!-- review-range-item end --> 
+                                                <!-- review-range-item-->
+                                                <div class="review-range-item">
+                                                    <div class="range-slider-title">Staf</div>
+                                                    <div class="range-slider-wrap ">
+                                                        <input type="text" class="rate-range" data-min="0" data-max="5"  name="rgcl"  data-step="1" value="5" >
+                                                    </div>
+                                                </div>
+                                                <!-- review-range-item end --> 
+                                                <!-- review-range-item-->
+                                                <div class="review-range-item">
+                                                    <div class="range-slider-title">Facilities</div>
+                                                    <div class="range-slider-wrap">
+                                                        <input type="text" class="rate-range" data-min="0" data-max="5"  name="rgcl"  data-step="1" value="3">
+                                                    </div>
+                                                </div>
+                                                <!-- review-range-item end -->                                     
+                                            </div>
+                                            <div class="review-total">
+                                                <span><input type="text" name="rg_total" value="" data-form="AVG({rgcl})" value="0"></span>    
+                                                <strong>Your Score</strong>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label><i class="fal fa-user"></i></label>
+                                                <input type="text" placeholder="Your Name *" value=""/>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label><i class="fal fa-envelope"></i>  </label>
+                                                <input type="text" placeholder="Email Address*" value=""/>
+                                            </div>
+                                        </div>
+                                        <textarea cols="40" rows="3" placeholder="Your Review:"></textarea>
+                                    </fieldset>
+                                    <button class="btn  big-btn flat-btn float-btn color2-bg" style="margin-top:30px">Submit Review <i class="fal fa-paper-plane"></i></button>
+                                </form>
+                            </div>
+                            <!-- Add Review Box / End -->
+                        </div>
+                        <!-- list-single-main-item end -->                                    
+                    </div>
+                </div>
+                <!--   datails end  -->
+                <!--   sidebar  -->
+                <div class="col-md-4">
+                    <!--box-widget-wrap -->  
+                    <div class="box-widget-wrap">
+                        <!--box-widget-item -->
+                        <!-- <div class="box-widget-item fl-wrap">
+                            <div class="box-widget counter-widget" data-countDate="09/12/2024">
+                                <div class="banner-wdget fl-wrap">
+                                    <div class="overlay"></div>
+                                    <div class="bg"  data-bg="assets/images/bg/10.jpg" style="background-image: url('assets/images/bg/10.jpg');"></div>
+                                    <div class="banner-wdget-content fl-wrap">
+                                        <h4>Get a discount <span>{{listDetails?.be_discount}}%</span> when ordering a room from three days.</h4>
+                                        <div class="countdown fl-wrap">
+                                            <div class="countdown-item">
+                                                <span class="days rot">00</span>
+                                                <p>days</p>
+                                            </div>
+                                            <div class="countdown-item">
+                                                <span class="hours rot">00</span>
+                                                <p>hours </p>
+                                            </div>
+                                            <div class="countdown-item">
+                                                <span class="minutes rot">00</span>
+                                                <p>minutes </p>
+                                            </div>
+                                            <div class="countdown-item">
+                                                <span class="seconds rot">00</span>
+                                                <p>seconds</p>
+                                            </div>
+                                        </div>
+                                        <a href="#">Book Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                        <!--box-widget-item end -->                                       
+                        <!--box-widget-item -->
+                        <div class="box-widget-item fl-wrap">
+                            <div class="box-widget">
+                                <div class="box-widget-content">
+                                    <div class="box-widget-item-header">
+                                        <h3> Contact Information</h3>
+                                    </div>
+                                    <div class="box-widget-list">
+                                        <ul>
+                                            <li><span><i class="fal fa-map-marker"></i> Adress :</span> <a href="javascript:()">Level 3, Office No. 5, Varun Tower, Sector-20 B, Near by Neelam Ajronda Chowk, Faridabad, Haryana 121001</a></li>
+                                            <li><span><i class="fal fa-phone"></i> Phone :</span> <a href="tel:+91 98704 70966">+91 98704 70966</a></li>
+                                            <li><span><i class="fal fa-envelope"></i> Mail :</span> <a href="mailto:info@revtriphotels.com">info@revtriphotels.com</a></li>
+                                            <li><span><i class="fal fa-browser"></i> Website :</span> <a href="revtriphotels.com">revtriphotels.com</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="list-widget-social">
+                                        <ul>
+                                            <li><a href="#" target="_blank" ><i class="fab fa-facebook-f"></i></a></li>
+                                            <li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
+                                            <li><a href="#" target="_blank" ><i class="fab fa-vk"></i></a></li>
+                                            <li><a href="#" target="_blank" ><i class="fab fa-instagram"></i></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--box-widget-item end -->       
+                                                    
+                           
+                        <!--box-widget-item end -->   
+                        <!--box-widget-item -->
+                        <div class="box-widget-item fl-wrap" *ngIf="hideDummyContent">
+                            <div class="box-widget widget-posts">
+                                <div class="box-widget-content">
+                                    <div class="box-widget-item-header">
+                                        <h3>Recommended Attractions</h3>
+                                    </div>
+                                    <!--box-image-widget-->
+                                    <div class="box-image-widget">
+                                        <div class="box-image-widget-media"><img src="assets/images/all/4.jpg" alt="">
+                                            <a href="#" class="color2-bg" target="_blank">Details</a>
+                                        </div>
+                                        <div class="box-image-widget-details">
+                                            <h4>Times Square <span>2.3 km</span></h4>
+                                            <p>It?s impossible to miss the colossal billboards, glitzy lights and massive crowds that make this intersection the city?s beating heart.</p>
+                                        </div>
+                                    </div>
+                                    <!--box-image-widget end -->
+                                    <!--box-image-widget-->
+                                    <div class="box-image-widget">
+                                        <div class="box-image-widget-media"><img src="assets/images/all/5.jpg" alt="">
+                                            <a href="#" class="color2-bg" target="_blank">Details</a>
+                                        </div>
+                                        <div class="box-image-widget-details">
+                                            <h4>Broadway<span>1.7 km</span></h4>
+                                            <p>Tap your feet to catchy ditties, hold back tears or bust your gut laughing at a world renowned Broadway performance.</p>
+                                        </div>
+                                    </div>
+                                    <!--box-image-widget end -->                                                   	
+                                    <!--box-image-widget-->
+                                    <div class="box-image-widget">
+                                        <div class="box-image-widget-media"><img src="assets/images/all/6.jpg" alt="">
+                                            <a href="#" class="color2-bg" target="_blank">Details</a>
+                                        </div>
+                                        <div class="box-image-widget-details">
+                                            <h4>Grand Central Station<span>0.7 km</span></h4>
+                                            <p>With its elegantly designed main concourse, this rail station is much more than just a massive transport hub.</p>
+                                        </div>
+                                    </div>
+                                    <!--box-image-widget end -->                                                         
+                                </div>
+                            </div>
+                        </div>
+                        <!--box-widget-item end -->       
+                        <!--box-widget-item -->
+                        <div class="box-widget-item fl-wrap" *ngIf="smilarHotelList.length>0">
+                            <div class="box-widget">
+                                <div class="box-widget-content">
+                                    <div class="box-widget-item-header">
+                                        <h3>Similar Listings</h3>
+                                    </div>
+                                    <div class="widget-posts fl-wrap">
+                                        <ul>
+                                            <li class="clearfix" *ngFor="let list of smilarHotelList">
+                                                <a href="javascript:()" (click)="onChangeHotel(list)"  class="widget-posts-img"><img [src]="list.image" class="respimg" alt=""></a>
+                                                <div class="widget-posts-descr">
+                                                    <a href="javascript:()" class="similar-heading" (click)="onChangeHotel(list)" title="{{list.hotel_name}}">{{list.hotel_name}}</a>
+                                                    <div class="similar-price-list"><span class="">₹{{list.single_rate}} <span class="discount-price" *ngIf="listDetails?.be_discount !=0">{{list.discount_Price}}</span> <strong> /Room/Night</strong></span></div>
+                                                    <div class="" style="text-align: left;"><rating [(ngModel)]="list.rating" [max]="max" [readonly]="isReadonly"></rating></div>
+                                                    <div class="geodir-category-location fl-wrap" style="margin-top: 6px;"><a href="javascript:()" (click)="onChangeHotel(list)"><i class="fas fa-map-marker-alt"></i> {{list.address}}</a></div>
+                                                    
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <a class="widget-posts-link" href="javascript:()">See All Listing <i class="fal fa-long-arrow-right"></i> </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--box-widget-item end -->                             
+                    </div>
+                    <!--box-widget-wrap end -->  
+                </div>
+                <!--   sidebar end  -->
+            </div>
+            <!--   row end  -->
+        </div>
+        <!--   container  end  -->
+    </section>
+    <!--  section  end-->
+    <section style="padding: 0;" id="end-hotel-view"></section>
+
+        <!--for mobile booking button show-->
+        <div class="booking-footer" *ngIf="isMobileView">
+            <div class="row">
+    
+                <div class="col-xs-7">
+                    <div class="rate-on-mobile" *ngIf="!soldOut">
+                            <span class="rate-price-mobile">₹ {{discountPrice}} <span class="room_previous_price" *ngIf="listDetails?.be_discount !=0"> ₹ {{price}}</span></span>
+                            <span class="per-night-mobile">(Room/Night)</span>
+                            <a class="price_summary" (click)="onShowSearch()">Change Details</a>
+                    </div>
+                    <div *ngIf="soldOut" class="rate-on-mobile" [ngClass]="soldOut == true?'sold-out':null">
+                        <i class="far fa-sad-tear"></i> Sold Out
+                    </div>
+                </div>
+    
+                <div class="col-xs-5">
+                    <div *ngIf="soldOut" class="list-single-hero-price fl-wrap" [ngClass]="soldOut == true?'sold-out':null"><i class="far fa-sad-tear"></i> Sold Out</div>
+                    <a *ngIf="!soldOut" href="javascript:()" (click)="onRouteBooking('room-plan')" class="btn-footer-mobile">Book Now</a>
+                </div>
+    
+            </div>
+        </div>
+        <!--End show mobile booking-->
+
+</div>
+
+
+
+

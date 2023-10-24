@@ -1,0 +1,285 @@
+
+<!--loader-->
+<div class="loader-wrap" *ngIf="loader">
+    <div class="pin">
+        <div class="pulse"></div>
+    </div>
+</div>
+<!--loader end-->
+
+<div class="content" *ngIf="!loader">
+    <!--  section  -->
+    <section class="grey-blue-bg small-padding scroll-nav-container">
+                          
+        <!--   container  -->
+        <div class="container mt-20">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="list-single-main-container-u">
+                        <!--   list-single-main-item -->
+                    <div class="list-single-main-item fl-wrap">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="hotel-img">
+                                    <img src="{{listDetails?.image}}" alt="{{listDetails?.image}}">
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                    <div class="list-single-main-item-title fl-wrap">
+                                        <h3 class="hotel_name" (click)="onRouteDetails()">{{listDetails?.hotel_name}} <button class="btnaplly color2-bg book-btn btn-back" (click)="onRouteDetails()"><i class="fas fa-long-arrow-left"></i></button></h3>
+                                        <div class="listing-rating" style="text-align: left;float: none;margin-top: 0;"><rating [(ngModel)]="listDetails.rating" [max]="5" [readonly]="isReadonly"></rating></div>
+                                        <p class="address">{{listDetails?.address}}</p>
+                                    </div>
+                                    <div class="row mt-3 book-details">
+                                        <div class="col-md-4">
+                                            <p>Room Type: <span>{{listDetails?.room_name}}</span></p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p>Plan Name: <span>{{listDetails?.plan_name}}</span></p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row book-details book-details-mobile">
+                                        <div class="col-md-4 col-xs-4">
+                                            <p>Check In: <span>{{checkin}}</span></p>
+                                        </div>
+                                        <div class="col-md-4 col-xs-4">
+                                            <p>Check Out: <span>{{checkout}}</span></p>
+                                        </div>
+                                        <div class="col-md-4 col-xs-4">
+                                            <p>Guests: <span>{{num_rooms}}Room/{{adults}}Adult</span><span *ngIf="child>0">/{{child}}Child</span></p>
+                                        </div>
+                                    </div>
+
+                            </div>
+                        </div>
+                    </div>
+                        <!--   list-single-main-item end -->
+                        
+                        <!--Sign in Button-->
+                        <!--   list-single-main-item -->
+                        <div class="list-single-main-item fl-wrap" id="sec3" *ngIf="!isLogin">
+                            <div class="login-section custom-form">
+                                <h3>Have an account? Login/Sign Up for faster booking.</h3>
+                            </div>
+                            <button class="btnaplly color2-bg book-btn btn-login" (click)="onModel()">Login/Sign Up</button>
+                        </div>
+                        <!--   list-single-main-item end -->  
+                        <!--End Sing button-->
+                        
+                        <!--Contact Details-->
+                         <!--   list-single-main-item -->
+                         <div class="list-single-main-item fl-wrap" id="sec4" *ngIf="isLogin">
+                            <div class="list-single-main-item-title fl-wrap">
+                                <h3>Contact Details</h3>
+                            </div>
+                            <!---->
+                            <div class="row custom-form custom-form-1">
+                                <form [formGroup]="userForm" class="main-register-form" id="userForm">
+                                    <div class="col-md-6">
+                                        <label >First Name <span>*</span> </label>
+                                        <input formControlName="first_name" type="text" >
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label >Last Name <span>*</span> </label>
+                                        <input formControlName="last_name" type="text" >
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label >Mobile No <span>*</span> </label>
+                                        <input formControlName="mobile" type="number" >
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Email Address <span>*</span></label>
+                                        <input formControlName="email" type="email">
+                                    </div>
+                                    <!-- <button type="submit"  class="log-submit-btn color-bg"  ><span>Register</span></button> -->
+                                </form>
+                                <p class="booking-info">We'll send your booking info on your mobile and email.</p>
+                            </div>
+                            
+                            <!---->
+                        </div>
+                        <!--   list-single-main-item end -->  
+                        <!--End Contact Details-->
+
+                        <!-- Pay Button -->
+                        <div class="book-form custom-form" *ngIf="!isMobileView">
+                            <div class="d-flex justify-content-between mb-1">
+                                <button *ngIf="this.f_total_taxt != 0 && hideDummyContent" class="btnaplly color2-bg book-btn ml-1" (click)="onPayHotel()">Pay at Hotel<i class="fal fa-paper-plane"></i></button>
+                                <button *ngIf="this.f_total_taxt != 0" class="btnaplly color2-bg book-btn" (click)="onPayNow()">Pay Now<i class="fal fa-paper-plane"></i></button><!-- initiatePayment() -->
+                            </div>
+                        </div>
+                        <!--End Pay Button-->
+
+                    </div>
+                </div><!--col-md-8-->
+                <div class="col-md-4">
+                    <!--  flat-hero-container -->
+                    <div class="flat-hero-container fl-wrap">
+                        <div class="box-widget-item-header fl-wrap " id="price_summary">
+                            <h3>Price Summary</h3>
+                        </div>
+                        <!--reviews-score-wrap-->   
+                        <div class="reviews-score-wrap fl-wrap" *ngIf="!soldOut">
+                            <div class="review-score-detail">
+                                <!-- review-score-detail-list-->
+                                <div class="review-score-detail-list">
+                                    <!-- rate item-->
+                                    <div class="rate-item fl-wrap">
+                                        <div class="rate-item-title rate-price_bold"><span>Room Charge</span> <span class="rate-price">₹ {{f_total}}</span></div>
+                                    </div>
+                                    <!-- rate item end-->
+                                     <!-- rate item-->
+                                     <div class="rate-item fl-wrap">
+                                        <div class="rate-item-title"><span>Base Price</span> <span class="rate-price previous-rate-cut" [ngClass]="listDetails?.be_discount == 0 ? 'discount-available':null">₹ {{f_base_P}}</span></div>
+                                    </div>
+                                    <!-- rate item end-->
+                                     <!-- rate item-->
+                                     <div class="rate-item fl-wrap">
+                                        <div class="rate-item-title rate-price_d"><span>Discount {{this.listDetails.be_discount}}%</span> <span class="rate-price">{{f_normal_d}}</span></div>
+                                    </div>
+                                    <!-- rate item end-->
+                                    <!-- rate item-->
+                                    <div class="rate-item fl-wrap" *ngIf="promo_d>0">
+                                        <div class="rate-item-title"><span>Promo Discount</span> <span class="rate-price">{{f_promo_d}}</span></div>
+                                    </div>
+                                    <!-- rate item end-->
+                                    <!-- rate item-->
+                                    <div class="rate-item fl-wrap">
+                                        <div class="rate-item-title rate-price_bold"><span>Taxes & Fees</span> <span class="rate-price">₹ {{f_tax}}</span></div>
+                                    </div>
+                                    <!-- rate item end-->
+                                </div>
+                                <!-- review-score-detail-list end-->
+                            </div>
+                        </div>
+                        <!-- reviews-score-wrap end -->   
+                        <div class="rate-item fl-wrap" *ngIf="!soldOut">
+                            <div class="rate-item-title rate-price_bold total-price">
+                                <span>Total Amount</span> 
+                                <span class="rate-price" style="font-weight: 800;">₹ {{f_total_taxt}}</span>
+                                <span class="per-night">({{num_rooms}}Room/ {{total_night}}Night)</span>
+                            </div>
+                        </div>
+                        <div class="review-score-detail-list">
+                            <div *ngIf="soldOut" class="list-single-hero-price fl-wrap" [ngClass]="soldOut == true?'sold-out':null">
+                                <i class="far fa-sad-tear"></i> Sold Out
+                            </div>
+                        </div>
+
+                        <!--Coupon code for mobile-->
+                        <div name="bookFormCalc" class="book-form custom-form" *ngIf="isMobileView">
+                            <fieldset>
+                                <div class="cal-item">
+                                    <div class="bookdate-container  fl-wrap">
+                                        <input type="text" placeholder="coupon code" [(ngModel)]="couponCode">
+                                        <div class="bookdate-container-dayscounter couponcode-container"><button (click)="onCouponCode()" class="btnaplly color2-bg book-btn btn-coupon-code">Apply Now</button></div>
+                                        <div class="coupon-code-error" >Not Valid</div><!-- *ngIf="verifyCoupon != 'Success'" -->
+                                    <div class="daterangepicker ltr show-calendar opensright"><div class="ranges"></div><div class="drp-calendar left"><div class="calendar-table"></div><div class="calendar-time" style="display: none;"></div></div><div class="drp-calendar right"><div class="calendar-table"></div><div class="calendar-time" style="display: none;"></div></div><div class="drp-buttons"><span class="drp-selected"></span><button class="cancelBtn btn btn-sm btn-default" type="button">Clear</button><button class="applyBtn btn btn-sm btn-primary" disabled="disabled" type="button">Apply</button> </div></div></div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    <!--End coupon code for mobile-->
+                    <!--Coupon Code List-->
+                    <div class="coupon-code-list" *ngIf="isMobileView && couponCodeList.length>0">
+                        <div *ngFor="let list of couponCodeList; let i = index">
+                          <label>
+                            <input type="radio" name="couponCode" [value]="list.code" [(ngModel)]="selectedCouponCode" (ngModelChange)="onSelectCouponCode(list)">
+                            <h4>{{ list.code }} <span>₹ {{list.discount_amount}}</span></h4>
+                            <p>{{ list.description }}</p>
+                          </label>
+                        </div>
+                      </div>
+                    <!--End Coupon Code list-->
+                        <!-- <a href="javascript:()" class="btn flat-btn color2-bg big-btn float-btn image-popup">Book Now<i class="far fa-bookmark"></i></a> -->
+                    </div>
+                    <!--   flat-hero-container end -->
+
+                    
+                </div>
+
+                
+                <div class="col-md-4" *ngIf="!isMobileView">
+                    <!--Promo Code-->
+                    <div class="box-widget-item">
+                        <div class="box-widget">
+                            <div class="box-widget-content">
+                                <div class="box-widget-item-header">
+                                    <h3>Apply promo code here!</h3>
+                                </div>
+                                <div name="bookFormCalc" class="book-form custom-form">
+                                    <fieldset>
+                                        <div class="cal-item">
+                                            <div class="bookdate-container  fl-wrap">
+                                                <input type="text" placeholder="coupon code" [(ngModel)]="couponCode" (ngModelChange)="onCouponCode()">
+                                                <div class="bookdate-container-dayscounter couponcode-container">
+                                                    <button (click)="onCouponCode()" class="btnaplly color2-bg book-btn btn-coupon-code">Apply Now</button>
+                                                </div>
+                                                <div class="coupon-code-error" *ngIf="showCouponError">Not Valid</div>
+                                            </div>
+                                            </div>
+                                    </fieldset>
+                                </div>
+                                <!--Coupon Code List-->
+                                <div class="coupon-code-list" *ngIf="couponCodeList.length>0">
+                                    <div *ngFor="let list of couponCodeList; let i = index">
+                                      <label>
+                                        <input type="radio" name="couponCode" [(ngModel)]="selectedCouponCode" (ngModelChange)="onSelectCouponCode(list)">
+                                        <h4>{{ list.code }} <span>₹ {{list.discount_amount}}</span></h4>
+                                        <p>{{ list.description }}</p>
+                                      </label>
+                                    </div>
+                                  </div>
+                                <!--End Coupon Code list-->
+                            </div>
+                        </div>
+                    </div>
+                    <!--End Promo Code-->
+
+                </div>
+            </div>
+            
+        </div>
+        <!--   container  end  -->
+    </section>
+    <!--  section  end-->
+
+    <!--for mobile booking button show-->
+    <div class="booking-footer" *ngIf="isMobileView">
+        <div class="row">
+
+            <div class="col-xs-7">
+                <div class="rate-on-mobile" *ngIf="!soldOut">
+                        <span class="rate-price-mobile">₹ {{f_total_taxt}} <span class="per-night-mobile">({{num_rooms}}Room/ {{total_night}}Night)</span></span>
+                        <a class="price_summary" [class.act-scrlink]="activeSection === 'price_summary'" (click)="scrollToPriceSummary('price_summary')">Price Summary</a>
+                </div>
+                <div *ngIf="soldOut" class="rate-on-mobile" [ngClass]="soldOut == true?'sold-out':null">
+                    <i class="far fa-sad-tear"></i> Sold Out
+                </div>
+                
+            </div>
+
+            <div class="col-xs-5">
+                <button *ngIf="this.f_total_taxt != 0 && hideDummyContent" class="btn-footer-mobile" (click)="onPayHotel()">Pay at Hotel<i class="fal fa-paper-plane"></i></button>
+                <button *ngIf="this.f_total_taxt != 0" class="btn-footer-mobile" (click)="onPayNow()">Pay Now<i class="fal fa-paper-plane"></i></button>
+            </div>
+
+        </div>
+    </div>
+    <!--End show mobile booking-->
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

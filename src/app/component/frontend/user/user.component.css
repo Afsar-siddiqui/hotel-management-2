@@ -1,0 +1,9 @@
+.content{
+    padding: 40px 0px;
+}
+.booking-name a{
+    color: #3AACED;
+}
+.booking-name a:hover{
+    color: #06F;
+}

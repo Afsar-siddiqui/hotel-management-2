@@ -1,0 +1,31 @@
+<!--loader-->
+<div class="loader-wrap" *ngIf="loader">
+    <div class="pin">
+        <div class="pulse"></div>
+    </div>
+</div>
+<!--loader end-->
+
+
+<div class="content" *ngIf="!loader">
+    <!--  section  -->
+    <section class="grey-blue-bg small-padding scroll-nav-container">
+                          
+        <!--   container  -->
+        <div class="container mt-20">
+            <div class="bg-confirm">
+                <div class="card">
+                    <div class="card-body">
+                      <h3 class="card-title">{{message}}</h3>
+                      <p class="card-text"><strong>Transection Id: </strong>{{transId}}</p>
+                      <p class="card-text"><strong>Name: </strong>{{username}}</p>
+                      <div class="btn-back">
+                        <a routerLink="/user" class="btn-custom color6-bg">Dashboard</a>
+                        <a routerLink="/home" class="btn-custom color6-bg">Home</a>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </section>
+</div>

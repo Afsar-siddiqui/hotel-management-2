@@ -1,0 +1,208 @@
+<header class="main-header">
+    <!-- header-inner-->
+    <div class="header-inner fl-wrap">
+        <div class="container">
+            <div class="show-search-button" (click)="onShowSearch()"><span>{{searchText}}</span> <i class="fas fa-search"></i> </div>
+            <div class="wishlist-link" (click)="onWishlistLink()"><i class="fal fa-heart"></i><span class="wl_counter">{{wishList?.length}}</span></div>
+            <div class="show-reg-form modal-open" (click)="onModel()" *ngIf="!this.isLogin"><i class="fa fa-sign-in"></i>Sign In</div>
+            <div class="header-user-menu" *ngIf="isLogin">
+                <div class="header-user-name" (click)="dropDown()">
+                    <span><img src="assets/images/avatar/avtar.jpg" alt=""></span>
+                    My account
+                </div>
+                <ul>
+                    <li><a routerLink="user">My Booking</a></li>
+                    <li><a href="javascript:()" (click)="onLogout()">Log Out</a></li>
+                </ul>
+                
+            </div>
+            <div class="logo-holder">
+                <a routerLink="/"><img src="assets/images/logo.png" alt=""></a>
+            </div>
+            <!-- <div class="home-btn"><a href="index.html"><i class="fas fa-home"></i></a></div> -->
+            <!-- nav-button-wrap-->
+           <!--  <div class="nav-button-wrap color-bg">
+                <div class="nav-button" (click)="showMenu()">
+                    <span></span><span></span><span></span>
+                </div>
+            </div> -->
+            <!-- nav-button-wrap end-->
+            <!--  navigation -->
+            <div class="nav-holder main-menu">
+                <nav>
+                    <ul>
+                        <!-- <li>
+                            <a href="#" class="act-link">Home <i class="fas fa-caret-down"></i></a>
+                            
+                            <ul>
+                                <li><a href="index.html">Parallax Image</a></li>
+                                <li><a href="index2.html">Slider</a></li>
+                                <li><a href="index3.html">Video</a></li>
+                                <li><a href="index4.html">Slideshow</a></li>
+                            </ul>
+                            
+                        </li>
+                        <li>
+                            <a href="#">Listings <i class="fas fa-caret-down"></i></a> -->
+                            <!--second level -->
+                            <!--<ul>
+                                 <li><a href="listing.html">Column map</a></li>
+                                <li><a href="listing6.html">Column map 2</a></li>
+                                <li><a href="listing2.html">Fullwidth Map</a></li>
+                                <li><a href="listing3.html">Fullwidth Map 2</a></li>
+                                <li><a href="listing4.html">Without Map</a></li>
+                                <li><a href="listing5.html">Without Map 2</a></li>
+                                <li>
+                                    <a href="#">Single <i class="fas fa-caret-down"></i></a> -->
+                                    <!--third  level  -->
+                                    <!-- <ul>
+                                        <li><a href="listing-single.html">Style 1</a></li>
+                                        <li><a href="listing-single2.html">Style 2</a></li>
+                                        <li><a href="listing-single3.html">Style 3</a></li>
+                                        <li><a href="listing-single4.html">Style 4</a></li>
+                                    </ul> -->
+                                    <!--third  level end-->
+                                <!-- </li>
+                            </ul> -->
+                            <!--second level end-->
+                        <!-- </li> -->
+                        <!-- <li>
+                            <a href="blog.html">News</a>
+                        </li> -->
+                        <li>
+                            <!-- <a href="#">Pages <i class="fas fa-caret-down"></i></a> -->
+                            <!--second level -->
+                            <!-- <ul>
+                                <li><a href="about.html">About</a></li>
+                                <li><a href="contacts.html">Contacts</a></li>
+                                <li><a href="author-single.html">User single</a></li>
+                                <li><a href="help.html">Help FAQ</a></li>
+                                <li><a href="pricing-tables.html">Pricing</a></li>
+                                <li><a href="booking-single.html">Booking</a></li>
+                                <li><a href="dashboard.html">User Dashboard</a></li>
+                                <li><a href="blog2.html">Blog Classik</a></li>
+                                <li><a href="blog-single.html">Blog Single</a></li>
+                                <li><a href="dashboard-add-listing.html">Add Listing</a></li>
+                                <li><a href="404.html">404</a></li>
+                                <li><a href="invoice.html">Invoice</a></li>
+                                <li><a href="coming-soon.html">Coming Soon</a></li>
+                            </ul> -->
+                            <!--second level end-->
+                        </li>
+                    </ul>
+                </nav>
+                <!--mobile-->
+               
+                <!--end mobile-->
+            </div>
+            <!-- navigation  end -->
+            <!-- wishlist-wrap-->
+            <div class="wishlist-wrap scrollbar-inner novis_wishlist" *ngIf="wishList.length>0">
+                <div class="box-widget-content">
+                    <div class="widget-posts fl-wrap">
+                        <ul>
+                            <li class="clearfix" *ngFor="let list of wishList">
+                                <a href="#"  class="widget-posts-img"><img src="{{list.image}}" class="respimg" alt=""></a>
+                                <div class="widget-posts-descr">
+                                    <a href="javascript:()" (click)="onRouteWishList()" title="{{list.hotel_name}}" class="header-cart">{{list.hotel_name}}</a>
+                                    <div class="listing-rating card-popup-rainingvis">
+                                        <rating [(ngModel)]="list.rating" [max]="max" [readonly]="isReadonly" style="color:#F9B90F;"></rating>
+                                        <span class="wishlist-price">₹ {{list.single_rate}} <strong>Room/Night</strong></span>
+                                    </div>
+                                    <div class="geodir-category-location fl-wrap"><a href="javascript:()"><i class="fas fa-map-marker-alt"></i> {{list.address}}</a></div>
+                                    <span class="wishlist-close" (click)="removeWishList(list)"><i class="far fa-times"></i></span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="wishlist-wrap scrollbar-inner novis_wishlist null-wishlist-wrap" *ngIf="wishList.length==0">
+                <div>
+                    No wishList
+                </div>
+            </div>
+            <!-- wishlist-wrap end-->
+        </div>
+    </div>
+    <!-- header-inner end-->
+    <!-- header-search -->
+    <div class="header-search vis-search">
+        <div class="container">
+            <div class="row" (click)="dropPlace()">
+                <!-- header-search-input-item -->
+                <div class="col-sm-4">
+                    <div class="header-search-input-item fl-wrap location autocomplete-container" (click)="onDropDown('.header-dropdown-content', 'hide')">
+                        <label>Destination or Hotel Name</label>
+                        <span class="header-search-input-item-icon"><i class="fal fa-map-marker-alt"></i></span>
+                        <input type="text" placeholder="Hotel , City..." class="autocomplete-input" [(ngModel)]="place" (keyup)="onPlace()" /><!----> <!--(blur)="dropPlace()" (blur)="onDropDown('.list-dropdown-content', 'hide')" -->
+                            <a routerLink="#"><i class="fal fa-dot-circle"></i></a>
+                    </div>
+                    <div class="fl-wrap" *ngIf="show_searchHotel">
+                        <ul class="header-list-search">
+                            <li *ngFor="let list of cityList" (click)="onSelectPlace(list)" class="option">{{list.name}} <span class="badge-city">City</span></li>
+                            <li *ngFor="let list of hotelList" (click)="onSelectPlace(list)" class="option">{{list.name}} <span class="badge-hotel">Hotel</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- header-search-input-item end -->
+                <!-- header-search-input-item -->
+                <div class="col-sm-3">
+                    <div class="header-search-input-item fl-wrap date-parent">
+                        <label>Date In-Out </label>
+                        <span class="header-search-input-item-icon"><i class="fal fa-calendar-check"></i></span>
+                        <!-- <input type="text" placeholder="When" name="header-search"   value=""/> -->
+                        <input type="text" placeholder="{{bookDate == null ?'When':bookDate}}" bsDaterangepicker [(ngModel)]="bookDate" [minDate]="minDate" (ngModelChange)="onBookDate()" 
+                        [bsConfig]="{ showWeekNumbers: false }"/>
+                    </div>
+                </div>
+                <!-- header-search-input-item end -->
+                <!-- header-search-input-item -->
+                <div class="col-sm-3">
+                    <div class="header-search-input-item fl-wrap">
+                        <div class="quantity-item">
+                            <label>Rooms</label>
+                            <div class="quantity">
+                                <input type="number" [(ngModel)]="roomsQuantity" min="1" max="20" step="1" value="0">
+                                <div class="quantity-nav">
+                                    <div class="quantity-button quantity-up" (click)="handelQuantity('plus', 'rooms')">+</div>
+                                    <div class="quantity-button quantity-down" (click)="handelQuantity('min', 'rooms')">-</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="quantity-item">
+                            <label>Adults</label>
+                            <div class="quantity">
+                                <input type="number" [(ngModel)]="adultsQuantity" min="1" max="20" step="1" value="1">
+                                <div class="quantity-nav">
+                                    <div class="quantity-button quantity-up" (click)="handelQuantity('plus', 'adults')">+</div>
+                                    <div class="quantity-button quantity-down" (click)="handelQuantity('min', 'adults')">-</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="quantity-item">
+                            <label>Children</label>
+                            <div class="quantity">
+                                <input type="number" [(ngModel)]="childrenQuantity" min="0" max="10" step="1" value="0">
+                                <div class="quantity-nav">
+                                    <div class="quantity-button quantity-up" (click)="handelQuantity('plus', 'children')">+</div>
+                                    <div class="quantity-button quantity-down" (click)="handelQuantity('min', 'children')">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- header-search-input-item end -->
+                <!-- header-search-input-item -->
+                <div class="col-sm-2">
+                    <div class="header-search-input-item fl-wrap">
+                        <button class="header-search-button" (click)="onSearch()">Search <i class="far fa-search"></i></button>
+                    </div>
+                </div>
+                <!-- header-search-input-item end -->
+            </div>
+        </div>
+        <div class="close-header-search" (click)="onShowSearch()"><i class="fal fa-angle-double-up"></i></div>
+    </div>
+    <!-- header-search  end -->
+</header>

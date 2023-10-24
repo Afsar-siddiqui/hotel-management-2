@@ -1,0 +1,10 @@
+/* You can add global styles to this file, and also import other style files */
+@import "/src/assets/css/style.css";
+@import "/src/assets/css/custom.css";
+@import "/src/assets/css/color.css";
+@import "/src/assets/css/cs-style.css";
+@import "/src/assets/css/invoice.css";
+@import "/src/assets/css/plugins.css";
+@import "/src/assets/css/reset.css";
+
+@import "../node_modules/ngx-bootstrap/datepicker/bs-datepicker.css"
