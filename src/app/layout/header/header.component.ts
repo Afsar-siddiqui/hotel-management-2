@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, ElementRef, HostListener, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
@@ -19,6 +20,7 @@ export class HeaderComponent {
   bookDate: any|null|undefined;
   checkIn: string|null|undefined;
   checkOut: string|null|undefined;
+  ref:string = '';
 
   //
   minDate: Date;
@@ -26,6 +28,7 @@ export class HeaderComponent {
 
   //
   searchDetails:any;
+  cityUrl:any;
 
   //
   isReadonly:boolean = true;
@@ -33,7 +36,8 @@ export class HeaderComponent {
 
   isLogin: boolean = false;
 
-  constructor(private elementRef: ElementRef, private _method: MethodService, private router: ActivatedRoute, private route: Router, private _frontend: FrontendService, private _scripts: ScriptsMethodService, private _wishList: WishlistService){
+  constructor(private elementRef: ElementRef, private _method: MethodService, private router: ActivatedRoute, private route: Router, private _frontend: FrontendService, private _scripts: ScriptsMethodService, private _wishList: WishlistService,
+    private _location: Location){
     this.minDate = new Date();
     this.maxDate = new Date();
   }
@@ -50,7 +54,7 @@ export class HeaderComponent {
       return this.wishList;
     });
 
-    console.log("login ", this.isLogin);
+    //console.log("login ", this.isLogin);
     //
     this._method.isLoginValue$.subscribe((value:any) => {
       this.isLogin = value;
@@ -60,64 +64,92 @@ export class HeaderComponent {
       this.isLogin = true;
     }
 
-
-     //get the bookin details from local storage if exist
-     if(localStorage.getItem('search')){
-        this.searchDetails = JSON.parse(localStorage.getItem('search') as string);
-        //set value if previous value exist
-        if(this.searchDetails.city){
-          this.place = this.searchDetails.Name;
-          this.cityId = this.searchDetails.city;
-          //console.log("city ", this.searchDetails.cityName)
-        }else{
-          this.place = this.searchDetails.Name;
-          this.hotelId = this.searchDetails.code;
-        }
-      
-      //assign child room and
-      this.adultsQuantity = this.searchDetails.adults
-      this.childrenQuantity = this.searchDetails.child
-      this.roomsQuantity = this.searchDetails.num_rooms;
-      //for search purpose
-      this.adults = this.adultsQuantity;
-      this.children =this.childrenQuantity;
-      this.rooms = this.roomsQuantity;
-      //assigned date checkin:this.checkIn, checkout:this.checkOut,
-      this.bookDate = this.searchDetails.checkin +" - "+this.searchDetails.checkout;
-      //console.log("Date ", this.bookDate)
-      this.checkIn = this.searchDetails.checkin;
-      this.checkOut = this.searchDetails.checkout;
-      }else{
-        
+    this._frontend.sharedValue$.subscribe((value) => {
+      console.log("params value ", value)
+      if(value){
+        this.handleParams(value);
+        this.ref = value?.ref;
       }
+    })
+    
 
       //get value from other component
-      this._frontend.sharedValue$.subscribe((value) => {
+      /* this._frontend.sharedValue$.subscribe((value) => {
         console.log("help ", value);
         this.searchDetails = value;
         //set value if previous value exist
-        if(this.searchDetails.city){
-          this.place = this.searchDetails.Name;
-          this.cityId = this.searchDetails.city;
-          //console.log("city ", this.searchDetails.cityName)
+        if(value.city){
+          this.place = value.Name;
+          this.cityId = value.city;
+          console.log("city ", value.cityName)
         }else{
-          this.place = this.searchDetails.Name;
-          this.hotelId = this.searchDetails.code;
+          this.place = value.Name;
+          this.hotelId = value.code;
+          console.log("city ", this.hotelId)
         }
         //assign child room and
-        this.adultsQuantity = this.searchDetails.adults
-        this.childrenQuantity = this.searchDetails.child
-        this.roomsQuantity = this.searchDetails.num_rooms;
+        this.adultsQuantity = value.adults
+        this.childrenQuantity = value.child
+        this.roomsQuantity = value.num_rooms;
         //for search purpose
         this.adults = this.adultsQuantity;
         this.children =this.childrenQuantity;
         this.rooms = this.roomsQuantity;
         //assigned date checkin:this.checkIn, checkout:this.checkOut,
-        this.bookDate = this.searchDetails.checkin +" - "+this.searchDetails.checkout;
+        this.bookDate = value.checkin +" - "+value.checkout;
         //console.log("Date ", this.bookDate)
-        this.checkIn = this.searchDetails.checkin;
-        this.checkOut = this.searchDetails.checkout;
-      });
+        this.checkIn = value.checkin;
+        this.checkOut = value.checkout;
+      }); */
+  }
+
+  handleParams(params:any){
+    let currentdate = moment(this.minDate).format('YYYY-MM-DD');
+    let nextDate = new Date();
+    nextDate.setDate(nextDate.getDate() + 1);
+
+    if(params.city){
+      console.log("working if ", params.city)
+      this._frontend.getCityName(params.city).subscribe((res:any)=>{
+        if(res?.result?.length>0){
+          res.result.filter((obj:any)=>{
+            if(obj.slug == params.city){
+              this.place = obj.name;
+            }
+          })
+        }
+      })
+      //this.place = params.Name;
+      this.cityId = params.city;
+      this.cityName = this.place;
+      this.hotelId = null;
+    }else{
+      this._frontend.getHotelName(params.code).subscribe((res:any)=>{
+        if(res?.result?.length>0){
+          res.result.filter((obj:any)=>{
+            if(obj.slug == params.code){
+              this.place = obj.name;
+            }
+          })
+        }
+      })
+      this.hotelName = this.place;
+      this.hotelId = params.code;
+      this.cityId = null;
+    }
+    //assign child room and
+    this.adultsQuantity = +(params.adults == undefined ?1:params.adults);
+    this.childrenQuantity = +params.child; //+(params.child == undefined?0:params.chide)
+    this.roomsQuantity = +(params.num_rooms == undefined?1:params.num_rooms);
+    //for search purpose
+    this.adults = this.adultsQuantity;
+    this.children =this.childrenQuantity;
+    this.rooms = this.roomsQuantity;
+    //assigned date checkin:this.checkIn, checkout:this.checkOut,
+    this.bookDate = (params.checkin == undefined ? currentdate:params.checkin)+" - "+(params.checkout == undefined ? moment(nextDate).format('YYYY-MM-DD'):params.checkout);
+    //console.log("Date ", this.bookDate)
+    this.checkIn = params.checkin;
+    this.checkOut = params.checkout;
   }
  
 
@@ -223,13 +255,13 @@ hotelList:any;
     this.place= list.name;
     //
     if(list.id){
-      this.cityId = list.id;
+      this.cityId = list.slug;
       this.cityName = list.name;
       localStorage.setItem('search', JSON.stringify({city: this.cityId, Name: this.cityName, checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms}));
     }
     //
     if(list.be_hotel_code){
-      this.hotelId = list.be_hotel_code;
+      this.hotelId = list.slug;
       this.hotelName = list.name;
       localStorage.setItem('search', JSON.stringify({code:this.hotelId, Name: this.hotelName, checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms}))
     }
@@ -245,7 +277,7 @@ hotelList:any;
     //get current date
     let currentdate = moment(this.minDate).format('YYYY-MM-DD');
     //console.log("date check ", this.searchDetails.checkin +"<="+ currentdate)
-    if(this.searchDetails){
+    /* if(this.searchDetails){
       this.searchDetails = JSON.parse(localStorage.getItem('search') as string);
       if(this.searchDetails.checkin >= currentdate){}else{
         Swal.fire({
@@ -256,20 +288,19 @@ hotelList:any;
         });
         return ;
       }
-    }
-
-    this.hotelId =this.searchDetails.code;
-    const queryParams = {code:this.hotelId, checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms, city: this.cityId}
+    } */
     //redirect on details page when choose hotel
     if(this.bookDate && this.place){
       if(this.hotelId){
-        this.route.navigate(['/view'], {queryParams});
+        const queryParams = {checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms,}
+        this.route.navigate([this.hotelId], {queryParams});
         localStorage.setItem('search', JSON.stringify({code:this.hotelId, Name: this.hotelName, checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms}))
       }
   
       //redirect on hotel list page when choose city
       if(this.cityId){
-        this.route.navigate(['/hotel-list']);
+        const queryParams = {checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms}
+        this.route.navigate(['/hotels/'+this.cityId], {queryParams});
         localStorage.setItem('search', JSON.stringify({city: this.cityId, Name: this.cityName, checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms}))
       }
       this.onShowSearch();

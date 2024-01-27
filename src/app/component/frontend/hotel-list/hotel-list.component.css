@@ -77,6 +77,10 @@
     text-decoration: line-through;
 }
 
+.geodir-category-content h3 a, .geodir-category-location a, .geodir-category-price {
+    cursor: pointer;
+}
+
 
 @media (max-width: 480px) {
     .listing-item.has_one_column .geodir-category-content, .listing-item.has_one_column .geodir-category-img{

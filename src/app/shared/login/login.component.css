@@ -13,6 +13,15 @@
     margin-top: 10px;
 }
 
+.custom-form{
+    padding-bottom: 20px;
+}
+
+.google-login{
+    position: absolute;
+    bottom: 0;
+}
+
 
 /* OTP */
 .main-otp-wrap, .reg-overlay {

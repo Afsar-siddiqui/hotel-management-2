@@ -3,12 +3,12 @@
     <div class="header-inner fl-wrap">
         <div class="container">
             <div class="show-search-button" (click)="onShowSearch()"><span>{{searchText}}</span> <i class="fas fa-search"></i> </div>
-            <div class="wishlist-link" (click)="onWishlistLink()"><i class="fal fa-heart"></i><span class="wl_counter">{{wishList?.length}}</span></div>
+            <!-- <div class="wishlist-link" (click)="onWishlistLink()"><i class="fal fa-heart"></i><span class="wl_counter">{{wishList?.length}}</span></div> -->
             <div class="show-reg-form modal-open" (click)="onModel()" *ngIf="!this.isLogin"><i class="fa fa-sign-in"></i>Sign In</div>
             <div class="header-user-menu" *ngIf="isLogin">
                 <div class="header-user-name" (click)="dropDown()">
                     <span><img src="assets/images/avatar/avtar.jpg" alt=""></span>
-                    My account
+                    <!-- My account -->
                 </div>
                 <ul>
                     <li><a routerLink="user">My Booking</a></li>
@@ -16,8 +16,14 @@
                 </ul>
                 
             </div>
-            <div class="logo-holder">
+            <div class="logo-holder" *ngIf="!ref">
                 <a routerLink="/"><img src="assets/images/logo.png" alt=""></a>
+            </div>
+            <div class="logo-holder logo-holder-text desktop" *ngIf="ref">
+                <p>{{place}}</p>
+            </div>
+            <div class="logo-holder logo-holder-text mobile" *ngIf="ref">
+                <p>{{place | slice:0:18}}</p>
             </div>
             <!-- <div class="home-btn"><a href="index.html"><i class="fas fa-home"></i></a></div> -->
             <!-- nav-button-wrap-->

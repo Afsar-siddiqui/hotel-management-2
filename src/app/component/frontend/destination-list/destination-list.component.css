@@ -5,6 +5,10 @@
     width: 25%;
 }
 
+.gallery-items.home-grid .gallery-item .listing-item-grid{
+    cursor: pointer;
+}
+
 @media (max-width: 480px) {
     .gallery-item{
         width: 100%;

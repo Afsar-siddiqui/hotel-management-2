@@ -82,3 +82,45 @@
     align-items: center;
     color: #d40b0b;
 }
+
+
+.logo-holder-text{
+    margin: 10px 0px;
+}
+.logo-holder-text p{
+    color: #fff !important;
+    margin-left: 5px;
+}
+.mobile{
+    display: none !important;
+}
+.desktop{
+    display: block;
+}
+/* mobile view */
+@media only screen and (max-width: 540px){
+    /* .logo-holder-text{
+        top: -46px !important;
+        margin: 0px;
+        overflow: hidden;
+        white-space: nowrap; 
+        text-overflow: ellipsis; 
+    } */
+    .show-reg-form {
+        margin-right: 18px;
+    }
+    .header-user-menu{
+        margin-right: 5px;
+    }
+    .mobile{
+        display: block !important;
+    }
+    .desktop{
+        display: none;
+    }
+}
+
+
+.header-user-name:before{
+    display: none;
+}

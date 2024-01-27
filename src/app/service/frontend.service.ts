@@ -139,4 +139,6 @@ export class FrontendService {
     this.sharedFooter.next(value);
   }
 
+  
+
 }

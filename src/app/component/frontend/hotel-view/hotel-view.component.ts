@@ -28,6 +28,10 @@ export class HotelViewComponent {
   adults: number=1;
   child: number=0;
   num_rooms: number=1;
+  total_amount = 0;
+
+  //for hide logo
+  ref:string = '';
 
 
   hideDummyContent: boolean = false;
@@ -49,10 +53,24 @@ export class HotelViewComponent {
 
   cartValue:any=[]; params:any={}
   ngOnInit(){
+    //hide footer on this page
+    this._frontend.setSharedFooterValue(true);
+    
     // Check local storage for search parameters
     // Subscribe to route query params
     this.route.queryParams.subscribe((params) => {
-      this.handleSearchParams(params);
+      //when checkin not exist then assign value from your side
+      if(params['checkin']){
+        this.handleSearchParams(params);
+      }else{
+        let currentdate = moment(new Date()).format('YYYY-MM-DD');
+        // Get the next date
+        const nextDate = new Date();
+        nextDate.setDate(nextDate.getDate() + 1);
+        const checkout = moment(nextDate).format('YYYY-MM-DD');
+        this.handleSearchParams({"checkin": currentdate,"checkout": checkout,"adults": 1,"child": 0,"num_rooms": 1});
+        
+      }
     });
     
     //Meta tag
@@ -61,14 +79,16 @@ export class HotelViewComponent {
     // Scroll to the top of the page
     this.viewportScroller.scrollToPosition([0, 0]);
 
-    
-    
     //check value without login
     if(localStorage.getItem('cart')){
       let cart = localStorage.getItem('cart')
       this.cartValue = cart;//JSON.parse(cart)
       console.log("cartValue ", this.cartValue)
     }
+
+  }
+
+  hide_logo(){
 
   }
 
@@ -83,6 +103,7 @@ export class HotelViewComponent {
     this.adults = +params['adults'];
     this.child = +params['child'];
     this.num_rooms = +params['num_rooms'];
+    this.ref = params['ref'];
   
     this.adultsQuantity = this.adults;
     this.childrenQuantity = this.child;
@@ -122,16 +143,18 @@ export class HotelViewComponent {
   similarHotel(id:number){
     if(id){
       this._frontend.getSimilarHotel(id).subscribe((res:any)=>{
-        this.smilarHotelList = res.result;
-        for(let val of this.smilarHotelList){
-          let price = parseInt(val.single_rate);
-          price = Math.floor(price);
-          //discount price
-          let dis_price = Math.floor((price * val.be_discount)/100);
-          let discountPrice = price - dis_price;
-          val['discount_Price'] = discountPrice;
+        this.smilarHotelList = res?.result;
+        if(this.smilarHotelList?.length>0){
+          for(let val of this.smilarHotelList){
+            let price = parseInt(val.single_rate);
+            price = Math.floor(price);
+            //discount price
+            let dis_price = Math.floor((price * val.be_discount)/100);
+            let discountPrice = price - dis_price;
+            val['discount_Price'] = discountPrice;
+          }
+          console.log("similar hotel ", this.smilarHotelList)
         }
-        console.log("similar hotel ", this.smilarHotelList)
       })
     }
   }
@@ -143,9 +166,15 @@ export class HotelViewComponent {
   getHotelListByHotel(){
     //
     this.loader = true;
-
+    //when hotel view by name
+    const code = this.route.snapshot.params
+    if(code['hotelName']){
+      this.code = code['hotelName'];
+    }
     const queryData = {code: this.code, checkin: this.checkin, checkout:this.checkout , adults:this.adults, child:this.child, num_rooms:this.num_rooms}
     console.log("params ", queryData);
+    //send value to header 
+    this.ref == 'be' ? this._frontend.setSharedValue({...queryData, 'ref': this.ref}) : this._frontend.setSharedValue(queryData);
     //
     this._frontend.searchHotel(queryData).subscribe({
         next: (res:any)=>{
@@ -162,7 +191,7 @@ export class HotelViewComponent {
             localStorage.setItem('search', JSON.stringify(changeStorageValue))
           }
           //assign value to the header component
-          this._frontend.setSharedValue(changeStorageValue);
+          this.ref == 'be' ? this._frontend.setSharedValue({...changeStorageValue, 'ref': this.ref}) : this._frontend.setSharedValue(changeStorageValue);
 
           //hotel id for similar hotel
           this.similarHotel(this.listDetails.id);
@@ -349,6 +378,7 @@ export class HotelViewComponent {
           //console.log("hotel ",this.rooms);
           //
           this.loader = false;
+          this.getBookingPrice();
         },
         error: err=>{
           this.loader = false;
@@ -442,19 +472,19 @@ export class HotelViewComponent {
 
     //route based on where click
     if(list == 'room-plan'){
-      const queryParams = {checkin:this.checkin, checkout: this.checkout, room_rate_plan_id: this.listDetails.room_rate_plan_id};
+      const queryParams = {checkin:this.checkin, checkout: this.checkout, room_rate_plan_id: this.listDetails.room_rate_plan_id, booking: `${this.code}_${this.adults}_${this.child}_${this.num_rooms}`, dis: this.listDetails.be_discount, ref:this.ref};
       this.router.navigate(['/booking'], { queryParams });
     }else{
-      const queryParams = {checkin:this.checkin, checkout: this.checkout, room_rate_plan_id: list.room_rate_plan_id};
+      const queryParams = {checkin:this.checkin, checkout: this.checkout, room_rate_plan_id: list.room_rate_plan_id, booking: `${this.code}_${this.adults}_${this.child}_${this.num_rooms}`, dis: this.listDetails.be_discount, ref:this.ref};
       //console.log("plan ", queryParams)
       this.router.navigate(['/booking'], { queryParams });
     }
   }
 
-  room_rate_Id:number=0;
+  room_rate_Id:number=0;  
   onCustRouteBooking(){
     if(this.room_rate_Id !=0){
-      const queryParams = {checkin:this.c_checkIn, checkout: this.c_checkOut, room_rate_plan_id: this.room_rate_Id};
+      const queryParams = {checkin:this.c_checkIn, checkout: this.c_checkOut, room_rate_plan_id: this.room_rate_Id, booking: `${this.code}_${this.adults}_${this.child}_${this.num_rooms}`, dis: this.listDetails.be_discount, ref:this.ref};
       //console.log("plan ", queryParams)
       this.router.navigate(['/booking'], { queryParams });
     }
@@ -464,20 +494,10 @@ export class HotelViewComponent {
   onChangeHotel(list:any){
 
       if(list.be_hotel_code){
-        //get query params
-        const queryParams = { ...this.route.snapshot.queryParams };
-        queryParams['code'] = list.be_hotel_code;
-
-        console.log("url ", queryParams)
-
-        
-        //change the value
-        this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams,
-          queryParamsHandling: 'merge', // This ensures other existing query parameters are preserved
-        });
- 
+        const queryParams = {...this.route.snapshot.queryParams}
+        queryParams['Name'] = list.hotel_name;
+        this.router.navigate([list.slug], {queryParams})
+        localStorage.setItem('search', JSON.stringify({code:list.slug, Name: list.hotel_name, ...this.route.snapshot.queryParams}))
       }
 
   }
@@ -489,7 +509,7 @@ export class HotelViewComponent {
 
   total_night:number=0; b_price_day:number=0; priceDetails:any=[];
   getBookingPrice(){
-    const queryData = {checkin: this.c_checkIn, checkout:this.c_checkOut , room_rate_plan_id:this.listDetails.room_rate_plan_id}
+    const queryData = {checkin: this.checkin, checkout:this.checkout , room_rate_plan_id:this.listDetails.room_rate_plan_id}
     console.log("params ", queryData);
     //
     this._frontend.getBookings(queryData).subscribe({
@@ -517,7 +537,8 @@ export class HotelViewComponent {
 
   room_rate:number=0;
   checkGuestno(){
-    
+    //make total price null
+    this.f_total_tax = 0;
     //if person greater then base adults then choose room rent based on last rate
     for(let val of this.priceDetails){
       if(this.c_adults > this.listDetails.base_adults){
@@ -554,7 +575,7 @@ export class HotelViewComponent {
       this.f_promo_d = this.f_promo_d + this.promo_d;
       this.f_normal_d = this.f_normal_d + this.normal_d;
       this.f_tax = this.f_tax + this.tax;
-      this.f_total_tax = this.f_total_tax + this.total_taxt;
+      this.f_total_tax = Math.floor(this.f_total_tax + this.total_taxt);
       console.log("Final Total tax ", this.f_total_tax);
     }
   }
@@ -582,22 +603,22 @@ export class HotelViewComponent {
     if(e_adult_p || e_child_p){
       //when adults extra
       if(e_adult_p){
-        this.base_P = this.room_rate + e_adult_p;
+        this.base_P = (this.room_rate * this.num_rooms) + e_adult_p;
         console.log("e_adults ", this.base_P);
       }
       //when child extra
       if(e_child_p){
-        this.base_P = this.room_rate + e_child_p;
+        this.base_P = (this.room_rate * this.num_rooms) + e_child_p;
         console.log("e_child ", this.base_P);
       }
       //when both extra
       if(e_child_p !=null && e_adult_p !=null){
-        this.base_P = this.room_rate + e_adult_p + e_child_p;
+        this.base_P = (this.room_rate * this.num_rooms) + e_adult_p + e_child_p;
         console.log("Both ", this.base_P);
       }
     }else{
-      this.base_P = this.room_rate;
-      console.log("normal ", this.base_P);
+      this.base_P = this.room_rate * this.num_rooms;
+      console.log("normal base price ", this.base_P);
     }
 
     //normal discount
@@ -657,7 +678,7 @@ export class HotelViewComponent {
     this.isMobileView = screenWidth < mobileScreenWidth;
 
     //hide footer value on mobile
-    this.isMobileView == true ? this._frontend.setSharedFooterValue(true): this._frontend.setSharedFooterValue(false);
+    this.isMobileView == true ? this._frontend.setSharedFooterValue(true): this._frontend.setSharedFooterValue(true);
 
     //
     //for fixed side bar share menu

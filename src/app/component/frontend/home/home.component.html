@@ -301,7 +301,7 @@
                         <div class="light-carousel">
                             <ngx-slick-carousel #slickModal="slick-carousel" [config]="slideConfigPopular">
                             <!--slick-slide-item repeate-->
-                            <div class="slick-slide-item" ngxSlickItem *ngFor="let list of popularHotel" [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)"><!-- (click)="onRouteDetails(list) -->
+                            <div class="slick-slide-item" ngxSlickItem *ngFor="let list of popularHotel" [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)"><!-- (click)="navigateToHotel_By_name(list) -->
                                 <div class="hotel-card fl-wrap title-sin_item">
                                     <div class="geodir-category-img card-post">
                                         <a [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)"><img src="{{list.image}}" alt=""></a>

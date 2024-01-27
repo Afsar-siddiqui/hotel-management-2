@@ -1,5 +1,6 @@
 import { ViewportScroller } from '@angular/common';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { FrontendService } from 'src/app/service/frontend.service';
 
@@ -12,7 +13,7 @@ export class DestinationListComponent {
 
   popularDestinationList:any=[];
 
-  constructor(private _frontend: FrontendService, private viewportScroller: ViewportScroller){}
+  constructor(private _frontend: FrontendService, private viewportScroller: ViewportScroller, private router: Router){}
 
   ngOnInit(){
     // Scroll to the top of the page
@@ -37,11 +38,10 @@ export class DestinationListComponent {
     //convert date into format
     let checkin = moment(date).format('YYYY-MM-DD');  let checkout = moment(nextDate).format('YYYY-MM-DD');
     //console.log("checkin ", checkin)
-    if(list.slug){
-      //const queryParams = {city: list.slug,checkin: checkin, checkout: checkout, "adults":adults, "child":child, "num_rooms":num_rooms}
-      //this.router.navigate(['city/'+cityName], { queryParams });
-      localStorage.setItem('search', JSON.stringify({city: list.id, Name: list.name, checkin:checkin, checkout:checkout, adults:adults, child:child, num_rooms:num_rooms}))
-    }
+    const queryParams = {checkin:checkin, checkout:checkout, adults:adults, child:child, num_rooms:num_rooms}
+    this.router.navigate(['/hotels/'+list.slug], {queryParams});
+    localStorage.setItem('search', JSON.stringify(queryParams))
+
   }
 
   

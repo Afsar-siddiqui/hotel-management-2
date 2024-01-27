@@ -66,16 +66,20 @@
 
 /* price icon display none */
 .list-single-hero-price .single-rate{
-    font-size: 22px;
+    font-size: 14px;/*22px */
     float: right;
     padding-left: 10px;
-    margin-top: -6px;
+    margin-top: 0px;
+}
+.price-both-view{
+    display: inline;
+    float: right;
 }
 .flat-hero-container .list-single-hero-price:before{
     display: none;
 }
 .room_previous_price{
-    font-size: 14px; 
+    font-size: 12px; 
     text-decoration: line-through;
     text-decoration-thickness: 1px;
     text-decoration-color: red;            
@@ -191,14 +195,41 @@
     top: 7px;
 }
 
+.total_price {
+    padding-top: 15px;
+}
+.total_price span.discount {
+    font-size: 14px;
+    float: right;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Align items vertically within the flex container */
+    padding: 5px 0px;
+  }
+  .price_view_item_heading{
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .price_view_item {
+    margin-right: 10px; /* Adds space between the items */
+    font-size: 14px;
+  }
+  .price_view_item span{
+    color: #5ECFB1;
+    font-weight: 600;
+    padding-right: 15px;
+  }
+  span.room_previous_price {
+    padding-right: 10px !important;
+  }
 
 
 @media (max-width: 480px) {
     .room_previous_price{
         font-size: 11px;
-    }
-    .list-single-hero-price .single-rate{
-        font-size: 18px;
     }
 }
 
@@ -235,6 +266,9 @@
     .per-night-mobile {
         font-size: 10px !important;
         padding-left: 5px;
+    }
+    .rate-price-mobile{
+        display: block;
     }
 }
 

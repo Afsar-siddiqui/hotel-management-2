@@ -5,6 +5,8 @@ import { FrontendService } from 'src/app/service/frontend.service';
 import { MethodService } from 'src/app/service/method.service';
 import { Location } from '@angular/common';
 import Swal from 'sweetalert2';
+import { GoogleLoginProvider, SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -20,16 +22,17 @@ export class LoginComponent {
   
   submitted: boolean = false;
 
-  constructor(private fb: FormBuilder,private _service: FrontendService,private _method: MethodService,private route: Router, private location: Location){
+  constructor(private fb: FormBuilder,private _service: FrontendService,private _method: MethodService,private route: Router, private location: Location,
+              private authService: SocialAuthService, private httpClient: HttpClient){
     this.loginForm = this.fb.group({
       mobile: ['', [Validators.required]],
       password: ['', [Validators.required]],
     });
 
     this.signUpForm = this.fb.group({
-      first_name: ['', [Validators.required]],
-      last_name: ['', [Validators.required,]],
-      email: ['', [Validators.required,]],
+      first_name: ['',],
+      last_name: ['',],
+      email: ['',],
       mobile: ['', [Validators.required, Validators.pattern('[0-9]{10}')]],
       password: ['', [Validators.required,]],
       user_ip:['']
@@ -41,12 +44,61 @@ export class LoginComponent {
       digit3: ['', [Validators.required, Validators.pattern('[0-9]{1}')]],
       digit4: ['', [Validators.required, Validators.pattern('[0-9]{1}')]]
     });
-
   }
 
   
+  socialUser!: SocialUser; isLoggedin: boolean = false;
+  ngOnInit(){
+    if(!localStorage.getItem('api_token')){
+      this.authService.authState.subscribe((user) => {
+        this.onModelClose();
+        this.socialUser = user;
+        //
+        localStorage.setItem('api_token', user.idToken);
+        localStorage.setItem('userId', user.id);
+        //set isLogin true;
+        this._method.setLogin(true);
+        
+        //
+        Swal.fire({
+          toast: true,
+          position: 'top',
+          showConfirmButton: false,
+          icon: 'success',
+          timerProgressBar: false,
+          timer: 3000,
+          title: 'Signed in successfully'
+        })
+        //
+        this.isLoggedin = user != null;
+        //console.log(this.socialUser);
+        const data ={first_name: user.firstName, last_name: user.lastName, email: user.email, mobile:"", password:"", user_ip:"", signin_by:"gmail"}
+        this._service.getSignUp(data).subscribe({
+          next: (res:any)=>{
+            console.log("signup ", res);
+            if(res.status == "NOK"){
+              localStorage.setItem('userId', res.result.data.id);
+            }
+          },
+          error: (err:any)=>{
 
+          }
+        })
+      });
+    }
+  }
 
+  /* private accessToken = '';
+  getAccessToken(): void {
+    this.authService.getAccessToken(GoogleLoginProvider.PROVIDER_ID).then(accessToken => {
+      this.accessToken = accessToken;
+      console.log('this.accessToken', this.accessToken);
+    });
+  } */
+  
+  /* refreshToken(): void {
+    this.authService.refreshAuthToken(GoogleLoginProvider.PROVIDER_ID);
+  } */
 
   response:any;
   onSubmit(){

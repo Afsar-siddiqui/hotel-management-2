@@ -3248,7 +3248,7 @@ input[type=number]
 }
 .filter-sidebar.fl-wrap.lws_mobile.fixed {
     position: fixed !important;
-    width: 25%;
+    width: 24%;
 }
 .filter-sidebar {
 	padding:25px 30px;

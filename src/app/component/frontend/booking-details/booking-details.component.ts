@@ -20,12 +20,14 @@ export class BookingDetailsComponent {
 
 
   //
+  code: string='';
   checkin: string|undefined;
   checkout: string|undefined;
   room_rate_plan_id: number|undefined;
   num_rooms: number=1;
   child: number=0;
-  adults: number=0;
+  adults: number=1;
+  discount: number=0;
 
   //
   priceDetails:any=[];
@@ -60,6 +62,9 @@ export class BookingDetailsComponent {
   ngOnInit(){
     // Scroll to the top of the page
     this.viewportScroller.scrollToPosition([0, 0]);
+
+    //hide footer on this page
+    this._frontend.setSharedFooterValue(true);
     
     //
     this._method.isLoginValue$.subscribe((value:any) => {
@@ -83,13 +88,21 @@ export class BookingDetailsComponent {
       this.checkin = params['checkin'];
       this.checkout = params['checkout'];
       this.room_rate_plan_id = +params['room_rate_plan_id']; // "+" is used to convert the string to a number
+      let ref = params['ref'];
+
+      let bookings = params['booking'].split('_');
+      this.code = bookings[0];
+      this.num_rooms = bookings[3];
+      this.adults = bookings[1];
+      this.child = bookings[2];
+      //assign value to the header component
+      this._frontend.setSharedValue({code:this.code, checkin:this.checkin, checkout:this.checkout, adults:this.adults, child:this.child, num_rooms:this.num_rooms, ref:ref});
+
+      this.discount = params['dis'];
       //
-      //console.log("params ", params);
+      console.log("params ", bookings);
       //this.getBookingPrice();
       this.getHotelListByHotel();
-
-      //
-
 
     });
 
@@ -142,9 +155,6 @@ export class BookingDetailsComponent {
     this.couponCode = list.code;
     //this.validateCouponCode();
     this.onCouponCode();
-    this.promo_d = list.discount_amount;
-    this.f_promo_d = this.promo_d;
-    this.f_total_taxt = this.f_total_taxt - this.promo_d;
     //console.log("select coupon code ", this.selectedCouponCode);
   }
   /* When user type coupon code
@@ -156,7 +166,7 @@ export class BookingDetailsComponent {
  showCouponError: boolean = false;
   onCouponCode(){
     //this.validateCouponCode();
-
+    console.log("validate ")
     let hotel_id = JSON.parse(localStorage.getItem('RoomDetails') ?? '{}');
     let data = { "hotel_id":hotel_id.code, 
     "user_id":localStorage.getItem('userId') == null ? 0:localStorage.getItem('userId'),
@@ -166,15 +176,26 @@ export class BookingDetailsComponent {
       this._frontend.validateCoupon(data).subscribe((res:any)=>{
         if(res.status == "Success"){
           this.showCouponError = false;
+          this.promo_d = res.result.discount_amount;
+          this.f_promo_d = this.promo_d;
+          this.f_total_taxt = this.f_total_taxt - this.promo_d;
+          console.log("validate if")
         }else{
           this.showCouponError = true;
           this.promo_d = 0;
           this.f_promo_d = 0;
           this.f_total_taxt = this.f_previous_Price;
           this.selectedCouponCode = '';
+          console.log("validate else")
         }
       })
-    }else{this.showCouponError = false}
+    }else{
+          this.promo_d = 0;
+          this.f_promo_d = 0;
+          this.f_total_taxt = this.f_previous_Price;
+          this.selectedCouponCode = '';
+          this.showCouponError = false
+    }
   }
 
 
@@ -211,19 +232,16 @@ export class BookingDetailsComponent {
   getHotelListByHotel(){
     //
     this.loader = true;
-    //get the details from local storage
-    this.bookDetails = JSON.parse(localStorage.getItem('RoomDetails') ?? '{}');
-    this.num_rooms = this.bookDetails.num_rooms;
-    console.log("rooms ", this.num_rooms);
-    this.adults = this.bookDetails.adults;
-    this.child = this.bookDetails.child;
 
-    const queryData = {code: this.bookDetails.code, checkin: this.checkin, checkout:this.checkout , adults:this.bookDetails.adults, child:this.bookDetails.child, num_rooms:this.bookDetails.num_rooms}
+    const queryData = {code: this.code, checkin: this.checkin, checkout:this.checkout , adults:this.adults, child:this.child, num_rooms:this.num_rooms}
     //
     this._frontend.searchHotel(queryData).subscribe({
         next: (res:any)=>{
           let data = res;
           this.listDetails = data.result.Hotel;
+          /* const changeStorageValue = {code:this.code, Name: this.listDetails.hotel_name, checkin:this.checkin, checkout:this.checkout, adults:this.adults, child:this.child, num_rooms:this.num_rooms}
+          //assign value to the header component
+          this._frontend.setSharedValue(changeStorageValue); */
           console.log("list Details", this.listDetails)
           //Gallery
           this.images = data.result.Photos;
@@ -289,7 +307,11 @@ export class BookingDetailsComponent {
     
     //if person greater then base adults then choose room rent based on last rate
     for(let val of this.priceDetails){
-      this.priceCal();
+      //
+      
+      this.getPrice(val)
+      //
+      //this.priceCal();
       //Final price add here each time
       this.f_total = this.f_total + this.total;
       this.f_base_P = this.f_base_P + this.base_P;
@@ -299,6 +321,11 @@ export class BookingDetailsComponent {
       this.f_total_taxt = this.f_total_taxt + this.total_taxt;
       this.f_previous_Price = this.f_total_taxt;
       console.log("Final Total tax ", this.f_total_taxt);
+    }
+    
+    //
+    if(this.f_total_taxt ==0){
+      this.soldOut = true;
     }
     
   }
@@ -527,6 +554,52 @@ export class BookingDetailsComponent {
     }
 
   }
+  
+  getPrice(data:any){
+    this.total_guest = this.adults + this.child;
+
+    let priceValue = 0; let base_P = 0;
+    let getId = Math.floor(this.adults/this.num_rooms) == 0 ? 1: Math.floor(this.adults/this.num_rooms);
+    let priceId = this.priceSelect[getId];
+    priceValue = data[priceId];
+
+    //when extra child or extra adults
+    let extraChild; let extraAdult; let extraAdultPrice=0; let extraChildPrice=0;
+    if(this.adults <= this.listDetails.max_adults * this.num_rooms && this.child <= this.listDetails.max_child * this.num_rooms){
+      if(this.adults > this.listDetails.base_adults * this.num_rooms || this.child > this.listDetails.base_child * this.num_rooms){
+        if(this.adults > this.listDetails.base_adults){
+          extraAdult = this.adults - this.listDetails.base_adults * this.num_rooms;
+          extraAdultPrice = extraAdult * this.listDetails.extra_adult_price;
+          //console.log("extra adults=", extraAdult +" extra adults price="+ extraAdultPrice);
+        }
+        //
+        if(this.child > this.listDetails.base_child){
+          extraChild = this.child - this.listDetails.base_child * this.num_rooms;
+          extraChildPrice = extraChild * this.listDetails.extra_child_price;
+          console.log("extra child=",  extraChild +" extra child price="+ extraChildPrice);
+        }
+      }
+    }else{this.soldOut = true;}
+
+    //base price
+    base_P += Math.floor(priceValue);
+    this.base_P = (base_P + extraAdultPrice + extraChildPrice) * this.num_rooms;
+    console.log("price value from booking ", this.base_P);
+
+    //discount price  here discount comes from params
+    let dis_price = (this.base_P * this.listDetails.be_discount)/100;
+    dis_price = Math.floor(dis_price);
+    this.normal_d = dis_price;
+    //total price after discount
+    this.total = this.base_P - dis_price;
+    //tax 12%
+    let tax = (12 * this.base_P)/100;
+    this.tax = Math.floor(tax);
+    console.log("tax ", this.tax);
+    //total price after discount and tax
+    this.total_taxt = (this.base_P - this.normal_d + this.tax);
+    console.log("base_P + tax - discount", this.total_taxt);
+  }
 
 
 
@@ -549,8 +622,8 @@ hideModel(){
 /* On route again view page */
 /* route on view page when click on hotel */
 onRouteDetails(){
-  const queryParams = {code: this.bookDetails.code,checkin: this.checkin, checkout:this.checkout , adults:this.bookDetails.adults, child:this.bookDetails.child, num_rooms:this.bookDetails.num_rooms}
-  this.router.navigate(['/view'], { queryParams });
+  const queryParams = {Name: this.listDetails.hotel_name,checkin: this.checkin, checkout:this.checkout , adults:this.adults, child:this.child, num_rooms:this.num_rooms}
+  this.router.navigate([this.listDetails.slug], { queryParams });
 }
 
 
@@ -641,7 +714,7 @@ PayDetails(){
   let guestDetail = [];
   guestDetail.push({"adult":this.adults, "child": {"total": this.child, "child_age":[]}});
   console.log("guest details ", guestDetail);
-  let bookingData = {"user_id": user.id, "hotel_id":this.listDetails.id, "hotel_code": this.listDetails.be_hotel_code, "booking_vendor_name":"Revtrip Hotel", "bookingStatus":"Tentative", "booking_id":"", "room_detail": guestDetail, "taxes":this.f_tax, "totalAmount":this.f_total_taxt, "hotel_discount": this.listDetails.be_discount, "promo_code": '', "promo_discount": this.promo_d, "checkInDate": this.checkin, "checkOutDate":this.checkout, "totalAdults":this.bookDetails.adults, "totalChildren":this.bookDetails.child, "guest_name":this.userForm.value.first_name+" "+this.userForm.value.last_name, "guest_email":this.userForm.value.email, "guest_phone":this.userForm.value.mobile, "room_id":this.listDetails.room_id, "plan_id": this.listDetails.plan_id, "room_rate_plan_id": this.room_rate_plan_id, "room_name":this.listDetails.room_name, "rate_plan_name":this.listDetails.plan_name, "num_rooms":this.bookDetails.num_rooms, "paymentStatus":0 }
+  let bookingData = {"user_id": user.id, "hotel_id":this.listDetails.id, "hotel_code": this.listDetails.be_hotel_code, "booking_vendor_name":"Revtrip Hotel", "bookingStatus":"Tentative", "booking_id":"", "room_detail": guestDetail, "taxes":this.f_tax, "totalAmount":this.f_total_taxt, "hotel_discount": this.listDetails.be_discount, "promo_code": '', "promo_discount": this.promo_d, "checkInDate": this.checkin, "checkOutDate":this.checkout, "totalAdults":this.adults, "totalChildren":this.child, "guest_name":this.userForm.value?.first_name+" "+this.userForm.value?.last_name, "guest_email":this.userForm.value?.email, "guest_phone":this.userForm.value?.mobile, "room_id":this.listDetails?.room_id, "plan_id": this.listDetails?.plan_id, "room_rate_plan_id": this.room_rate_plan_id, "room_name":this.listDetails?.room_name, "rate_plan_name":this.listDetails?.plan_name, "num_rooms":this.num_rooms, "paymentStatus":0 }
   //console.log("value ", data);
   //console.log("bookingData ", bookingData);
   if(this.userForm.valid){
@@ -754,9 +827,9 @@ PayDetails(){
     this.isMobileView = screenWidth < mobileScreenWidth;
 
     //hide footer value on mobile
-    this.isMobileView == true ? this._frontend.setSharedFooterValue(true): this._frontend.setSharedFooterValue(false);
+    this.isMobileView == true ? this._frontend.setSharedFooterValue(true): this._frontend.setSharedFooterValue(true);
 
-    console.log("screen width ", screenWidth < mobileScreenWidth , screenWidth +">"+ mobileScreenWidth)
+    //console.log("screen width ", screenWidth < mobileScreenWidth , screenWidth +">"+ mobileScreenWidth)
 
   }
 

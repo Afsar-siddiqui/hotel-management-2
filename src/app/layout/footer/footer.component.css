@@ -11,8 +11,15 @@
     font-size: 14px;
 }
 
+.main-footer{
+    z-index: 99;
+}
+
 @media (max-width: 480px) {
     .cs-mumber{
         font-size: 16px;
+    }
+    .main-footer{
+        z-index: 1;
     }
 }

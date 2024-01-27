@@ -170,6 +170,13 @@
     padding: 14px 20px 14px 20px;
 }
 
+.bt-back-mobile button{
+    margin-bottom: 10px;
+    width: 100%;
+}
+.bt-back-mobile button i{
+    padding-right: 5px;
+}
 
 .d-flex{
     display: flex;
@@ -221,7 +228,9 @@
     margin-left: 9px;
 }
 
-
+.coupon-box-lg{
+    float: right;
+}
 
 
 

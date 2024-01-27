@@ -1,4 +1,4 @@
-import { ViewportScroller } from '@angular/common';
+import { Location, ViewportScroller } from '@angular/common';
 import { Component, ElementRef, HostListener, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
@@ -22,7 +22,7 @@ export class HotelListComponent {
 
   //
   city: string|undefined;
-  checkin: string|undefined;
+  checkin: string='';
   checkout: string|undefined;
   adults: number|undefined;
   child: number|undefined;
@@ -34,11 +34,12 @@ export class HotelListComponent {
 
   //
   searchDetails:any;
+  cityUrl:any;
 
   display_date: any;
 
   constructor(private _scripts: ScriptsMethodService, private _frontend: FrontendService, private route: ActivatedRoute, private router: Router,
-    private _meta: MetaService, private viewportScroller: ViewportScroller, private el: ElementRef, private renderer: Renderer2){
+    private _meta: MetaService, private viewportScroller: ViewportScroller, private el: ElementRef, private renderer: Renderer2, private _location: Location){
     this.minDate = new Date();
     this.maxDate = new Date();
   }
@@ -49,59 +50,57 @@ export class HotelListComponent {
     
     //get current date
     let currentdate = moment(this.minDate).format('YYYY-MM-DD');
-    
-    if(localStorage.getItem('search')){
-      this.searchDetails = JSON.parse(localStorage.getItem('search') as string);
-      //set value if previous value exist
-      if(this.searchDetails){
-        //console.log("this.searchDetails", this.searchDetails)
-       //set value if previous value exist
-        if(this.searchDetails.city){
-          this.cityName = this.searchDetails.Name;
-          this.city = this.searchDetails.city;
-        }
-        this.checkin = this.searchDetails['checkin'];
-        this.checkout = this.searchDetails['checkout'];
-        this.adults = +this.searchDetails['adults']; // "+" is used to convert the string to a number
-        this.child = +this.searchDetails['child'];
-        this.num_rooms = +this.searchDetails['num_rooms'];
-        this.city = this.searchDetails['city'];
-        //
-        this.adultsQuantity = this.adults;
-        this.childrenQuantity = this.child;
-        
-        //console.log("searchDetails ", searchDetails);
+    //get params for call the api for hotel list
+    this.route.queryParams.subscribe((query:any)=>{
+        this.route.params.subscribe(params => {
+          this.cityUrl = params['city'];
+          console.log('City Slug:', this.cityUrl);
+          // Use the city slug to fetch hotels or perform other actions
+          this.city = this.cityUrl;
+          this.checkin = query['checkin'];
+          this.checkout = query['checkout'];
+          this.adults = +query['adults']; // "+" is used to convert the string to a number
+          this.child = +query['child'];
+          this.num_rooms = +query['num_rooms'];
+          //
+          this.adultsQuantity = this.adults;
+          this.childrenQuantity = this.child;
+          this.roomsQuantity = this.num_rooms;
 
-        //When route from wishlist it will check current date will be > check in date
-        if(this.searchDetails.checkin >= currentdate){
-          this.bookDate = this.searchDetails.checkin +" - "+this.searchDetails.checkout;
-        }else{
-          //get get next date
-          let nextDate = new Date();
-          nextDate.setDate(nextDate.getDate() + 1);
-          let checkout = moment(nextDate).format('YYYY-MM-DD');
-          this.checkin = currentdate;
-          this.checkout = checkout;
-          //console.log("date check ", currentdate +"<="+ checkout)
-          //localStorage.setItem('search', JSON.stringify({city:this.city, Name: this.cityName, checkin:this.checkin, checkout:this.checkout, adults:this.adults, child:this.child, num_rooms:this.num_rooms}))
-         }
-        //console.log("Date ", this.bookDate)
-        this.checkin = this.searchDetails.checkin;
-        this.checkout = this.searchDetails.checkout;
-        this.getHotelListByCity();
-      }
-    }
+          //when date will be less then our current date
+          if(this.checkin >= currentdate){
+            this.bookDate = this.checkin +" - "+this.checkout;
+          }else{
+            //get get next date
+            let nextDate = new Date();
+            nextDate.setDate(nextDate.getDate() + 1);
+            let checkout = moment(nextDate).format('YYYY-MM-DD');
+            this.checkin = currentdate;
+            this.checkout = checkout;
+          }
+          this.getHotelListByCity();
+          this._frontend.setSharedValue({...params, city:this.city})
+        });
+    })
     
     //Meta tag
-    this._meta.updateTitle(`Top Hotels in ${this.searchDetails['Name']}: Book Hotel Rooms Online.`)
-    this._meta.updateTag('title', `Top Hotels in ${this.searchDetails['Name']}: Book Hotel Rooms Online.`);
-    this._meta.updateTag('description', `Book Cheap & Budget-Friendly Luxury Hotels in ${this.searchDetails['Name']} With RevTrip Hotels and Save More on Your Hotel Rooms Booking Online. Register in RevTrip Hotels with your mobile for Instant Discounts.`);
+    this._meta.updateTitle(`Top Hotels in ${this.cityName}: Book Hotel Rooms Online.`)
+    this._meta.updateTag('title', `Top Hotels in ${this.cityName}: Book Hotel Rooms Online.`);
+    this._meta.updateTag('description', `Book Cheap & Budget-Friendly Luxury Hotels in ${this.cityName} With RevTrip Hotels and Save More on Your Hotel Rooms Booking Online. Register in RevTrip Hotels with your mobile for Instant Discounts.`);
     this._meta.updateTag('keywords','Hotel Booking, Cheap Hotel Rooms, Budget Hotel, Hotel Room Booking, Online Hotel Booking, Hotels in India, Cheap Hotels, Booking Hotels, Hotels Near Me, Discount Hotel Rooms, Online Hotel Reservations, Cheap Hotels in India, Budget Hotels India, Hotels In Guwahati, Hotels In New Delhi, Hotels In Mumbai, Hotels In Pune, Hotels In Chennai, Hotels In Bangalore, Hotels In Goa, Hotels In Kolkata')
+  
+    this._frontend.setSharedValue({city: this.city, Name:this.cityName, checkin: this.checkin,checkout: this.checkout,adults: this.adults,child: this.child,num_rooms: this.num_rooms})
   }
 
   hotelListNull:boolean=false;
   getHotelListByCity(){
     this.loader = true;
+    //when hotel load
+    //const city = this.route.snapshot.params;
+    if(this.cityUrl){
+      this.city = this.cityUrl;
+    }
+    
     const queryData = {checkin: this.checkin, checkout:this.checkout , adults:this.adults, child:this.child, num_rooms:this.num_rooms, city: this.city}
     //console.log("params ", queryData);
     //
@@ -133,7 +132,7 @@ export class HotelListComponent {
           console.log("error ", err)
           this.loader = false;
         }
-      })
+    })
   }
 
 
@@ -176,10 +175,9 @@ export class HotelListComponent {
   onRouteDetails(list:any){
     console.log("list ", list)
     if(list.be_hotel_code){
-      const queryParams = {code: list.be_hotel_code,checkin: this.checkin, checkout: this.checkout, adults: this.adults, child:this.child, num_rooms: this.num_rooms}
-      //this.router.navigate(['/view'], { queryParams });
-      localStorage.setItem('search', JSON.stringify({code: list.be_hotel_code, Name:list.hotel_name, checkin: this.checkin, checkout: this.checkout, adults: this.adults, child:this.child, num_rooms: this.num_rooms}))
-      
+      const queryParams = {checkin: this.checkin, checkout: this.checkout, adults: this.adults, child:this.child, num_rooms: this.num_rooms}
+      this.router.navigate([list.slug], { queryParams });
+      localStorage.setItem('search', JSON.stringify({code: list.slug, Name:list.hotel_name, checkin: this.checkin, checkout: this.checkout, adults: this.adults, child:this.child, num_rooms: this.num_rooms}))
     }
   }
 
@@ -388,24 +386,17 @@ export class HotelListComponent {
   onSelectCity(list:any){
     //
     this.cityName = list.name;
+    let cityId = list.slug;
     this.show_cityhHotel = false;
-    console.log("select City ", this.cityName);
+    console.log("select City ", this.cityName,);
 
     //get query params
     const queryParams = { ...this.route.snapshot.queryParams };
-    queryParams['city'] = list.id;
+    this.router.navigate(['/hotels/'+cityId], {queryParams});
 
-
-    
-    //change the value
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams,
-      queryParamsHandling: 'merge', // This ensures other existing query parameters are preserved
-    });
 
     //change place in local storage
-    localStorage.setItem('search', JSON.stringify({city: list.id, Name: this.cityName, checkin:this.checkin, checkout:this.checkout, adults:this.adults, child:this.child, num_rooms:this.num_rooms}));
+    localStorage.setItem('search', JSON.stringify({city: list.slug, Name: this.cityName, checkin:this.checkin, checkout:this.checkout, adults:this.adults, child:this.child, num_rooms:this.num_rooms}));
 
 
   }

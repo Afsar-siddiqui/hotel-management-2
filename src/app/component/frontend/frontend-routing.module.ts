@@ -20,7 +20,7 @@ const routes: Routes = [
   {path: 'contact', component: ContactsComponent},
   {path: 'user', component: UserComponent},
   {path: 'view', component: HotelViewComponent},
-  {path: 'hotel-list', component: HotelListComponent},
+  {path: 'hotels/:city', component: HotelListComponent},
   {path: 'booking', component: BookingDetailsComponent},
   { path: 'city/:cityName', component: HotelListComponent },
   {path: 'city-list', component: DestinationListComponent},
@@ -34,7 +34,8 @@ const routes: Routes = [
   {path: 'frequently-asked-questions', component: FaqComponent},
 
   //based on hotel name view hotel
-  { path: ':hotelName', component: HotelViewByNameComponent },
+  { path: ':hotelName', component: HotelViewComponent },
+  //{ path: ':hotelName', component: HotelViewByNameComponent },
   
 ];
 

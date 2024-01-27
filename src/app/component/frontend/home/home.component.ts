@@ -78,7 +78,8 @@ export class HomeComponent {
     //get the bookin details from local storage if exist
     if(localStorage.getItem('search')){
       this.searchDetails = JSON.parse(localStorage.getItem('search') as string);
-      
+      //send value to header
+      this._frontend.setSharedValue(this.searchDetails)
       //set value if previous value exist
       if(this.searchDetails.city){
         this.place = this.searchDetails.Name;
@@ -285,13 +286,13 @@ export class HomeComponent {
     this.place= list.name;
     //
     if(list.id){
-      this.cityId = list.id;
+      this.cityId = list.slug == null ? list.id: list.slug;
       this.cityName = list.name;
       localStorage.setItem('search', JSON.stringify({city: this.cityId, Name: this.cityName, checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms}));
     }
 
     if(list.be_hotel_code){
-      this.code = list.be_hotel_code;
+      this.code = list.slug == null ? list.be_hotel_code:list.slug;
       this.hotelName = list.name;
       localStorage.setItem('search', JSON.stringify({code:this.code, Name: this.hotelName, checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms}))
     }
@@ -403,20 +404,22 @@ addToWishlist(list: any) {
     
     this.code =this.searchDetails.code;
     //hotel:string, checkin:string, checkout:string, adults:number, child:number, num_rooms:number, city:number
-    const queryParams = {code:this.code, checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms, city: this.cityId}
     //redirect on details page when choose hotel
     console.log("working ", this.bookDate, (this.place))
     if(this.bookDate && (this.place)){
       if(this.code){
-        this.router.navigate(['/view'], {queryParams});  //
+        const queryParams = {Name: this.hotelName, checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms, city: this.cityId}
+        //this.router.navigate(['/view'], {queryParams});  //
+        this.router.navigate([this.code], {queryParams})
         localStorage.setItem('search', JSON.stringify({code:this.code, Name: this.hotelName, checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms}))
         
       }
   
       //redirect on hotel list page when choose city
       if(this.cityId){
-        this.router.navigate(['/hotel-list']);
-        localStorage.setItem('search', JSON.stringify({city: this.cityId, Name: this.cityName, checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms}))
+        const queryParams = {checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms}
+        this.router.navigate(['/hotels/'+this.cityId], {queryParams});
+        localStorage.setItem('search', JSON.stringify(queryParams))
         
       }
     }else{
@@ -440,7 +443,7 @@ addToWishlist(list: any) {
       }
 
       //
-      this.router.navigate(['/view'], {queryParams});
+      //this.router.navigate(['/view'], {queryParams});
 
     }
 
@@ -459,7 +462,8 @@ addToWishlist(list: any) {
     //console.log("checkin ", checkin)
     let adults = 1; let num_rooms = 1; let child = 0;
     if(list.be_hotel_code){
-      const queryParams = {code: list.be_hotel_code,checkin: checkin, checkout: checkout, "adults":adults, "child":child, "num_rooms":num_rooms}
+      localStorage.setItem('search', JSON.stringify({code:this.code, Name: list.hotel_name, checkin: checkin, checkout: checkout, "adults":adults, "child":child, "num_rooms":num_rooms}))
+      const queryParams = {code: list.be_hotel_code, checkin: checkin, checkout: checkout, "adults":adults, "child":child, "num_rooms":num_rooms}
       this.router.navigate(['/view'], { queryParams });
     }
   }
@@ -476,8 +480,8 @@ addToWishlist(list: any) {
     let checkin = moment(date).format('YYYY-MM-DD');  let checkout = moment(nextDate).format('YYYY-MM-DD');
     //console.log("checkin ", checkin)
     if(list.slug){
-      //const queryParams = {code: list.slug,checkin: checkin, checkout: checkout, "adults":adults, "child":child, "num_rooms":num_rooms}
-      //this.router.navigate([hotelName]);
+      const queryParams = {checkin: checkin, checkout: checkout, "adults":adults, "child":child, "num_rooms":num_rooms}
+      this.router.navigate([list.slug], {queryParams});
       localStorage.setItem('search', JSON.stringify({code:list.slug, Name: list.hotel_name, checkin:checkin, checkout:checkout, adults:adults, child:child, num_rooms: num_rooms}))
     }
   }
@@ -486,7 +490,7 @@ addToWishlist(list: any) {
     navigateToHotel_By_city(list: any) {
       let adults = 1; let num_rooms = 1; let child = 0;
       this.cityName = list.name;
-      this.cityId = list.id;
+      this.cityId = list.slug;
 
       let date = new Date();
       //next date
@@ -496,9 +500,11 @@ addToWishlist(list: any) {
       let checkin = moment(date).format('YYYY-MM-DD');  let checkout = moment(nextDate).format('YYYY-MM-DD');
       //console.log("checkin ", checkin)
       if(list.slug){
-        //const queryParams = {city: list.slug,checkin: checkin, checkout: checkout, "adults":adults, "child":child, "num_rooms":num_rooms}
-        //this.router.navigate(['city/'+cityName], { queryParams });
-        localStorage.setItem('search', JSON.stringify({city: this.cityId, Name: this.cityName, checkin:checkin, checkout:checkout, adults:adults, child:child, num_rooms:num_rooms}))
+        const queryParams = {checkin:checkin, checkout:checkout, adults:adults, child:child, num_rooms:num_rooms}
+        this.router.navigate(['/hotels/'+this.cityId], {queryParams});
+        //this.router.navigate(['city/'+list.slug], {queryParams});
+        localStorage.setItem('search', JSON.stringify({city: this.cityId, ...queryParams}));
+        
       }
     }
 
@@ -512,7 +518,7 @@ addToWishlist(list: any) {
     //console.log("checkin ", checkin)
     let adults = 1; let num_rooms = 1; let child = 0;
     const queryParams = {city: 0,checkin: checkin, checkout: checkout, "adults":adults, "child":child, "num_rooms":num_rooms}
-    this.router.navigate(['/hotel-list'], { queryParams });
+    this.router.navigate(['/hotels/city'], { queryParams });
     localStorage.setItem('search', JSON.stringify({city: 0, Name: this.cityName, checkin:checkin, checkout:checkout, adults:adults, child:child, num_rooms:num_rooms}))
   }
 

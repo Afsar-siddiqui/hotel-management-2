@@ -6,6 +6,8 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { MapComponent } from './map/map.component';
 import { GoogleMapsModule } from '@angular/google-maps';
 
+import { GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
+
 
 @NgModule({
   declarations: [
@@ -22,6 +24,7 @@ import { GoogleMapsModule } from '@angular/google-maps';
     FormsModule,
     //
     GoogleMapsModule,
+    GoogleSigninButtonModule,
 
     //
     ModalModule.forRoot(), 

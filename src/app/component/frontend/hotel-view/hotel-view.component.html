@@ -129,14 +129,22 @@
 
                         </div>
                         <!---->
-                        <div *ngIf="!soldOut" class="list-single-hero-price fl-wrap" style="font-weight: 600;">Average Price <!-- inventory != 0  -->
-                            <span class="room_previous_price" *ngIf="listDetails?.be_discount !=0"> ₹ {{price}}</span><!-- listDetails?.single_rate -->
+                        <div *ngIf="!soldOut" class="list-single-hero-price fl-wrap" style="font-weight: 600;">Average Price
+                            <p class="price-both-view">
+                                <span class="room_previous_price" *ngIf="listDetails?.be_discount !=0"> ₹ {{price}}</span>
                             <span class="single-rate"> ₹ {{discountPrice}} 
                                 <span class="room_night">Room/Night</span>
                             </span>
+                            </p>
                             <div *ngIf="listDetails?.be_discount !=0" class="discount-price price-details-tag mt-2">Discount {{listDetails?.be_discount}}% 
                                 <span class="discount"> 
                                     ₹  {{price - discountPrice}} 
+                                </span>
+                            </div>
+                            <div *ngIf="f_total_tax !=0" class="total_price mt-2">Total Price
+                                <span class="discount"> 
+                                    ₹  {{f_total_tax}}
+                                    <span class="room_night">{{num_rooms}}Room/{{priceDetails.length}}Night</span>
                                 </span>
                             </div>
                         </div>
@@ -207,58 +215,38 @@
                     <div class="list-single-main-container ">
                         <!-- list-single-header end -->
                         <div class="list-single-facts fl-wrap" id="sec2">
-                            <!-- inline-facts -->
+                            
                             <div class="inline-facts-wrap">
                                 <div class="inline-facts">
                                     <i class="fal fa-bed"></i>
-                                    <div class="milestone-counter">
-                                        <div class="stats animaper">
-                                            18
-                                        </div>
-                                    </div>
-                                    <h6>Hotel Rooms</h6>
+                                    
+                                    <h6>Rooms</h6>
                                 </div>
                             </div>
-                            <!-- inline-facts end -->
-                            <!-- inline-facts  -->
+                           
                             <div class="inline-facts-wrap">
                                 <div class="inline-facts">
-                                    <i class="fal fa-users"></i>
-                                    <div class="milestone-counter">
-                                        <div class="stats animaper">
-                                            1278
-                                        </div>
-                                    </div>
-                                    <h6>Customers Every Year</h6>
+                                    <i class="fa-briefcase-medical fal"></i>
+                                    
+                                    <h6>Doctor on call</h6>
                                 </div>
                             </div>
-                            <!-- inline-facts end -->
-                            <!-- inline-facts -->
+                            
                             <div class="inline-facts-wrap">
                                 <div class="inline-facts">
                                     <i class="fal fa-taxi"></i>
-                                    <div class="milestone-counter">
-                                        <div class="stats animaper">
-                                            15
-                                        </div>
-                                    </div>
-                                    <h6>Distance to Center</h6>
+                                    
+                                    <h6>Parking</h6>
                                 </div>
                             </div>
-                            <!-- inline-facts end -->
-                            <!-- inline-facts -->
+                           
                             <div class="inline-facts-wrap">
                                 <div class="inline-facts">
-                                    <i class="fal fa-plane"></i>
-                                    <div class="milestone-counter">
-                                        <div class="stats animaper">
-                                            4
-                                        </div>
-                                    </div>
-                                    <h6>Near By Airport/Railway</h6>
+                                    <i class="fa-wifi fal"></i>
+                                    <h6>Free Wi-Fi</h6>
                                 </div>
                             </div>
-                            <!-- inline-facts end -->                                                                        
+                                                                                               
                         </div>
                         <!--   list-single-main-item -->
                         <div class="list-single-main-item fl-wrap">
@@ -330,7 +318,7 @@
                                     </div>
                                     <div class="rooms-details" *ngFor="let val of room[1]">
                                         <div class="rooms-details-header fl-wrap">
-                                            <span class="rooms-price" *ngIf="!isMobileView">₹ {{val?.single_rate - (val?.single_rate * listDetails?.be_discount)/100 | number: '1.0-0'}} <span class="discount-price" *ngIf="listDetails?.be_discount != 0">{{val?.single_rate}}</span> <strong> per/person</strong></span>
+                                            <span class="rooms-price" *ngIf="!isMobileView">₹ {{val?.single_rate - (val?.single_rate * listDetails?.be_discount)/100 | number: '1.0-0'}} <span class="discount-price" *ngIf="listDetails?.be_discount != 0">{{val?.single_rate}}</span> <strong> Room/Night</strong></span>
                                             <h3>{{val?.name}}</h3>
                                             <h5><i class="fa fa-bed" aria-hidden="true"></i>  <span>{{val?.plan_name}}</span></h5>
                                             <h5 class="mt-1" *ngIf="isMobileView"><i class="fal fa-user"></i>Max Guests: <span>{{room[1][i]?.max_adults}} Adults, {{room[1][i]?.max_child}} Child</span></h5>
@@ -343,7 +331,7 @@
                                                 <li><i class="fal fa-tv"></i><span> Tv Inside</span></li>
                                                 <li><i class="fas fa-concierge-bell"></i><span>Breakfast</span></li>
                                             </ul>
-                                            <a href="javascript:()" (click)="onRouteBooking(val)" class="btn color-bg ajax-link">Book Now <span class="rooms-price" *ngIf="isMobileView">₹ {{val?.single_rate - (val?.single_rate * listDetails?.be_discount)/100 | number: '1.0-0'}} <span class="discount-price" *ngIf="listDetails?.be_discount != 0">{{val?.single_rate}}</span> <strong> per/person</strong></span></a>
+                                            <a href="javascript:()" (click)="onRouteBooking(val)" class="btn color-bg ajax-link">Book Now <span class="rooms-price" *ngIf="isMobileView">₹ {{val?.single_rate - (val?.single_rate * listDetails?.be_discount)/100 | number: '1.0-0'}} <span class="discount-price" *ngIf="listDetails?.be_discount != 0">{{val?.single_rate}}</span> <strong> Room/Night</strong></span></a>
                                         </div>
                                         <p class="room-description">{{room[1][i]?.description}}</p>
                                     </div>
@@ -604,7 +592,7 @@
     
                 <div class="col-xs-7">
                     <div class="rate-on-mobile" *ngIf="!soldOut">
-                            <span class="rate-price-mobile">₹ {{discountPrice}} <span class="room_previous_price" *ngIf="listDetails?.be_discount !=0"> ₹ {{price}}</span></span>
+                            <span class="rate-price-mobile">₹ {{f_total_tax}} <span class="room_previous_price" *ngIf="listDetails?.be_discount !=0"> ₹ {{this.f_base_P}}</span></span>
                             <span class="per-night-mobile">(Room/Night)</span>
                             <a class="price_summary" (click)="onShowSearch()">Change Details</a>
                     </div>

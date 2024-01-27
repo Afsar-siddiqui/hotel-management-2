@@ -175,7 +175,7 @@
                                 <div class="listing-item has_one_column" *ngFor="let list of hotelList">
                                     <article class="geodir-category-listing fl-wrap">
                                         <div class="geodir-category-img">
-                                            <a [routerLink]="['/'+list.slug]" (click)="onRouteDetails(list)"><img src="{{list.image}}" alt=""></a>
+                                            <a  (click)="onRouteDetails(list)"><img src="{{list.image}}" alt=""></a><!-- [routerLink]="['/'+list.slug]" -->
                                             <!-- <div class="listing-avatar"><a href="author-single.html"><img src="assets/images/avatar/1.jpg" alt=""></a>
                                                 <span class="avatar-tooltip">Added By  <strong>Alisa Noory</strong></span>
                                             </div> -->
@@ -191,8 +191,8 @@
                                         <div class="geodir-category-content fl-wrap title-sin_item">
                                             <div class="geodir-category-content-title fl-wrap">
                                                 <div class="geodir-category-content-title-item">
-                                                    <h3 class="title-sin_map"><a [routerLink]="['/'+list.slug]" (click)="onRouteDetails(list)">{{list.hotel_name}}</a></h3>
-                                                    <div class="geodir-category-location fl-wrap"><a [routerLink]="['/'+list.slug]" (click)="onRouteDetails(list)" class="map-item"><i class="fas fa-map-marker-alt"></i> {{list.address}}</a></div>
+                                                    <h3 class="title-sin_map"><a  (click)="onRouteDetails(list)">{{list.hotel_name}}</a></h3>
+                                                    <div class="geodir-category-location fl-wrap"><a  (click)="onRouteDetails(list)" class="map-item"><i class="fas fa-map-marker-alt"></i> {{list.address}}</a></div>
                                                 </div>
                                             </div>
                                             <p>{{list.description | slice:0:250}}</p>
@@ -203,7 +203,7 @@
                                                 <li><i class="fal fa-utensils"></i><span> Restaurant</span></li>
                                             </ul>
                                             <div class="geodir-category-footer fl-wrap">
-                                                <div class="geodir-category-price">Room/Night <span>₹ {{list.discount_Price}} <span *ngIf="list.be_discount !=0" class="discount-price">₹ {{list.single_rate}}</span></span></div>
+                                                <div (click)="onRouteDetails(list)" class="geodir-category-price">Room/Night <span>₹ {{list.discount_Price}} <span *ngIf="list.be_discount !=0" class="discount-price">₹ {{list.single_rate}}</span></span></div>
                                                 <div class="geodir-opt-list">
                                                     <a href="javascript:()" class="single-map-item" data-newlatitude="40.72956781" data-newlongitude="-73.99726866"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>
                                                     <a href="javascript:()" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Save</span></a>
