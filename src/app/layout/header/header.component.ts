@@ -1,5 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, ElementRef, HostListener, Renderer2 } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { FrontendService } from 'src/app/service/frontend.service';
@@ -14,6 +15,8 @@ import Swal from 'sweetalert2';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
+
+  childForm:FormGroup | any;
 
   hotelId: string|null|undefined;
   cityId: number|null|undefined;
@@ -37,7 +40,7 @@ export class HeaderComponent {
   isLogin: boolean = false;
 
   constructor(private elementRef: ElementRef, private _method: MethodService, private router: ActivatedRoute, private route: Router, private _frontend: FrontendService, private _scripts: ScriptsMethodService, private _wishList: WishlistService,
-    private _location: Location){
+    private _location: Location, private fb: FormBuilder){
     this.minDate = new Date();
     this.maxDate = new Date();
   }
@@ -46,6 +49,12 @@ export class HeaderComponent {
 
     //get wishList
     this.getWishlist();
+
+    //
+    this.childForm = this.fb.group({
+      numberOfChildren: [0], // Input field for selecting number of children
+      childAges: this.fb.array([]) // Form array for dynamically adding child age form controls
+    });
 
     //When add new wishList then reflect on header
     this._wishList.getWishListIObservable().subscribe((items:any) => {
@@ -150,8 +159,49 @@ export class HeaderComponent {
     //console.log("Date ", this.bookDate)
     this.checkIn = params.checkin;
     this.checkOut = params.checkout;
+    //
+    if(this.childrenQuantity){
+      this.generateChildAges();
+    }
   }
  
+// Getter for accessing child ages form array
+get childAgesArray() {
+  return this.childForm?.get('childAges') as FormArray;
+}
+
+// Method to generate child age form controls based on the selected number of children
+generateChildAges() {
+  if (localStorage.getItem('child_age')) {
+    const child_age = JSON.parse(localStorage.getItem('child_age') || '');
+    console.log("working age ", child_age, this.childrenQuantity);
+    const formArray = this.childForm?.get('childAges') as FormArray;
+    formArray.clear();
+    // Patch the retrieved child age values into the form array
+    for(let i=0; i< this.childrenQuantity; i++){
+      if(child_age.length-1 >= i){
+        formArray.push(this.fb.control(child_age[i], [Validators.required, Validators.max(17)]));
+      }else{
+        formArray.push(this.fb.control(0, [Validators.required, Validators.max(17)]));
+      }
+    }
+  } else {
+    // Clear existing form controls if no child age values are found
+    const formArray = this.childForm.get('childAges') as FormArray;
+    formArray.clear();
+
+    // Add form control for each child age
+    for (let i = 0; i < this.childrenQuantity; i++) {
+      formArray.push(this.fb.control(0, [Validators.required, Validators.max(17)]));
+    }
+  }
+}
+
+
+// Method to handle change in the number of children
+onNumberOfChildrenChange() {
+  this.generateChildAges(); // Generate child age form controls
+}
 
 
 //handel quantity
@@ -171,8 +221,10 @@ handelQuantity(val: string, type:string){
     case 'children':
       if(this.childrenQuantity<10 && val==='plus'){
         this.childrenQuantity += 1;
+        this.onNumberOfChildrenChange();
       }else if(this.childrenQuantity>0 && val==='min'){
         this.childrenQuantity -= 1;
+        this.onNumberOfChildrenChange();
       }else{}
       this.children = this.childrenQuantity;
       break;
@@ -235,7 +287,6 @@ hotelList:any;
     }
   }
 
-
   place:string=''; show_searchHotel:boolean=false;
   onPlace(){
     this.show_searchHotel = true;
@@ -274,23 +325,21 @@ hotelList:any;
   }
 
   onSearch(){
-    //get current date
-    let currentdate = moment(this.minDate).format('YYYY-MM-DD');
-    //console.log("date check ", this.searchDetails.checkin +"<="+ currentdate)
-    /* if(this.searchDetails){
-      this.searchDetails = JSON.parse(localStorage.getItem('search') as string);
-      if(this.searchDetails.checkin >= currentdate){}else{
-        Swal.fire({
-          position: 'top',
-          text: 'Please check your booking date old',
-          icon: 'info',
-          confirmButtonText: 'Ok'
-        });
-        return ;
-      }
-    } */
+    if(!this.isChildAge()){
+      this.showErrorMessage("Please provide child age")
+      return ;
+    }
+     // Get current date
+     const currentDate: string = this.formatDate(this.minDate);
+     
     //redirect on details page when choose hotel
     if(this.bookDate && this.place){
+      //it will return error if date is older
+      if (!this.isValidCheckinDate(currentDate)) {
+        this.showErrorMessage(`Your check in date is older ${this.checkIn}`);
+        return ;
+      }
+
       if(this.hotelId){
         const queryParams = {checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms,}
         this.route.navigate([this.hotelId], {queryParams});
@@ -304,28 +353,49 @@ hotelList:any;
         localStorage.setItem('search', JSON.stringify({city: this.cityId, Name: this.cityName, checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms}))
       }
       this.onShowSearch();
+      this.child_age_store();
     }else{
       //when booking date null
       if(!this.bookDate){
-        Swal.fire({
-          position: 'top',
-          text: 'Please select booking date',
-          icon: 'info',
-          confirmButtonText: 'Ok'
-        });
+        this.showErrorMessage('Please select booking date');
       }
       //when place null
       if(!this.place){
-        Swal.fire({
-          position: 'top',
-          text: 'Please select city or hotel',
-          icon: 'info',
-          confirmButtonText: 'Ok'
-        });
+        this.showErrorMessage('Please select city or hotel');
       }
     }
   }
 
+  formatDate(date: Date): string {
+    return moment(date).format('YYYY-MM-DD');
+  }
+
+  isValidCheckinDate(currentDate: string): boolean {
+    this.searchDetails = JSON.parse(localStorage.getItem('search') as string);
+    if(this.searchDetails?.checkin){
+      return  this.searchDetails?.checkin >= currentDate;
+    }else{ return true}
+  }
+
+  isChildAge(): boolean{
+    const includesZero = this.childAgesArray.value.includes(0);
+    //console.log("working child", this.childAgesArray, includesZero)
+    if(includesZero){ return false;}
+    else{return true}
+  }
+
+  showErrorMessage(message: string): void {
+    Swal.fire({
+      position: 'top',
+      text: message,
+      icon: 'info',
+      confirmButtonText: 'Ok'
+    });
+  }
+
+  child_age_store(){
+    localStorage.setItem("child_age", JSON.stringify(this.childAgesArray.value));
+  }
 
   /* Route wish list product */
   onRouteWishList(){

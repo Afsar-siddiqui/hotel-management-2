@@ -121,32 +121,33 @@
                             <h3>Price Summary</h3>
                         </div>
                         <!--reviews-score-wrap-->   
-                        <div class="reviews-score-wrap fl-wrap" *ngIf="!soldOut">
+                        <div class="reviews-score-wrap fl-wrap" style="margin-bottom:0px;" *ngIf="!soldOut">
                             <div class="review-score-detail">
                                 <!-- review-score-detail-list-->
                                 <div class="review-score-detail-list">
                                     <!-- rate item-->
                                     <div class="rate-item fl-wrap">
-                                        <div class="rate-item-title rate-price_bold"><span>Room Charge</span> <span class="rate-price">₹ {{f_total}}</span></div>
+                                        <div class="rate-item-title rate-price_bold"><span>{{num_rooms}}Room x {{total_night}}Night</span> <span class="rate-price previous-rate-cut" [ngClass]="listDetails?.be_discount == 0 ? 'discount-available':null">₹ {{f_base_P}}</span> <span class="base-per-night">Base Price</span></div>
                                     </div>
                                     <!-- rate item end-->
-                                     <!-- rate item-->
-                                     <div class="rate-item fl-wrap">
-                                        <div class="rate-item-title"><span>Base Price</span> <span class="rate-price previous-rate-cut" [ngClass]="listDetails?.be_discount == 0 ? 'discount-available':null">₹ {{f_base_P}}</span></div>
+                                    <!-- rate item-->
+                                    <div class="rate-item fl-wrap">
+                                        <div class="rate-item-title rate-price_d"><span>Discount {{this.listDetails.be_discount}}%</span> <span class="rate-price">{{f_normal_d}}</span><span class="base-per-night">Room/Night</span></div>
                                     </div>
                                     <!-- rate item end-->
-                                     <!-- rate item-->
-                                     <div class="rate-item fl-wrap">
-                                        <div class="rate-item-title rate-price_d"><span>Discount {{this.listDetails.be_discount}}%</span> <span class="rate-price">{{f_normal_d}}</span></div>
+                                    <!-- rate item-->
+                                    <div class="rate-item fl-wrap">
+                                        <div class="rate-item-title"><span>Price After Discount</span> <span class="rate-price">₹ {{f_total}}</span></div>
                                     </div>
                                     <!-- rate item end-->
+                                     
                                     <!-- rate item-->
                                     <div class="rate-item fl-wrap" *ngIf="promo_d>0">
                                         <div class="rate-item-title"><span>Promo Discount</span> <span class="rate-price">{{f_promo_d}}</span></div>
                                     </div>
                                     <!-- rate item end-->
                                     <!-- rate item-->
-                                    <div class="rate-item fl-wrap">
+                                    <div class="rate-item fl-wrap" style="border-bottom: 0; padding-bottom: 0px;">
                                         <div class="rate-item-title rate-price_bold"><span>Taxes & Fees</span> <span class="rate-price">₹ {{f_tax}}</span></div>
                                     </div>
                                     <!-- rate item end-->
@@ -155,11 +156,10 @@
                             </div>
                         </div>
                         <!-- reviews-score-wrap end -->   
-                        <div class="rate-item fl-wrap" *ngIf="!soldOut">
+                        <div class="rate-item fl-wrap" style="background-color: #efefef;" *ngIf="!soldOut">
                             <div class="rate-item-title rate-price_bold total-price">
                                 <span>Total Amount</span> 
                                 <span class="rate-price" style="font-weight: 800;">₹ {{f_total_taxt}}</span>
-                                <span class="per-night">({{num_rooms}}Room/ {{total_night}}Night)</span>
                             </div>
                         </div>
                         <div class="review-score-detail-list">

@@ -199,33 +199,135 @@ export class BookingDetailsComponent {
   }
 
 
-  total_night:number=0; b_price_day:number=0;
-  getBookingPrice(){
-    const queryData = {checkin: this.checkin, checkout:this.checkout , room_rate_plan_id:this.room_rate_plan_id}
-    console.log("params ", queryData);
-    //
-    this._frontend.getBookings(queryData).subscribe({
-        next: (res:any)=>{
-          this.priceDetails = res.result;
+  total_night: number = 0;
+  b_price_day: number = 0;
 
-          //convert object of object into array of object
-          const arrayOfObjects = Object.keys(res.result).map(key => ({
-            key: key,
-            ...res.result[key]
-          }));
-          console.log("iterate ", arrayOfObjects)
-          this.priceDetails = arrayOfObjects;
+  getBookingPrice(): void {
+      const queryData = {
+          checkin: this.checkin,
+          checkout: this.checkout,
+          room_rate_plan_id: this.room_rate_plan_id
+      };
 
-          //total length
-          this.total_night = this.priceDetails.length;
-          //
-          this.checkGuestno();
-        },
-        error: err=>{
-          console.log("error ", err)
-        }
-      })
+      this._frontend.getBookings(queryData).subscribe({
+          next: (res: any) => {
+              this.priceDetails = Object.values(res.result);
+              this.total_night = this.priceDetails.length;
+              this.checkGuestNo();
+          },
+          error: err => {
+              console.log("error ", err);
+          }
+      });
   }
+
+
+  total_guest:number=0; discountPrice:number=0; price:number=0;
+  priceSelect:any = ['', 'single_rate', 'double_rate', 'triple_rate', 'quadruple_rate'];
+  soldOut:boolean = false;
+
+  room_rate:number=0;
+  checkGuestNo(): void {
+    console.log("price details ", this.priceDetails)
+    this.priceDetails.forEach((data:any) => {
+        this.getPrice(data);
+        this.updateFinalTotals();
+    });
+
+    if (this.f_total_taxt === 0) {
+        this.soldOut = true;
+    }
+  }
+
+  total:number=0; base_P:number=0; promo_d:number=0; normal_d:number=0; tax: number=0; total_taxt:number=0;
+  f_total:number=0; f_base_P:number=0; f_promo_d:number=0; f_normal_d:number=0; f_tax: number=0; f_total_taxt:number=0;
+  f_previous_Price: number = 0;
+  updateFinalTotals(): void {
+    this.f_total += this.total;
+    this.f_base_P += this.base_P;
+    this.f_promo_d += this.promo_d;
+    this.f_normal_d += this.normal_d;
+    this.f_tax += this.tax;
+    this.f_total_taxt += this.total_taxt;
+    this.f_previous_Price = this.f_total_taxt;
+    console.log("Final Total tax ", this.f_total_taxt);
+  }
+
+  getPrice(data: any): void {
+    this.total_guest = Number(this.adults) + Number(this.child);
+
+    let priceValue = 0;
+    let base_P = 0;
+    let getId = 0; //Math.ceil(this.adults / this.num_rooms) == 0 ? 1 : Math.ceil(this.adults / this.num_rooms);
+    /*  */
+    if((this.adults/this.num_rooms) >= this.listDetails.base_adults && this.total_guest/this.num_rooms <= this.listDetails.max_guest){
+      getId = Math.ceil(this.adults/this.num_rooms) >= this.listDetails.base_adults ? this.listDetails.base_adults : Math.floor(this.adults/this.num_rooms); 
+    }else if((this.adults/this.num_rooms) < this.listDetails.base_adults && (this.total_guest)/this.num_rooms <= this.listDetails.max_guest){
+      getId = Math.ceil(this.adults/this.num_rooms); 
+    }else{
+      console.log("else perform",)
+      this.soldOut = true;
+      return ;
+    }
+    //console.log("getId ", getId);
+    let priceId = this.priceSelect[getId];
+    //console.log("priceId ", priceId);
+    priceValue = data[priceId];
+    console.log("priceValue ", priceValue);
+    
+    // Get extra adult, child, and base price
+    const extraAdults = Math.ceil(Math.max((this.adults / this.num_rooms) - this.listDetails.base_adults, 0));
+    const extraAdultPrice = extraAdults * this.listDetails.extra_adult_price;
+
+    //let extraChildPrice = 0;
+    const childAges = JSON.parse(localStorage.getItem('child_age') || '[]');
+
+    // Calculate the number of chargeable children (above or equal to the minimum age)
+    const chargeableChildren = childAges.filter((age:any) => age > this.listDetails.min_child_age).length;
+
+    // Calculate the extra child price based on the number of children exceeding the base limit
+    //const extraChildPrice = Math.max(chargeableChildren - this.listDetails.base_child, 0) * this.listDetails.extra_child_price;
+    const extraChildPrice = Math.ceil(Math.max(chargeableChildren, 0)) * this.listDetails.extra_child_price;
+    /* if (this.adults <= this.listDetails.max_adults * this.num_rooms &&
+        this.child <= this.listDetails.max_child * this.num_rooms) {
+        if (this.adults > this.listDetails.base_adults * this.num_rooms ||
+            this.child > this.listDetails.base_child * this.num_rooms) {
+            if (this.adults > this.listDetails.base_adults) {
+                let extraAdult = this.adults - this.listDetails.base_adults * this.num_rooms;
+                extraAdultPrice = extraAdult * this.listDetails.extra_adult_price;
+            }
+            //if (this.child > this.listDetails.base_child || childAges?.find((value:any)=> value >this.listDetails.min_child_age) !== -1) {
+                //let extraChild = this.child - this.listDetails.base_child * this.num_rooms;
+                //extraChildPrice = extraChild * this.listDetails.extra_child_price;
+            //}
+            // Calculate the number of chargeable children (above or equal to the minimum age)
+            const chargeableChildren = childAges.filter((age:any) => age > this.listDetails.min_child_age).length;
+            // Calculate the extra child price based on the number of children exceeding the base limit
+            extraChildPrice = Math.ceil(Math.max(chargeableChildren, 0)) * this.listDetails.extra_child_price; 
+        }
+    } else {
+        console.log("else perform 2",)
+        this.soldOut = true;
+    } */
+
+    base_P += Math.floor(priceValue);
+    this.base_P = (base_P + extraAdultPrice + extraChildPrice) * this.num_rooms;
+    //console.log("price value from booking ", base_P, extraAdultPrice, extraChildPrice, this.num_rooms);
+
+    this.normal_d = (Math.floor((this.listDetails.be_discount * base_P) / 100)) * this.num_rooms;
+    this.total = this.base_P - this.normal_d;
+    //console.log("price after discount , normal_d", this.total, this.normal_d);
+
+    let tax = (base_P >= 7500) ? (18 * this.total) / 100 : (12 * this.total) / 100;
+    this.tax = Math.ceil(tax);
+
+    this.total_taxt = (this.total + this.tax);
+    console.log("base_P + tax - discount", this.total_taxt);
+}
+
+  
+
+
 
   bookDetails:any;
   listDetails:any; images:any;
@@ -260,350 +362,42 @@ export class BookingDetailsComponent {
       })
   }
 
-
-  //Slider configuartion
-  slideConfig = {
-    enabled: true,
-    autoplay: true,
-    draggable: false,
-    autoplaySpeed: 3000,
-    accessibility: true,
-    "slidesToShow": 4,
-    "slidesToScroll": 1,
-    "infinite": false,
-    "responsive": [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 4,
-          slidesToScroll: 3,
-          infinite: true,
-          dots: true
-        }
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 4,
-          slidesToScroll: 2
-        }
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1
-        }
+//Slider configuartion
+slideConfig = {
+  enabled: true,
+  autoplay: true,
+  draggable: false,
+  autoplaySpeed: 3000,
+  accessibility: true,
+  "slidesToShow": 4,
+  "slidesToScroll": 1,
+  "infinite": false,
+  "responsive": [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 4,
+        slidesToScroll: 3,
+        infinite: true,
+        dots: true
       }
-    ]
-  };
-
-  total_guest:number=0; discountPrice:number=0; price:number=0;
-  priceSelect:any = ['', 'single_rate', 'double_rate', 'triple_rate', 'quadruple_rate'];
-  soldOut:boolean = false;
-
-  room_rate:number=0;
-  checkGuestno(){
-    
-    //if person greater then base adults then choose room rent based on last rate
-    for(let val of this.priceDetails){
-      //
-      
-      this.getPrice(val)
-      //
-      //this.priceCal();
-      //Final price add here each time
-      this.f_total = this.f_total + this.total;
-      this.f_base_P = this.f_base_P + this.base_P;
-      this.f_promo_d = this.f_promo_d + this.promo_d;
-      this.f_normal_d = this.f_normal_d + this.normal_d;
-      this.f_tax = this.f_tax + this.tax;
-      this.f_total_taxt = this.f_total_taxt + this.total_taxt;
-      this.f_previous_Price = this.f_total_taxt;
-      console.log("Final Total tax ", this.f_total_taxt);
-    }
-    
-    //
-    if(this.f_total_taxt ==0){
-      this.soldOut = true;
-    }
-    
-  }
-
-  total:number=0; base_P:number=0; promo_d:number=0; normal_d:number=0; tax: number=0; total_taxt:number=0;
-  f_total:number=0; f_base_P:number=0; f_promo_d:number=0; f_normal_d:number=0; f_tax: number=0; f_total_taxt:number=0;
-  f_previous_Price: number = 0;
-  priceCal(){
-    
-    //=====================================
-
-    this.total_guest = this.adults + this.child;
-
-      //discount price
-      //when total guest < max guest ho tu show kre
-      if(this.num_rooms == 1){
-        if(this.total_guest <= this.listDetails.max_guest){
-          //when adults < max adults se tu show kre
-          if(this.adults <= this.listDetails.max_adults && this.child <= this.listDetails.max_child){
-            //when adults < base adults ho tu show kre
-            if(this.adults <= this.listDetails.base_adults && this.child <= this.listDetails.base_child){
-              //
-              let priceId = this.priceSelect[this.adults];
-              let priceValue; 
-              //console.log("selected base price ", this.priceSelect[this.adults] +"=="+this.listDetails[priceId]);
-              if(this.listDetails[priceId] !== 0){
-                priceValue = this.listDetails[priceId];
-                //price 
-                //this.price = parseInt(priceValue);
-                let base_P = parseInt(priceValue);
-                this.base_P = Math.floor(base_P);
-                //discount price
-                let dis_price = (this.base_P * this.listDetails?.be_discount)/100;
-                dis_price = Math.floor(dis_price);
-                this.discountPrice = this.base_P - dis_price;
-                //normal discount 
-                this.normal_d = dis_price;
-                console.log("normal_d ", this.normal_d);
-                //console.log("price when adults < base adults ", this.discountPrice);
-                //
-                //total price after discount
-                this.total = this.base_P - this.normal_d;
-                console.log("total amount - discount amount ", this.total);
-                //tax 12%
-                let tax = (12 * this.base_P)/100;
-                this.tax = Math.floor(tax);
-                console.log("tax ", this.tax);
-                //total price after discount and tax
-                this.total_taxt = (this.base_P - this.normal_d + this.tax);
-                console.log("base_P + tax - discount", this.total_taxt);
-              }else{
-                console.log("person greater then four");
-                this.soldOut = true;
-              }
-  
-            }else{
-  
-              //get which price have to select  (this will return index number for get price this.listDetails.base_adults)
-              //console.log("base adults ", this.listDetails.base_adults);
-              let priceId = this.priceSelect[this.listDetails.base_adults];
-              let priceValue; 
-              //console.log("selected base price ", this.priceSelect[this.listDetails.base_adults] +"=="+this.listDetails[priceId]);
-              if(this.listDetails[priceId] !== 0){
-                priceValue = this.listDetails[priceId] 
-              }
-  
-              //when extra child or extra adults
-              let extraChild; let extraAdult; let extraAdultPrice=0; let extraChildPrice=0;
-              if(this.adults > this.listDetails.base_adults){
-                extraAdult = this.adults - this.listDetails.base_adults
-                extraAdultPrice = extraAdult * this.listDetails.extra_adult_price;
-                //console.log("extra adults=", extraAdult +" extra adults price="+ extraAdultPrice);
-              }
-              //
-              if(this.child > this.listDetails.base_child){
-                extraChild = this.child - this.listDetails.base_child;
-                extraChildPrice = extraChild * this.listDetails.extra_child_price;
-                //console.log("extra child=",  extraChild +" extra child price="+ extraChildPrice);
-              }
-  
-                
-                
-                //this.price = parseInt(priceValue);
-                let base_P = parseInt(priceValue) + extraAdultPrice + extraChildPrice;
-                this.base_P = Math.floor(base_P);
-                console.log("base price ", this.base_P);
-                //discount price
-                let dis_price = (this.base_P * this.listDetails?.be_discount)/100;
-                dis_price = Math.floor(dis_price);
-                this.discountPrice = this.base_P - dis_price;
-                //normal discount 
-                this.normal_d = dis_price;
-                console.log("normal_d ", this.normal_d);
-                //console.log("price when adults < base adults ", this.discountPrice);
-                //
-                //total price after discount
-                this.total = this.base_P - this.normal_d;
-                console.log("total amount - discount amount ", this.total);
-                //tax 12%
-                let tax = (12 * this.base_P)/100;
-                this.tax = Math.floor(tax);
-                console.log("tax ", this.tax);
-                //total price after discount and tax
-                this.total_taxt = (this.base_P - this.normal_d + this.tax);
-                console.log("base_P + tax - discount", this.total_taxt);
-              
-            }
-          }else{
-            console.log("max adults & child ",this.adults +">"+ this.listDetails.max_adults);
-            this.soldOut = true;
-          }
-        }else{
-          console.log("max guest ",this.total_guest +">"+ this.listDetails.max_guest);
-          this.soldOut = true;
-        }
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 4,
+        slidesToScroll: 2
       }
-    //======================================
-
-    /* =====================================
-          When room more then 2
-    ========================================*/
-    if(this.num_rooms > 1){
-      if(this.total_guest <= this.listDetails.max_guest * this.num_rooms){
-        //when adults < max adults se tu show kre
-        if(this.adults <= this.listDetails.max_adults * this.num_rooms && this.child <= this.listDetails.max_child * this.num_rooms){
-          //when adults < base adults ho tu show kre
-          if(this.adults <= this.listDetails.base_adults * this.num_rooms && this.child <= this.listDetails.base_child * this.num_rooms){
-            //
-            let adult_room = Math.ceil(this.adults/this.num_rooms);
-            console.log("adult_room ", adult_room);
-            let priceId = this.priceSelect[adult_room];
-            let priceValue; 
-            //console.log("selected base price ", this.priceSelect[this.adults] +"=="+this.listDetails[priceId]);
-            if(this.listDetails[priceId] !== 0){
-              priceValue = this.listDetails[priceId];
-              //price 
-              //this.price = parseInt(priceValue);
-              let base_P = parseInt(priceValue);
-              this.base_P = Math.floor(base_P);
-              this.base_P = this.base_P * this.num_rooms;
-              //discount price
-              let dis_price = (this.base_P * this.listDetails?.be_discount)/100;
-              dis_price = Math.floor(dis_price);
-              this.discountPrice = this.base_P - dis_price;
-              //normal discount 
-              this.normal_d = dis_price;
-              console.log("normal_d ", this.normal_d);
-              //console.log("price when adults < base adults ", this.discountPrice);
-              //
-              //total price after discount
-              this.total = this.base_P - this.normal_d;
-              console.log("total amount - discount amount ", this.total);
-              //tax 12%
-              let tax = (12 * this.base_P)/100;
-              this.tax = Math.floor(tax);
-              console.log("tax ", this.tax);
-              //total price after discount and tax
-              this.total_taxt = (this.base_P - this.normal_d + this.tax);
-              console.log("base_P + tax - discount", this.total_taxt);
-            }else{
-              console.log("person greater then four");
-              this.soldOut = true;
-            }
-
-          }else{
-
-            //get which price have to select  (this will return index number for get price this.listDetails.base_adults)
-            //console.log("base adults ", this.listDetails.base_adults);
-            let priceId = this.priceSelect[this.listDetails.base_adults];
-            let priceValue; 
-            //console.log("selected base price ", this.priceSelect[this.listDetails.base_adults] +"=="+this.listDetails[priceId]);
-            if(this.listDetails[priceId] !== 0){
-              priceValue = this.listDetails[priceId] 
-            }
-
-            //when extra child or extra adults
-            let extraChild; let extraAdult; let extraAdultPrice=0; let extraChildPrice=0;
-            if(this.adults > this.listDetails.base_adults){
-              extraAdult = this.adults - this.listDetails.base_adults
-              extraAdultPrice = extraAdult * this.listDetails.extra_adult_price;
-              //console.log("extra adults=", extraAdult +" extra adults price="+ extraAdultPrice);
-            }
-            //
-            if(this.child > this.listDetails.base_child){
-              extraChild = this.child - this.listDetails.base_child;
-              extraChildPrice = extraChild * this.listDetails.extra_child_price;
-              //console.log("extra child=",  extraChild +" extra child price="+ extraChildPrice);
-            }
-
-              
-              
-              //this.price = parseInt(priceValue);
-              let base_P = parseInt(priceValue) + extraAdultPrice + extraChildPrice;
-              this.base_P = Math.floor(base_P);
-              this.base_P = this.base_P * this.num_rooms;
-              console.log("base price ", this.base_P);
-              //discount price
-              let dis_price = (this.base_P * this.listDetails?.be_discount)/100;
-              dis_price = Math.floor(dis_price);
-              this.discountPrice = this.base_P - dis_price;
-              //normal discount 
-              this.normal_d = dis_price;
-              console.log("normal_d ", this.normal_d);
-              //console.log("price when adults < base adults ", this.discountPrice);
-              //
-              //total price after discount
-              this.total = this.base_P - this.normal_d;
-              console.log("total amount - discount amount ", this.total);
-              //tax 12%
-              let tax = (12 * this.base_P)/100;
-              this.tax = Math.floor(tax);
-              console.log("tax ", this.tax);
-              //total price after discount and tax
-              this.total_taxt = (this.base_P - this.normal_d + this.tax);
-              console.log("base_P + tax - discount", this.total_taxt);
-            
-          }
-        }else{
-          console.log("max adults & child ",this.adults +">"+ this.listDetails.max_adults);
-          this.soldOut = true;
-        }
-      }else{
-        console.log("max guest ",this.total_guest +">"+ this.listDetails.max_guest);
-        this.soldOut = true;
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 3,
+        slidesToScroll: 1
       }
     }
-
-  }
-  
-  getPrice(data:any){
-    this.total_guest = this.adults + this.child;
-
-    let priceValue = 0; let base_P = 0;
-    let getId = Math.floor(this.adults/this.num_rooms) == 0 ? 1: Math.floor(this.adults/this.num_rooms);
-    let priceId = this.priceSelect[getId];
-    priceValue = data[priceId];
-
-    //when extra child or extra adults
-    let extraChild; let extraAdult; let extraAdultPrice=0; let extraChildPrice=0;
-    if(this.adults <= this.listDetails.max_adults * this.num_rooms && this.child <= this.listDetails.max_child * this.num_rooms){
-      if(this.adults > this.listDetails.base_adults * this.num_rooms || this.child > this.listDetails.base_child * this.num_rooms){
-        if(this.adults > this.listDetails.base_adults){
-          extraAdult = this.adults - this.listDetails.base_adults * this.num_rooms;
-          extraAdultPrice = extraAdult * this.listDetails.extra_adult_price;
-          //console.log("extra adults=", extraAdult +" extra adults price="+ extraAdultPrice);
-        }
-        //
-        if(this.child > this.listDetails.base_child){
-          extraChild = this.child - this.listDetails.base_child * this.num_rooms;
-          extraChildPrice = extraChild * this.listDetails.extra_child_price;
-          console.log("extra child=",  extraChild +" extra child price="+ extraChildPrice);
-        }
-      }
-    }else{this.soldOut = true;}
-
-    //base price
-    base_P += Math.floor(priceValue);
-    this.base_P = (base_P + extraAdultPrice + extraChildPrice) * this.num_rooms;
-    console.log("price value from booking ", this.base_P);
-
-    //discount price  here discount comes from params
-    let dis_price = (this.base_P * this.listDetails.be_discount)/100;
-    dis_price = Math.floor(dis_price);
-    this.normal_d = dis_price;
-    //total price after discount
-    this.total = this.base_P - dis_price;
-    //tax 12%
-    let tax = (12 * this.base_P)/100;
-    this.tax = Math.floor(tax);
-    console.log("tax ", this.tax);
-    //total price after discount and tax
-    this.total_taxt = (this.base_P - this.normal_d + this.tax);
-    console.log("base_P + tax - discount", this.total_taxt);
-  }
-
-
-
-
+  ]
+};
   
 /* 
   show and hide model for sign in

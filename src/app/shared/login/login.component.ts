@@ -236,7 +236,7 @@ export class LoginComponent {
     let mobileNo = this.signUpForm.value.mobile;
     if(mobileNo){
       this._service.getMobileNo(mobileNo).subscribe((res:any)=>{
-        console.log("res ", res);
+        //console.log("res ", res);
         if(res.status == "NOK"){
           this.mobile_exist = true;
         }else{

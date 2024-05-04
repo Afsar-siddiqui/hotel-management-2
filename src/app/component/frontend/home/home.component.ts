@@ -12,6 +12,7 @@ import { MetaService } from 'src/app/service/meta.service';
 import { ViewportScroller } from '@angular/common';
 import { Observable, map } from 'rxjs';
 import { MapDirectionsService } from '@angular/google-maps';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class HomeComponent {
   /* bsInlineValue = new Date();
   bsInlineRangeValue: Date[];
   maxDate = new Date(); */
+  childForm: FormGroup|any;
 
   code: any;
   cityId: number|null|undefined;
@@ -49,7 +51,7 @@ export class HomeComponent {
   modalRef?: BsModalRef;
 
 
-  constructor(private _scripts: ScriptsMethodService, private _frontend: FrontendService, private router: Router, private _whishList: WishlistService,
+  constructor(private _scripts: ScriptsMethodService, private _frontend: FrontendService, private router: Router, private _whishList: WishlistService, private fb: FormBuilder,
     private geo: GeoService, private _meta: MetaService, private viewportScroller: ViewportScroller, private mapDirectionsService: MapDirectionsService){
     this.minDate = new Date();
     this.maxDate = new Date();
@@ -69,6 +71,12 @@ export class HomeComponent {
   ngOnInit(){
     // Scroll to the top of the page
     this.viewportScroller.scrollToPosition([0, 0]);
+
+    //
+    this.childForm = this.fb.group({
+      numberOfChildren: [0], // Input field for selecting number of children
+      childAges: this.fb.array([]) // Form array for dynamically adding child age form controls
+    });
 
     //Meta tag
     this._meta.updateTitle('RevTrip Hotels - Best Hotel Deals, Discounts, and Reservations')
@@ -104,6 +112,10 @@ export class HomeComponent {
       //console.log("Date ", this.bookDate)
       this.checkIn = this.searchDetails.checkin;
       this.checkOut = this.searchDetails.checkout;
+
+      if (localStorage.getItem('child_age')) {
+        this.generateChildAges();
+      }
     }
 
     //Recently added hotel
@@ -134,7 +146,44 @@ export class HomeComponent {
         val['discount_Price'] = discountPrice;
       }
     })
+  }
 
+  // Getter for accessing child ages form array
+  get childAgesArray() {
+    return this.childForm?.get('childAges') as FormArray;
+  }
+
+  // Method to generate child age form controls based on the selected number of children
+  generateChildAges() {
+    if (localStorage.getItem('child_age')) {
+      const child_age = JSON.parse(localStorage.getItem('child_age') || '');
+      //console.log("working age ", child_age, this.childrenQuantity);
+      const formArray = this.childForm?.get('childAges') as FormArray;
+      formArray.clear();
+      // Patch the retrieved child age values into the form array
+      for(let i=0; i< this.childrenQuantity; i++){
+        if(child_age.length-1 >= i){
+          formArray.push(this.fb.control(child_age[i], [Validators.required, Validators.max(17)]));
+        }else{
+          formArray.push(this.fb.control(0, [Validators.required, Validators.max(17)]));
+        }
+      }
+    } else {
+      // Clear existing form controls if no child age values are found
+      const formArray = this.childForm.get('childAges') as FormArray;
+      formArray.clear();
+  
+      // Add form control for each child age
+      for (let i = 0; i < this.childrenQuantity; i++) {
+        formArray.push(this.fb.control(0, [Validators.required, Validators.max(17)]));
+      }
+    }
+  }
+  
+
+  // Method to handle change in the number of children
+  onNumberOfChildrenChange() {
+    this.generateChildAges(); // Generate child age form controls
   }
 
   popularDestinationList:any; itemsToShow: number=0;
@@ -321,6 +370,7 @@ export class HomeComponent {
     }
     this.checkIn = moment(new Date(arrDate[0])).format('YYYY-MM-DD');
     this.checkOut = moment(new Date(arrDate[1])).format('YYYY-MM-DD');
+    console.log("BookDate", this.checkIn, this.checkOut)
 
     //if date already exist and then change date it should to change loacl storage also
     if(this.searchDetails){
@@ -357,8 +407,10 @@ addToWishlist(list: any) {
       case 'children':
         if(this.childrenQuantity<10 && val==='plus'){
           this.childrenQuantity += 1;
+          this.onNumberOfChildrenChange();
         }else if(this.childrenQuantity>0 && val==='min'){
           this.childrenQuantity -= 1;
+          this.onNumberOfChildrenChange();
         }else{}
         this.children = this.childrenQuantity;
         break;
@@ -376,78 +428,109 @@ addToWishlist(list: any) {
 
 
   //search hotel list
-  onSearch(){
-    //get current date
-    let currentdate = moment(this.minDate).format('YYYY-MM-DD');
-    let nextDate = new Date();
-    nextDate.setDate(nextDate.getDate() + 1);
-    let checkout = moment(nextDate).format('YYYY-MM-DD');
-    console.log("date check ", this.searchDetails.checkin +"<="+ currentdate)
-    if(this.searchDetails){
-      this.searchDetails = JSON.parse(localStorage.getItem('search') as string);
-      if(this.searchDetails.checkin >= currentdate){}else{
-        Swal.fire({
-          position: 'top',
-          text: 'Please check your booking date old',
-          icon: 'info',
-          confirmButtonText: 'Ok'
-        });
-        //assigned date checkin:this.checkIn, checkout:this.checkOut,
-        this.bookDate = this.searchDetails.checkin +" - "+this.searchDetails.checkout;
-        
-        //console.log("Date ", this.bookDate)
-        this.checkIn = currentdate;
-        this.checkOut = checkout;
-        return ;
-      }
+  onSearch(): void {
+    if(!this.isChildAge()){
+      this.showErrorMessage("please provide child age")
+      return ;
     }
-    
-    this.code =this.searchDetails.code;
-    //hotel:string, checkin:string, checkout:string, adults:number, child:number, num_rooms:number, city:number
-    //redirect on details page when choose hotel
-    console.log("working ", this.bookDate, (this.place))
-    if(this.bookDate && (this.place)){
-      if(this.code){
-        const queryParams = {Name: this.hotelName, checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms, city: this.cityId}
-        //this.router.navigate(['/view'], {queryParams});  //
-        this.router.navigate([this.code], {queryParams})
-        localStorage.setItem('search', JSON.stringify({code:this.code, Name: this.hotelName, checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms}))
-        
-      }
+    // Get current date
+    const currentDate: string = this.formatDate(this.minDate);
+    const nextDate: string = this.formatDate(this.getNextDate());
+    //console.log("booking date ", currentDate)
+    // Check if check-in date is valid
+    if (this.isValidCheckinDate(currentDate)) {
+      this.handleValidCheckinDate(currentDate, nextDate);
+    } else {
+      this.handleInvalidCheckinDate();
+    }
+  }
   
-      //redirect on hotel list page when choose city
-      if(this.cityId){
-        const queryParams = {checkin:this.checkIn, checkout:this.checkOut, adults:this.adults, child:this.children, num_rooms:this.rooms}
-        this.router.navigate(['/hotels/'+this.cityId], {queryParams});
-        localStorage.setItem('search', JSON.stringify(queryParams))
-        
-      }
-    }else{
-      //when booking date null
-      if(!this.bookDate){
-        Swal.fire({
-          position: 'top',
-          text: 'Please select booking date',
-          icon: 'info',
-          confirmButtonText: 'Ok'
-        });
-      }
-      //when place null
-      if(!this.place){
-        Swal.fire({
-          position: 'top',
-          text: 'Please select city or hotel',
-          icon: 'info',
-          confirmButtonText: 'Ok'
-        });
-      }
+  formatDate(date: Date): string {
+    return moment(date).format('YYYY-MM-DD');
+  }
+  
+  getNextDate(): Date {
+    const nextDate: Date = new Date();
+    nextDate.setDate(nextDate.getDate() + 1);
+    return nextDate;
+  }
+  
+  isValidCheckinDate(currentDate: string): boolean {
+    this.searchDetails = JSON.parse(localStorage.getItem('search') as string);
+    if(this.searchDetails?.checkin){
+      return  this.searchDetails?.checkin >= currentDate;
+    }else{ return true}
+  }
 
-      //
-      //this.router.navigate(['/view'], {queryParams});
-
+  isChildAge(): boolean{
+    const includesZero = this.childAgesArray.value.includes(0);
+    //console.log("working child", this.childAgesArray, includesZero)
+    if(includesZero){ return false;}
+    else{return true}
+  }
+  
+  handleValidCheckinDate(currentDate: string, nextDate: string): void {
+    if (this.bookDate && this.place) {
+      if (this.code) {
+        const queryParams = {
+          Name: this.hotelName,
+          checkin: this.checkIn,
+          checkout: this.checkOut,
+          adults: this.adults,
+          child: this.children,
+          num_rooms: this.rooms,
+          city: this.cityId,
+        };
+        this.navigateToDetailsPage(queryParams);
+      } else if (this.cityId) {
+        const queryParams = {
+          checkin: this.checkIn,
+          checkout: this.checkOut,
+          adults: this.adults,
+          child: this.children,
+          num_rooms: this.rooms,
+        };
+        this.navigateToHotelListPage(queryParams);
+      }
+      this.child_age_store();
+    } else {
+      if (!this.bookDate) {
+        this.showErrorMessage('Please select booking date');
+      }
+      if (!this.place) {
+        this.showErrorMessage('Please select city or hotel');
+      }
     }
-
-    
+  }
+  
+  handleInvalidCheckinDate(): void {
+    this.showErrorMessage('Please check your booking date');
+    this.bookDate = `${this.searchDetails?.checkin} - ${this.searchDetails?.checkout}`;
+    this.checkIn = this.formatDate(this.minDate);
+    this.checkOut = this.formatDate(this.getNextDate());
+  }
+  
+  navigateToDetailsPage(queryParams: any): void {
+    this.router.navigate([this.code], { queryParams });
+    localStorage.setItem('search', JSON.stringify({ code: this.code, ...queryParams }));
+  }
+  
+  navigateToHotelListPage(queryParams: any): void {
+    this.router.navigate(['/hotels/' + this.cityId], { queryParams });
+    localStorage.setItem('search', JSON.stringify(queryParams));
+  }
+  
+  showErrorMessage(message: string): void {
+    Swal.fire({
+      position: 'top',
+      text: message,
+      icon: 'info',
+      confirmButtonText: 'Ok'
+    });
+  }
+  
+  child_age_store(){
+    localStorage.setItem("child_age", JSON.stringify(this.childAgesArray.value));
   }
 
 

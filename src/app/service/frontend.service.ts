@@ -139,6 +139,18 @@ export class FrontendService {
     this.sharedFooter.next(value);
   }
 
+
+  onConsole(type='log', message="console message: ", value:any='', value2:any=''){
+    if(type == 'table'){
+      console.table(message, value)
+    }else if(type == 'info'){
+      console.info(message, value, value2)
+    }else if(type == 'error'){
+      console.error(message, value, value2)
+    }else{
+      console.log(message, value, value2)
+    }
+  }
   
 
 }

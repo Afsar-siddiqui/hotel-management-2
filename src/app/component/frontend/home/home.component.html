@@ -46,12 +46,33 @@
                         <div class="main-search-input-item main-date-parent main-search-input-item_small">
                             <span class="inpt_dec">
                             <i class="fal fa-calendar-check"></i></span> 
-                            <input type="text" placeholder="{{bookDate == null ?'When':bookDate}}" bsDaterangepicker [(ngModel)]="bookDate" [minDate]="minDate" (ngModelChange)="onBookDate()" [bsConfig]="{ showWeekNumbers: false }"/>
+                            <!-- <input type="text" placeholder="{{bookDate == null ?'When':bookDate}}" bsDaterangepicker [(ngModel)]="bookDate" [minDate]="minDate" (ngModelChange)="onBookDate()" [bsConfig]="{ showWeekNumbers: false }"/> -->
+                            <!-- <input type="text" placeholder="{{ bookDate == null ? 'When' : bookDate }}"
+                            bsDaterangepicker
+                            [(ngModel)]="bookDate"
+                            [minDate]="minDate"
+                            (ngModelChange)="onBookDate()"
+                            [bsConfig]="{ showWeekNumbers: false }"/> -->
+                            <input class="form-control" placeholder="{{ bookDate == null ? 'When' : bookDate }}" [(ngModel)]="bookDate"
+                            bsDaterangepicker
+                            [minDate]="minDate"
+                            (ngModelChange)="onBookDate()"
+                            [bsConfig]="{ preventChangeToNextMonth: true, showWeekNumbers: false }"><!-- displayOneMonthRange: true, -->
                         </div>
                         <div class="main-search-input-item">
                             <div class="qty-dropdown fl-wrap">
                                 <div class="qty-dropdown-header fl-wrap" (click)="onDropDownAttributes('.qty-dropdown-content')"><i class="fal fa-users"></i> Rooms {{rooms}}, Adults {{adults}}, Child {{children}}</div>
                                 <div class="qty-dropdown-content fl-wrap">
+                                    <div class="quantity-item">
+                                        <label><i class="fas fa-home"></i> Rooms</label>
+                                        <div class="quantity">
+                                            <input type="number" [(ngModel)]="roomsQuantity" min="1" max="20" step="1" value="0">
+                                            <div class="quantity-nav">
+                                                <div class="quantity-button quantity-up" (click)="handelQuantity('plus', 'rooms')">+</div>
+                                                <div class="quantity-button quantity-down" (click)="handelQuantity('min', 'rooms')">-</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="quantity-item">
                                         <label><i class="fas fa-male"></i> Adults</label>
                                         <div class="quantity">
@@ -65,23 +86,27 @@
                                     <div class="quantity-item">
                                         <label><i class="fas fa-child"></i> Children</label>
                                         <div class="quantity">
-                                            <input type="number" [(ngModel)]="childrenQuantity" min="0" max="10" step="1" value="0">
+                                            <input type="number" [(ngModel)]="childrenQuantity" min="0" max="10" step="1" value="0" (change)="onNumberOfChildrenChange()">
                                             <div class="quantity-nav">
                                                 <div class="quantity-button quantity-up" (click)="handelQuantity('plus', 'children')">+</div>
                                                 <div class="quantity-button quantity-down" (click)="handelQuantity('min', 'children')">-</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="quantity-item">
-                                        <label><i class="fas fa-home"></i> Rooms</label>
-                                        <div class="quantity">
-                                            <input type="number" [(ngModel)]="roomsQuantity" min="1" max="20" step="1" value="0">
-                                            <div class="quantity-nav">
-                                                <div class="quantity-button quantity-up" (click)="handelQuantity('plus', 'rooms')">+</div>
-                                                <div class="quantity-button quantity-down" (click)="handelQuantity('min', 'rooms')">-</div>
+                                    <!-- Display child age input fields -->
+                                    <form [formGroup]="childForm">
+                                        <div formArrayName="childAges">
+                                            <div *ngFor="let child of childAgesArray.controls; let i = index">
+                                            <div class="child_age">
+                                                <label for="age{{ i + 1 }}">Child Age {{ i + 1 }}:</label>
+                                                <input type="number" id="age{{ i + 1 }}" [formControlName]="i">
+                                                <p *ngIf="child.errors?.['required'] || child.value <1">Age required</p>
+                                                <p *ngIf="child.errors?.['max']">Maximum age 17</p>
+                                            </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </form>
+                                    <!-- End -->
                                 </div>
                             </div>
                         </div>
@@ -112,7 +137,7 @@
                     <div class="grid-item-holder" (click)="navigateToHotel_By_city(list)" [routerLink]="'/city/'+list.slug">
                         <div class="listing-item-grid">
                             <div class="listing-counter"><span>{{list.total_hotel}}</span> Hotels</div>
-                            <img  [src]="list.image"   [alt]="list.slug">
+                            <img  [src]="list.image || 'assets/images/bg/dummy-room.jpeg'"  [alt]="list.slug" loading="lazy">
                             <div class="listing-item-cat">
                                 <h3><a (click)="navigateToHotel_By_city(list)" [routerLink]="'/city/'+list.slug">{{list.name}} - {{list.state_name}}</a></h3>
                                 <div class="clearfix"></div>
@@ -162,7 +187,7 @@
                 <div class="listing-item">
                     <article class="geodir-category-listing fl-wrap">
                         <div class="geodir-category-img">
-                            <a [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)"><img src="{{list.image}}" alt=""></a>
+                            <a [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)"><img [src]="list.image || 'assets/images/bg/dummy-room.jpeg'"  [alt]="list.slug"></a>
                             <!-- <div class="listing-avatar"><a href="author-single.html"><img src="assets/images/avatar/1.jpg" alt=""></a>
                                 <span class="avatar-tooltip">Added By  <strong>Alisa Noory</strong></span>
                             </div> -->
@@ -304,7 +329,7 @@
                             <div class="slick-slide-item" ngxSlickItem *ngFor="let list of popularHotel" [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)"><!-- (click)="navigateToHotel_By_name(list) -->
                                 <div class="hotel-card fl-wrap title-sin_item">
                                     <div class="geodir-category-img card-post">
-                                        <a [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)"><img src="{{list.image}}" alt=""></a>
+                                        <a [routerLink]="[list.slug]" (click)="navigateToHotel_By_name(list)"><img [src]="list.image || 'assets/images/bg/dummy-room.jpeg'" [alt]="list.slug"></a>
                                         <div class="listing-counter">Room/Night <strong>₹{{list.discount_Price}} </strong> <span *ngIf="list.be_discount !=0" class="p-discount-price">₹ {{list.single_rate}}</span></div>
                                         <div class="sale-window">Sale 20%</div>
                                         <div class="geodir-category-opt">

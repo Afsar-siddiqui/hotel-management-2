@@ -129,24 +129,37 @@
 
                         </div>
                         <!---->
-                        <div *ngIf="!soldOut" class="list-single-hero-price fl-wrap" style="font-weight: 600;">Average Price
-                            <p class="price-both-view">
-                                <span class="room_previous_price" *ngIf="listDetails?.be_discount !=0"> ₹ {{price}}</span>
-                            <span class="single-rate"> ₹ {{discountPrice}} 
-                                <span class="room_night">Room/Night</span>
-                            </span>
-                            </p>
-                            <div *ngIf="listDetails?.be_discount !=0" class="discount-price price-details-tag mt-2">Discount {{listDetails?.be_discount}}% 
-                                <span class="discount"> 
-                                    ₹  {{price - discountPrice}} 
-                                </span>
+                        <div *ngIf="!soldOut" class="review-score-detail-list">
+                            <!-- base price item-->
+                            <div class="rate-item fl-wrap">
+                                <div class="rate-item-title"><span>Room Price</span> <span class="rate-price" [ngClass]="listDetails?.be_discount == 0 ? 'discount-available':null"> <span class="previous-rate-cut">₹ {{price}}
+                                    <span class="room_night">Room/Night</span>
+                                </span></span></div>
                             </div>
-                            <div *ngIf="f_total_tax !=0" class="total_price mt-2">Total Price
-                                <span class="discount"> 
+                            <!-- base price item end-->
+                            <!-- discount item-->
+                            <div class="rate-item fl-wrap" *ngIf="this.listDetails.be_discount !=0">
+                                <div class="rate-item-title rate-price_d"><span style="color: red;">Discount {{this.listDetails.be_discount}}%</span> <span class="rate-price">₹ {{price - discountPrice}} 
+                                    <span class="room_night">Room/Night</span></span></div>
+                            </div>
+                            <!-- discount item end-->
+                            <!-- discount price item-->
+                            <div class="rate-item fl-wrap">
+                                <div class="rate-item-title rate-price_bold"><span>Price After Discount</span> <span class="single-rate"> ₹ {{discountPrice}} 
+                                    <span class="room_night">Room/Night</span>
+                                </span></div>
+                            </div>
+                            <!-- discount item end-->
+                             <!-- total item-->
+                            <div class="rate-item fl-wrap">
+                                <div class="rate-item-title total_price_calculate"><span style="font-weight: 800;">Total Amount</span> <span class="discount"> 
                                     ₹  {{f_total_tax}}
                                     <span class="room_night">{{num_rooms}}Room/{{priceDetails.length}}Night</span>
                                 </span>
+                                <p class="other-taxes">+ {{f_tax}} taxes & fees</p>
+                                </div>
                             </div>
+                            <!-- total item end-->
                         </div>
                         <div *ngIf="soldOut" class="list-single-hero-price fl-wrap" [ngClass]="soldOut == true?'sold-out':null"><i class="far fa-sad-tear"></i> Sold Out</div> <!-- *ngIf="inventory.length==0" -->
                         <!--reviews-score-wrap-->   
@@ -441,7 +454,7 @@
                 <!--   sidebar  -->
                 <div class="col-md-4">
                     <!--box-widget-wrap -->  
-                    <div class="box-widget-wrap">
+                    <div class="box-widget-wrap" style="margin-top: 1.5rem;">
                         <!--box-widget-item -->
                         <!-- <div class="box-widget-item fl-wrap">
                             <div class="box-widget counter-widget" data-countDate="09/12/2024">
@@ -483,10 +496,11 @@
                                     </div>
                                     <div class="box-widget-list">
                                         <ul>
-                                            <li><span><i class="fal fa-map-marker"></i> Adress :</span> <a href="javascript:()">Level 3, Office No. 5, Varun Tower, Sector-20 B, Near by Neelam Ajronda Chowk, Faridabad, Haryana 121001</a></li>
+                                            <li *ngIf="ref"><span><i class="fal fa-map-marker"></i> Adress :</span> <a href="javascript:()">{{listDetails?.address}}</a></li>
+                                            <li *ngIf="!ref"><span><i class="fal fa-map-marker"></i> Adress :</span> <a href="javascript:()">Level 3, Office No. 5, Varun Tower, Sector-20 B, Near by Neelam Ajronda Chowk, Faridabad, Haryana 121001</a></li>
                                             <li><span><i class="fal fa-phone"></i> Phone :</span> <a href="tel:+91 98704 70966">+91 98704 70966</a></li>
-                                            <li><span><i class="fal fa-envelope"></i> Mail :</span> <a href="mailto:info@revtriphotels.com">info@revtriphotels.com</a></li>
-                                            <li><span><i class="fal fa-browser"></i> Website :</span> <a href="revtriphotels.com">revtriphotels.com</a></li>
+                                            <li *ngIf="!ref"><span><i class="fal fa-envelope"></i> Mail :</span> <a href="mailto:info@revtriphotels.com">info@revtriphotels.com</a></li>
+                                            <li *ngIf="!ref"><span><i class="fal fa-browser"></i> Website :</span> <a href="revtriphotels.com">revtriphotels.com</a></li>
                                         </ul>
                                     </div>
                                     <div class="list-widget-social">
@@ -558,7 +572,7 @@
                                     <div class="widget-posts fl-wrap">
                                         <ul>
                                             <li class="clearfix" *ngFor="let list of smilarHotelList">
-                                                <a href="javascript:()" (click)="onChangeHotel(list)"  class="widget-posts-img"><img [src]="list.image" class="respimg" alt=""></a>
+                                                <a href="javascript:()" (click)="onChangeHotel(list)"  class="widget-posts-img"><img [src]="list.image  || 'assets/images/bg/dummy-room.jpeg'" class="respimg" alt="list.hotel_name"></a>
                                                 <div class="widget-posts-descr">
                                                     <a href="javascript:()" class="similar-heading" (click)="onChangeHotel(list)" title="{{list.hotel_name}}">{{list.hotel_name}}</a>
                                                     <div class="similar-price-list"><span class="">₹{{list.single_rate}} <span class="discount-price" *ngIf="listDetails?.be_discount !=0">{{list.discount_Price}}</span> <strong> /Room/Night</strong></span></div>
@@ -602,7 +616,7 @@
                 </div>
     
                 <div class="col-xs-5">
-                    <div *ngIf="soldOut" class="list-single-hero-price fl-wrap" [ngClass]="soldOut == true?'sold-out':null"><i class="far fa-sad-tear"></i> Sold Out</div>
+                    <!-- <div *ngIf="soldOut" class="list-single-hero-price fl-wrap" [ngClass]="soldOut == true?'sold-out':null"><i class="far fa-sad-tear"></i> Sold Out</div> -->
                     <a *ngIf="!soldOut" href="javascript:()" (click)="onRouteBooking('room-plan')" class="btn-footer-mobile">Book Now</a>
                 </div>
     

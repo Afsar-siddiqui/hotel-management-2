@@ -124,3 +124,35 @@
 .header-user-name:before{
     display: none;
 }
+
+
+
+
+.child_age_parent::before{
+    display: none;
+}
+.child_age_div{
+    width: 100%;
+    float: right;
+}
+.child_age label{
+    float: left;
+    font-size: 12px;
+    padding-top: 8px;
+    width: 60%;
+    text-align: left;
+}
+.child_age input{
+    width: 53px;
+    text-align: center;
+    padding: 3px 0px;
+    float: left;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin-bottom: 5px;
+}
+.child_age p {
+    font-size: 10px;
+    float: inline-end;
+    color: red;
+}

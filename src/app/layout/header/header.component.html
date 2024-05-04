@@ -137,7 +137,7 @@
         <div class="container">
             <div class="row" (click)="dropPlace()">
                 <!-- header-search-input-item -->
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <div class="header-search-input-item fl-wrap location autocomplete-container" (click)="onDropDown('.header-dropdown-content', 'hide')">
                         <label>Destination or Hotel Name</label>
                         <span class="header-search-input-item-icon"><i class="fal fa-map-marker-alt"></i></span>
@@ -159,7 +159,7 @@
                         <span class="header-search-input-item-icon"><i class="fal fa-calendar-check"></i></span>
                         <!-- <input type="text" placeholder="When" name="header-search"   value=""/> -->
                         <input type="text" placeholder="{{bookDate == null ?'When':bookDate}}" bsDaterangepicker [(ngModel)]="bookDate" [minDate]="minDate" (ngModelChange)="onBookDate()" 
-                        [bsConfig]="{ showWeekNumbers: false }"/>
+                        [bsConfig]="{ preventChangeToNextMonth: true, showWeekNumbers: false }"/>
                     </div>
                 </div>
                 <!-- header-search-input-item end -->
@@ -189,7 +189,7 @@
                         <div class="quantity-item">
                             <label>Children</label>
                             <div class="quantity">
-                                <input type="number" [(ngModel)]="childrenQuantity" min="0" max="10" step="1" value="0">
+                                <input type="number" [(ngModel)]="childrenQuantity" min="0" max="10" step="1" value="0" (change)="onNumberOfChildrenChange()">
                                 <div class="quantity-nav">
                                     <div class="quantity-button quantity-up" (click)="handelQuantity('plus', 'children')">+</div>
                                     <div class="quantity-button quantity-down" (click)="handelQuantity('min', 'children')">-</div>
@@ -198,9 +198,28 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-1" *ngIf="childrenQuantity">
+                    <div class="header-search-input-item fl-wrap date-parent child_age_parent">
+                        <label>Child Age </label>
+                        <!-- Display child age input fields -->
+                        <form [formGroup]="childForm">
+                            <div formArrayName="childAges" class="child_age_div">
+                                <div *ngFor="let child of childAgesArray.controls; let i = index">
+                                <div class="child_age">
+                                    <!-- <label for="age{{ i + 1 }}">Age {{ i + 1 }}:</label> -->
+                                    <input type="number" id="age{{ i + 1 }}" [formControlName]="i">
+                                    <p *ngIf="child.errors?.['required'] || child.value <1">Age required</p>
+                                    <p *ngIf="child.errors?.['max']">Maximum age 17</p>
+                                </div>
+                                </div>
+                            </div>
+                        </form>
+                        <!-- End -->
+                    </div>
+                </div>
                 <!-- header-search-input-item end -->
                 <!-- header-search-input-item -->
-                <div class="col-sm-2">
+                <div class="col-md-2">
                     <div class="header-search-input-item fl-wrap">
                         <button class="header-search-button" (click)="onSearch()">Search <i class="far fa-search"></i></button>
                     </div>

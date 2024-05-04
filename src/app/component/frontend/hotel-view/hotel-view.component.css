@@ -53,9 +53,7 @@
 .rooms-media img{
     border-radius: 6px;
 }
-.room_night{
-    margin-left: -13px;
-}
+
 
 .slick-slide-img>img{
     width: 178px;
@@ -285,4 +283,32 @@
     .rooms-price{
         top: -16px;
     }
+}
+
+
+
+.rate-item-title span:nth-child(2){
+    float: right;
+    font-size: 14px;
+    color: #5ECFB1;
+    font-weight: 800;
+}
+
+.total_price_calculate{
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 18px;
+}
+
+.other-taxes{
+    position: absolute;
+    right: 0;
+    top: 26px;
+    font-size: 9px;
+    font-weight: 600;
+}
+
+.mb-4{
+    margin-bottom: 1.5rem;
 }

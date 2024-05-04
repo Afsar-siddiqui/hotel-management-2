@@ -14,12 +14,29 @@
 }
 
 .custom-form{
-    padding-bottom: 20px;
+    padding-bottom: 70px;
 }
 
 .google-login{
     position: absolute;
-    bottom: 0;
+    bottom: 5px;
+    right: 33%;
+}
+.google-icon{
+    margin-left: 50px;
+}
+
+.googleLoginBar {
+    margin-bottom: 12px;
+}
+.googleLoginBar>span {
+    background-color: #fff;
+    color: #9b9b9b;
+    display: inline-flex;
+    font-size: calc(var(--font-scale, 1)* 12px);
+    font-weight: 700;
+    margin-bottom: -7px;
+    padding: 0 10px;
 }
 
 

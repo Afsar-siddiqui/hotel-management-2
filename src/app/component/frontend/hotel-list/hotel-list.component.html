@@ -175,7 +175,7 @@
                                 <div class="listing-item has_one_column" *ngFor="let list of hotelList">
                                     <article class="geodir-category-listing fl-wrap">
                                         <div class="geodir-category-img">
-                                            <a  (click)="onRouteDetails(list)"><img src="{{list.image}}" alt=""></a><!-- [routerLink]="['/'+list.slug]" -->
+                                            <a  (click)="onRouteDetails(list)"><img [src]="list.image  || 'assets/images/bg/dummy-room.jpeg'" [alt]="list.hotel_name" loading="lazy"></a><!-- [routerLink]="['/'+list.slug]" -->
                                             <!-- <div class="listing-avatar"><a href="author-single.html"><img src="assets/images/avatar/1.jpg" alt=""></a>
                                                 <span class="avatar-tooltip">Added By  <strong>Alisa Noory</strong></span>
                                             </div> -->

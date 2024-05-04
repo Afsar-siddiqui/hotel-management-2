@@ -21,6 +21,7 @@
 }
 .flat-hero-container .box-widget-item-header{
     padding-bottom: 0px;
+    margin-bottom: 0px;
 }
 .rooms-media .room-description{
     font-size: 12px;
@@ -45,6 +46,11 @@
 .fl-wrap{
     padding: 10px;
     margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+.rate-item-title{
+    margin-bottom: 0px;
+    font-weight: 600;
 }
 .box-widget-item-header:before{
     display: none;
@@ -69,6 +75,11 @@
     display: block;
     font-size: 12px;
     font-weight: 300;
+}
+.base-per-night{
+    display: block;
+    font-size: 9px;
+    font-weight: 600;
 }
 .review-score-detail-list .rate-item {
     margin-bottom: 0px;

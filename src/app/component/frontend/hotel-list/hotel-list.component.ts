@@ -59,9 +59,9 @@ export class HotelListComponent {
           this.city = this.cityUrl;
           this.checkin = query['checkin'];
           this.checkout = query['checkout'];
-          this.adults = +query['adults']; // "+" is used to convert the string to a number
-          this.child = +query['child'];
-          this.num_rooms = +query['num_rooms'];
+          this.adults = query['adults'] === undefined ? 1 : +query['adults']; // "+" is used to convert the string to a number
+          this.child = query['child'] === undefined ? 0 : +query['child'];
+          this.num_rooms = query['num_rooms'] === undefined ? 1 : +query['num_rooms'];
           //
           this.adultsQuantity = this.adults;
           this.childrenQuantity = this.child;
@@ -116,8 +116,8 @@ export class HotelListComponent {
               let discountPrice = price - dis_price;
               val['discount_Price'] = discountPrice;
             }
-            console.log("hotel list based on city ",this.hotelList);
-            this.cityName = this.hotelList[0].city_name;
+            this._frontend.onConsole("hotel list based on city ",this.hotelList);
+            this.cityName = this.city === 'city' ? '':this.hotelList[0].city_name;
             const changeStorageValue = {city:this.city, Name: this.cityName, checkin:this.checkin, checkout:this.checkout, adults:this.adults, child:this.child, num_rooms:this.num_rooms}
             localStorage.setItem('search', JSON.stringify(changeStorageValue))
             //
@@ -256,7 +256,7 @@ export class HotelListComponent {
   {id:5, name: "NON-SMOKING ROOMS", status: false}, {id:6, name: "AIR CONDITIONING", status: false}];
   facilityValue: any;
   onFacility(list:any){
-    console.log("facilityList ", list)
+    this._frontend.onConsole("facilityList ", list)
     if(list.status == true){
       this.facilityValue = list.name;
     }
@@ -265,11 +265,11 @@ export class HotelListComponent {
 
   priceChange:string='';
   sortOnprice(){
-    //console.log("price change ", this.priceChange)
+    //this._frontend.onConsole("price change ", this.priceChange)
     if(this.priceChange == 'asc'){
       this.hotelList.sort((a:any, b:any) => a.single_rate - b.single_rate);
     }
-    console.log("list asc", this.hotelList)
+    this._frontend.onConsole("list asc", this.hotelList)
     if(this.priceChange == 'dsc'){
       this.hotelList.sort((a:any, b:any) => b.single_rate - a.single_rate);
     }
@@ -375,11 +375,11 @@ export class HotelListComponent {
       this._frontend.getCityName(this.cityName).subscribe((res:any)=>{
         let listValue = res;
         this.f_cityList = listValue.result;
-        console.log("City list ", this.f_cityList);
+        this._frontend.onConsole("City list ", this.f_cityList);
       })
     }else{
       this.show_cityhHotel = false;
-      console.log("city list ", this.cityName);
+      this._frontend.onConsole("city list 382", this.cityName);
     }
   }
 
@@ -388,7 +388,7 @@ export class HotelListComponent {
     this.cityName = list.name;
     let cityId = list.slug;
     this.show_cityhHotel = false;
-    console.log("select City ", this.cityName,);
+    this._frontend.onConsole("select City line 391 ", this.cityName,);
 
     //get query params
     const queryParams = { ...this.route.snapshot.queryParams };

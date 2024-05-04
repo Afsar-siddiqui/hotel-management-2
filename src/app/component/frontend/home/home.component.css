@@ -223,3 +223,31 @@ section.hero-section {
     margin: 8px;
     border-radius: 5px;
 }
+
+
+
+
+.child_age label{
+    float: left;
+    font-size: 12px;
+    padding-top: 8px;
+    width: 68%;
+    text-align: left;
+}
+.child_age input{
+    width: 31%;
+    text-align: center;
+    padding: 3px 0px;
+    float: right;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin-bottom: 5px;
+}
+.child_age p {
+    font-size: 10px;
+    float: inline-end;
+    color: red;
+    position: relative;
+    right: -60px;
+}
