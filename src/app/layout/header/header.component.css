@@ -134,6 +134,10 @@
 .child_age_div{
     width: 100%;
     float: right;
+    text-align: left;
+}
+.child_age_div > div {
+    display: inline-block;
 }
 .child_age label{
     float: left;
@@ -143,16 +147,17 @@
     text-align: left;
 }
 .child_age input{
-    width: 53px;
+    width: 40px;
     text-align: center;
     padding: 3px 0px;
-    float: left;
+    /* float: left; */
+    margin-right: 5px;
     border: 1px solid #ddd;
     border-radius: 3px;
     margin-bottom: 5px;
 }
 .child_age p {
     font-size: 10px;
-    float: inline-end;
+    float: inline-start;
     color: red;
 }

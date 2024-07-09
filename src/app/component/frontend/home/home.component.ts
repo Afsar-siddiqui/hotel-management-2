@@ -204,11 +204,11 @@ export class HomeComponent {
   private setItemsToShow() {
     const screenWidth = window.innerWidth;
     if (screenWidth >= 992) { // Desktop view
-      this.itemsToShow = 8;
+      this.itemsToShow = 12;
     } else if (screenWidth >= 576) { // Tablet view
-      this.itemsToShow = 4;
+      this.itemsToShow = 8;
     } else { // Mobile view
-      this.itemsToShow = 4; // Adjust this number for smaller screens if needed
+      this.itemsToShow = 8; // Adjust this number for smaller screens if needed
     }
   }
 

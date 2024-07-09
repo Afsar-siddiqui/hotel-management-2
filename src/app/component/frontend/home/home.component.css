@@ -41,7 +41,7 @@ section.hero-section {
 }
 
 .geodir-category-img:hover img, .gallery-item:hover img, .geodir-category-img img, .gallery-item img{
-    height: 200px;
+    height: 180px;
 }
 
 
@@ -128,9 +128,12 @@ section.hero-section {
 .header-list-search .option:hover{
     background-color: #f2f2f2;
 }
-
+.home-grid .listing-item-cat h3 a{
+    font-size: 16px;
+}
 .listing-item-cat p {
-    font-size: 14px;
+    font-size: 12px;
+	line-height: normal;
 }
 .grid-item-holder {
     cursor: pointer;

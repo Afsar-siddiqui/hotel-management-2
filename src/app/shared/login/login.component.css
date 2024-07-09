@@ -148,5 +148,78 @@ padding:10px;
         margin-bottom: 10px;
         padding: 10px 0;
     }
+    .otp-custom-box{
+        width: 100%;
+    }
 }
 
+
+.mobile-register input {   float: left;
+    border: 1px solid #eee;
+    background:#F7F9FB;
+    width: 100%;
+    padding: 14px 20px 14px 45px;
+    border-radius: 6px;
+	color: #666;
+	font-size:13px;
+	appearance: none;
+	-webkit-appearance: none;
+}
+
+.mobile-register form{
+    margin: 0px 25px;
+}
+
+.mobile-register form button{
+    padding: 10px;
+    border-radius: 5px;
+    border: 0;
+    margin-top: 10px;
+    color: #fff;
+    cursor: pointer;
+}
+
+
+
+
+
+#main-child-age-wrap .child_age_div{
+    width: 100%;
+    text-align: center;
+}
+#main-child-age-wrap .child_age_div > div {
+    display: inline-block;
+    margin-top: 10px;
+}
+#main-child-age-wrap .child_age label{
+    float: left;
+    font-size: 12px;
+    padding-top: 8px;
+    width: 60%;
+    text-align: left;
+}
+#main-child-age-wrap .child_age input{
+    width: 40px;
+    text-align: center;
+    padding: 3px 0px;
+    /* float: left; */
+    margin-right: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin-bottom: 5px;
+    background-color: #fff;
+}
+#main-child-age-wrap .child_age p {
+    font-size: 10px;
+    color: red;
+}
+
+#main-child-age-wrap .log-submit-btn {
+    padding: 6px;
+    border-radius: 5px;
+    border: 0;
+    margin-top: 10px;
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+}

@@ -170,38 +170,6 @@ price: number = 0;
 soldOut: boolean = false;
 priceSelect: any = ['', 'single_rate', 'double_rate', 'triple_rate', 'quadruple_rate'];
 
-/* getHotelListByHotel(): void {
-    this.loader = true;
-    const code = this.route.snapshot.params['hotelName'];
-    if (code) {
-        this.code = code;
-    }
-
-    const queryData = {
-        code: this.code,
-        checkin: this.checkin,
-        checkout: this.checkout,
-        adults: this.adults,
-        child: this.child,
-        num_rooms: this.num_rooms
-    };
-
-    this._frontend.setSharedValue(queryData);
-
-    this._frontend.searchHotel(queryData).subscribe({
-        next: (res: any) => {
-            let data = res;
-            this.processHotelData(data);
-            this.loader = false;
-            this.getBookingPrice();
-        },
-        error: err => {
-            this.loader = false;
-            console.log("error ", err);
-        }
-    });
-} */
-
 getHotelListByHotel(){
     //
     this.loader = true;
@@ -234,10 +202,7 @@ getHotelListByHotel(){
           //when max_guest, max_adults, base_adults
           if(this.listDetails.base_adults !== undefined && (this.listDetails.max_adults == 0 || this.listDetails.max_guest ==0 || this.listDetails.base_adults==0)){
             this.soldOut = true;
-          }else if(data.result.Rooms.length == 0){
-            this.soldOut = true;
           }
-          console.log("this.soldOut 240 ", this.soldOut)
           
           //=====================================================================================
           //available details
@@ -253,8 +218,6 @@ getHotelListByHotel(){
 
           //
           this.loader = false;
-          this.getBookingPrice();
-
           
         },
         error: err=>{
@@ -317,7 +280,6 @@ processInventory(data: any): void {
     if (this.inventory.length === 0) {
         this.soldOut = true;
     }
-    console.log("this.soldOut 320 ", this.soldOut)
 }
 
 processGallery(data: any): void {
@@ -333,8 +295,9 @@ processRooms(data: any): void {
     console.log("this.rooms ",this.rooms);
     if(this.rooms.length==0){
       this.soldOut = true;
+    }else{
+      this.getBookingPrice();
     }
-    console.log("this.soldOut 320 ", this.soldOut)
 }
 
 checkRoomAvailability(data: any): void {
@@ -533,7 +496,7 @@ checkRoomAvailability(data: any): void {
 
 
   bookDate: any|null|undefined; c_checkIn: string|null|undefined; c_checkOut: string|null|undefined;
-  onBookDate(){
+  /* onBookDate(){
     //console.log("book date ", this.bookDate)
     let arrDate = [];
     for(let i=0; i<=this.bookDate.length-1; i++){
@@ -544,11 +507,11 @@ checkRoomAvailability(data: any): void {
 
     //call method for get price on that date
     this.getBookingPrice();
-  }
+  } */
 
   //handel quantity
   adultsQuantity: number = 1; childrenQuantity: number = 0; c_adults:number=1; c_child:number=0;
-  handelQuantity(val: string, type:string){
+  /* handelQuantity(val: string, type:string){
     //for adults
     switch (type) {
       case 'adults':
@@ -572,7 +535,7 @@ checkRoomAvailability(data: any): void {
 
     //call method for get price on that date
     this.getBookingPrice();
-  }
+  } */
 
   
 
@@ -594,13 +557,13 @@ checkRoomAvailability(data: any): void {
   }
 
   room_rate_Id:number=0;  
-  onCustRouteBooking(){
+  /* onCustRouteBooking(){
     if(this.room_rate_Id !=0){
       const queryParams = {checkin:this.c_checkIn, checkout: this.c_checkOut, room_rate_plan_id: this.room_rate_Id, booking: `${this.code}_${this.adults}_${this.child}_${this.num_rooms}`, dis: this.listDetails.be_discount, ref:this.ref};
       //console.log("plan ", queryParams)
       this.router.navigate(['/booking'], { queryParams });
     }
-  }
+  } */
 
 
   onChangeHotel(list:any){
@@ -651,7 +614,7 @@ checkGuestNo(): void {
   //get adult/priceid tag
   //console.log("base_adults price details ", this.listDetails.base_adults)
   let adult_room = 0; //Math.ceil(this.adults/this.num_rooms);
-  if((this.c_adults/this.num_rooms) >= this.listDetails.base_adults && (this.c_adults + this.child)/this.num_rooms <= this.listDetails.max_guest){
+  if((this.c_adults/this.num_rooms) >= this.listDetails.base_adults && (this.c_adults + this.child)/this.num_rooms <= this.listDetails.max_guest && (this.c_adults/this.num_rooms) <= this.listDetails.max_adults){
     adult_room = Math.ceil(this.c_adults/this.num_rooms) >= this.listDetails.base_adults ? this.listDetails.base_adults : Math.floor(this.c_adults/this.num_rooms); console.log("base_adults price if",`${this.c_adults + this.child} adult <= max guest ${this.listDetails.max_guest} with price witout base_adults ${Math.ceil(this.adults/this.num_rooms)}` , `adult with base ${Math.ceil(this.listDetails.base_adults/this.num_rooms)}`)
     // 3 >= 2 ? 2 : 3 
     //console.log("working if ", Math.ceil(this.c_adults/this.num_rooms) +">="+ this.listDetails.base_adults +"?"+ this.listDetails.base_adults +":"+ Math.floor(this.c_adults/this.num_rooms))
@@ -709,7 +672,16 @@ calculatePrice(roomRate: number): void {
   const childAges = JSON.parse(localStorage.getItem('child_age') || '[]');
 
   // Calculate the number of chargeable children (above or equal to the minimum age)
-  const chargeableChildren = childAges.filter((age:any) => age > this.listDetails.min_child_age).length;
+  let chargeableChildren = childAges.filter((age:any) => age > this.listDetails.min_child_age).length;
+  if(childAges.length > this.listDetails.base_child){
+    //when more then one child age less then base_child then, childAges.length - this.listDetails.base_child = chargeableChildren
+    if((childAges.length - chargeableChildren) != this.listDetails.base_child && (childAges.length - chargeableChildren) > this.listDetails.base_child){
+      console.log("working allChild, baseChild, chargeableChildren, childAges.length - base_child: ", childAges.length, this.listDetails.base_child, chargeableChildren, (childAges.length - this.listDetails.base_child))
+      chargeableChildren = childAges.length - this.listDetails.base_child;
+    }else if((childAges.length - chargeableChildren) != this.listDetails.base_child){
+      chargeableChildren = childAges.length; 
+    }
+  }
 
   // Calculate the extra child price based on the number of children exceeding the base limit
   //const extraChildPrice = Math.max(chargeableChildren - this.listDetails.base_child, 0) * this.listDetails.extra_child_price;

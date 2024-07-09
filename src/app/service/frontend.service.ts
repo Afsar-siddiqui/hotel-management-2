@@ -8,7 +8,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class FrontendService {
 
   baseUrl = "https://revchm.com/tests";
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { 
+  }
 
   getLogin(data:any){
     return this.http.post(this.baseUrl+'/web_login', data);
@@ -31,31 +32,37 @@ export class FrontendService {
   }
 
   getHotelName(q:string){
-    return this.http.get(this.baseUrl+`/get_hotels?q=${q}`);
+    const headers = new HttpHeaders({'userId': localStorage.getItem('userId') || 0});
+    return this.http.get(this.baseUrl+`/get_hotels?q=${q}`, { headers: headers });
   }
 
   getCityName(q:string){
-    return this.http.get(this.baseUrl+`/get_cities?q=${q}`);
+    const headers = new HttpHeaders({'userId': localStorage.getItem('userId') || 0});
+    return this.http.get(this.baseUrl+`/get_cities?q=${q}`, { headers: headers });
   }
 
   //popular hotel on home page
   getPopularHotel(){
-    return this.http.get(this.baseUrl+'/get_popular_hotels')
+    const headers = new HttpHeaders({'userId': localStorage.getItem('userId') || 0});
+    return this.http.get(this.baseUrl+'/get_popular_hotels', { headers: headers })
   }
 
   //recent hotel home page
   getRecentHotel(){
-    return this.http.get(this.baseUrl+'/get_recent_hotels')
+    const headers = new HttpHeaders({'userId': localStorage.getItem('userId') || 0});
+    return this.http.get(this.baseUrl+'/get_recent_hotels', { headers: headers })
   }
 
   //popular destination https://revchm.com/tests/popular_destination
   getpopularDestinationHotel(): Observable<any>{
-    return this.http.get(this.baseUrl+'/popular_destination')
+    const headers = new HttpHeaders({'userId': localStorage.getItem('userId') || 0});
+    return this.http.get(this.baseUrl+'/popular_destination', { headers: headers })
   }
 
   //similar hotel on details page
   getSimilarHotel(id:any){
-    return this.http.get(this.baseUrl+'/get_similar_hotels?id='+id);
+    const headers = new HttpHeaders({'userId': localStorage.getItem('userId') || 0});
+    return this.http.get(this.baseUrl+'/get_similar_hotels?id='+id, { headers: headers });
   }
 
   //contact page
@@ -63,33 +70,43 @@ export class FrontendService {
     return this.http.post(this.baseUrl+'/contact_us', data);
   }
 
+  //Update profile
+  updateProfile(data:any){
+    return this.http.post(this.baseUrl+'/update_user', data);
+  }
+
   /* get hotel by code */
   searchHotel(data:any){
+    const headers = new HttpHeaders({'userId': localStorage.getItem('userId') || 0});
     //hotel:string, checkin:string, checkout:string, adults:number, child:number, num_rooms:number, city:number
     //https://revchm.com/tests/get_hotel_listing?code=Sk23QFSFlD&checkin=2023-08-28&checkout=2023-08-30&adults=2&child=1&num_rooms=5&city=392
-    return this.http.get(this.baseUrl+`/get_hotel_detail?code=${data.code}&checkin=${data.checkin}&checkout=${data.checkout}&adults=${data.adults}&child=${data.child}&num_rooms=${data.num_rooms}`);
+    return this.http.get(this.baseUrl+`/get_hotel_detail?code=${data.code}&checkin=${data.checkin}&checkout=${data.checkout}&adults=${data.adults}&child=${data.child}&num_rooms=${data.num_rooms}`, { headers: headers });
     
   }
 
   //get hotel by city
   searchCity(data:any): Observable<any>{
-    return this.http.get(this.baseUrl+`/get_hotel_listing?checkin=${data.checkin}&checkout=${data.checkout}&adults=${data.adults}&child=${data.child}&num_rooms=${data.num_rooms}&city=${data.city}`);
+    const headers = new HttpHeaders({'userId': localStorage.getItem('userId') || 0});
+    return this.http.get(this.baseUrl+`/get_hotel_listing?checkin=${data.checkin}&checkout=${data.checkout}&adults=${data.adults}&child=${data.child}&num_rooms=${data.num_rooms}&city=${data.city}`, { headers: headers });
   }
 
   /* redirect on details page by hotel name */
   get_Hotel_Details_By_Name(data:any){
-    return this.http.get(this.baseUrl+`/get_hotel_detail?code=${data.code}&checkin=${data.checkin}&checkout=${data.checkout}&adults=${data.adults}&child=${data.child}&num_rooms=${data.num_rooms}`);
+    const headers = new HttpHeaders({'userId': localStorage.getItem('userId') || 0});
+    return this.http.get(this.baseUrl+`/get_hotel_detail?code=${data.code}&checkin=${data.checkin}&checkout=${data.checkout}&adults=${data.adults}&child=${data.child}&num_rooms=${data.num_rooms}`, { headers: headers });
   }
 
   //redirect on booking page
   getBookings(data:any){
-    return this.http.get(this.baseUrl+`/get_room_rate_plans_rates?checkin=${data.checkin}&checkout=${data.checkout}&room_rate_plan_id=${data.room_rate_plan_id}`);
+    const headers = new HttpHeaders({'userId': localStorage.getItem('userId') || 0});
+    return this.http.get(this.baseUrl+`/get_room_rate_plans_rates?checkin=${data.checkin}&checkout=${data.checkout}&room_rate_plan_id=${data.room_rate_plan_id}`, { headers: headers });
   }
 
 
   //CouponCode
   getCouponCode(hotel_id:any, user_id:any){
-    return this.http.get(this.baseUrl+`/get_coupons?hotel_id=${hotel_id}&user_id=${user_id}`,);
+    const headers = new HttpHeaders({'userId': localStorage.getItem('userId') || 0});
+    return this.http.get(this.baseUrl+`/get_coupons?hotel_id=${hotel_id}&user_id=${user_id}`, { headers: headers });
   }
 
   //validate coupon code
@@ -100,16 +117,19 @@ export class FrontendService {
 
   /* Pay at hotel */
   payAtHotel(data:any){
-    return this.http.post(this.baseUrl+'/portal_push_booking', data);
+    const headers = new HttpHeaders({'userId': localStorage.getItem('userId') || 0});
+    return this.http.post(this.baseUrl+'/portal_push_booking', data, { headers: headers });
   }
 
   /* get user bookings */
   getUserBookings(id:any){
-    return this.http.get(this.baseUrl+'/get_user_bookings?user_id='+id)
+    const headers = new HttpHeaders({'userId': localStorage.getItem('userId') || 0});
+    return this.http.get(this.baseUrl+'/get_user_bookings?user_id='+id, { headers: headers })
   }
 
   //Check Confirmation
   getConfirmation(data:any){
+    const headers = new HttpHeaders({'userId': localStorage.getItem('userId') || 0});
     return this.http.post(this.baseUrl+'/check_payment',data)
   }
 

@@ -31,6 +31,7 @@ export class BookingDetailsComponent {
 
   //
   priceDetails:any=[];
+  childAge: any=[]; 
   loader: boolean = false;
   hideDummyContent: boolean = false;
 
@@ -110,6 +111,8 @@ export class BookingDetailsComponent {
     this._meta.updateTitle('Book Your Stay - RevTrip Hotels')
     this._meta.updateTag('title', 'Book Your Stay - RevTrip Hotels');
     this._meta.updateTag('description', 'Securely book your stay at the best hotels with RevTrip.');
+
+    this.childAge = JSON.parse(localStorage.getItem('child_age') || '[]');
     
   }
 
@@ -283,8 +286,15 @@ export class BookingDetailsComponent {
     const childAges = JSON.parse(localStorage.getItem('child_age') || '[]');
 
     // Calculate the number of chargeable children (above or equal to the minimum age)
-    const chargeableChildren = childAges.filter((age:any) => age > this.listDetails.min_child_age).length;
-
+    let chargeableChildren = childAges.filter((age:any) => age > this.listDetails.min_child_age).length;
+    if(childAges.length > this.listDetails.base_child){
+      //when more then one child age less then base_child then, childAges.length - this.listDetails.base_child = chargeableChildren
+      if((childAges.length - chargeableChildren) != this.listDetails.base_child && (childAges.length - chargeableChildren) > this.listDetails.base_child){
+        chargeableChildren = childAges.length - this.listDetails.base_child;
+      }else if((childAges.length - chargeableChildren) != this.listDetails.base_child){
+        chargeableChildren = childAges.length; 
+      }
+    }
     // Calculate the extra child price based on the number of children exceeding the base limit
     //const extraChildPrice = Math.max(chargeableChildren - this.listDetails.base_child, 0) * this.listDetails.extra_child_price;
     const extraChildPrice = Math.ceil(Math.max(chargeableChildren, 0)) * this.listDetails.extra_child_price;
@@ -444,7 +454,7 @@ contactDetails(){
   //{ "user_id":"1", "hotel_id":"73", "hotel_code":"S5ldSw39Et", "booking_vendor_name":"Portal", "bookingStatus":"confirmed", "confirmationNo":"", "taxes":"870.0", "totalAmount":"2650.0", "checkInDate":"2020-08-10", "checkOutDate":"2020-08-12", "totalAdults":2, "totalChildren":1, "guest_name":"Ranjeet Singh", "guest_email":"ram@xxx.com", "guest_phone":"9986543212", "room_id":"155", "plan_id": "1", "room_rate_plan_id":"308", "room_name":"Deluxe Room", "rate_plan_name":"Room Only", "num_rooms":"1", "paymentStatus":0 }
   let user = this.userDetails;
   let guestDetail = [];
-  guestDetail.push({"adult":this.adults, "child": {"total": this.child, "child_age":[]}});
+  guestDetail.push({"adult":this.adults, "child": {"total": this.child, "child_age":this.childAge}});
   console.log("guest details ", guestDetail);
   let bookingData = {"user_id": user.id, "hotel_id":this.listDetails.id, "hotel_code": this.listDetails.be_hotel_code, "booking_vendor_name":"Revtrip Hotel", "bookingStatus":"confirmed", "booking_id":"", "room_detail": guestDetail, "taxes":this.f_tax, "totalAmount":this.f_total_taxt, "hotel_discount": this.listDetails.be_discount, "promo_code": this.couponCode, "promo_discount": this.promo_d, "checkInDate": this.checkin, "checkOutDate":this.checkout, "totalAdults":this.bookDetails.adults, "totalChildren":this.bookDetails.child, "guest_name":this.userForm.value.first_name+" "+this.userForm.value.last_name, "guest_email":this.userForm.value.email, "guest_phone":this.userForm.value.mobile, "room_id":this.listDetails.room_id, "plan_id": this.listDetails.plan_id, "room_rate_plan_id": this.room_rate_plan_id, "room_name":this.listDetails.room_name, "rate_plan_name":this.listDetails.plan_name, "num_rooms":this.bookDetails.num_rooms, "paymentStatus":0 }
   //console.log("value ", data);

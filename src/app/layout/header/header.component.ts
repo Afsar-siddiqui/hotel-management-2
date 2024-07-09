@@ -74,10 +74,10 @@ export class HeaderComponent {
     }
 
     this._frontend.sharedValue$.subscribe((value) => {
-      console.log("params value ", value)
       if(value){
         this.handleParams(value);
         this.ref = value?.ref;
+        console.log("params value ", value)
       }
     })
     
@@ -528,5 +528,6 @@ onWishlistLink(){
     this._wishList.removeWishList(list);
     return this.getWishlist()
   }
+
 
 }

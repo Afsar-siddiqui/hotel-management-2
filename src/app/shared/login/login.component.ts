@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FrontendService } from 'src/app/service/frontend.service';
 import { MethodService } from 'src/app/service/method.service';
@@ -18,16 +18,24 @@ export class LoginComponent {
   loginForm: FormGroup;
   signUpForm: FormGroup;
   otpForm: FormGroup;
+  mobilenoForm: FormGroup;
+  childForm: FormGroup;
   loader:boolean=false;
+  childrenQuantity: number = 0;
   
   submitted: boolean = false;
 
-  constructor(private fb: FormBuilder,private _service: FrontendService,private _method: MethodService,private route: Router, private location: Location,
+  constructor(private fb: FormBuilder,private _service: FrontendService,private _method: MethodService,private route: Router, private location: Location, private a_route: ActivatedRoute,
               private authService: SocialAuthService, private httpClient: HttpClient){
     this.loginForm = this.fb.group({
       mobile: ['', [Validators.required]],
       password: ['', [Validators.required]],
     });
+
+    this.childForm = this.fb.group({
+      numberOfChildren: [0], // Input field for selecting number of children
+      childAges: this.fb.array([]) // Form array for dynamically adding child age form controls
+    })
 
     this.signUpForm = this.fb.group({
       first_name: ['',],
@@ -44,6 +52,11 @@ export class LoginComponent {
       digit3: ['', [Validators.required, Validators.pattern('[0-9]{1}')]],
       digit4: ['', [Validators.required, Validators.pattern('[0-9]{1}')]]
     });
+
+    this.mobilenoForm = this.fb.group({
+      id: [0],
+      mobile: ['', [Validators.required, Validators.pattern('[0-9]{10}')]],
+    })
   }
 
   
@@ -58,7 +71,7 @@ export class LoginComponent {
         localStorage.setItem('userId', user.id);
         //set isLogin true;
         this._method.setLogin(true);
-        
+
         //
         Swal.fire({
           toast: true,
@@ -78,6 +91,16 @@ export class LoginComponent {
             console.log("signup ", res);
             if(res.status == "NOK"){
               localStorage.setItem('userId', res.result.data.id);
+              //call this for register mobile no from user
+              if(!res.result.data.mobile){
+                this.onMobileModel();
+              }
+            }else if(res.status == "OK"){
+              localStorage.setItem('userId', res.result.data.id);
+              //call this for register mobile no from user
+              if(!res.result.data.mobile){
+                this.onMobileModel();
+              }
             }
           },
           error: (err:any)=>{
@@ -86,8 +109,60 @@ export class LoginComponent {
         })
       });
     }
+    const childArray = JSON.parse(localStorage.getItem('child_age') || '[]');
+    this.a_route.queryParams.subscribe((params) => {
+      if(params['ref'] && childArray.length >= 0){
+        this.childrenQuantity = params['child'] === undefined ? 0 : +params['child'];
+        //console.log("working age ", params['ref'] , childArray.length, this.childrenQuantity)
+        if(this.childrenQuantity != childArray.length ){
+          this.onChildAgeModel();
+        }
+      }
+      //
+    });
   }
 
+  register_mobile(){
+    const data = this.mobilenoForm.value;
+    data['id']= localStorage.getItem('userId'),
+    this._service.updateProfile(data).subscribe({
+      next: (res:any)=>{
+        if(res.status == 'OK'){
+          this.onMobileModelClose();
+          this.loader = false;
+          Swal.fire({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            icon: 'success',
+            timerProgressBar: false,
+            timer: 3000,
+            title: 'Register successfully'
+          });
+        }else{
+          //close loader
+          this.loader = false;
+          Swal.fire({
+            position: 'top',
+            text: res.result,
+            icon: 'error',
+            confirmButtonText: 'Ok'
+          })
+        }
+      },
+      error: err=>{
+        Swal.fire({
+          toast: true,
+          position: 'top',
+          showConfirmButton: false,
+          icon: 'error',
+          timerProgressBar: false,
+          timer: 5000,
+          title: err
+        })
+      }
+    })
+  }
   /* private accessToken = '';
   getAccessToken(): void {
     this.authService.getAccessToken(GoogleLoginProvider.PROVIDER_ID).then(accessToken => {
@@ -234,6 +309,9 @@ export class LoginComponent {
   mobile_exist:boolean = false;
   onCehckNo(){
     let mobileNo = this.signUpForm.value.mobile;
+    if(mobileNo.toString().length<10){
+      return ;
+    }
     if(mobileNo){
       this._service.getMobileNo(mobileNo).subscribe((res:any)=>{
         //console.log("res ", res);
@@ -430,7 +508,73 @@ onKeyDown(event: KeyboardEvent, nextControlName: string) {
 }
 
 
+onMobileModel(){
+  //console.log("working ", document.querySelector('#main-register-wrap'));
+  document.querySelector('#main-mobile-wrap')?.setAttribute('style','display:block')
+}
 
+hideMobileModel(){
+  document.querySelector('#main-mobile-wrap')?.setAttribute('style','display:none')
+}
+
+onMobileModelClose(){
+  document.querySelector('#main-mobile-wrap')?.setAttribute('style','display:none');
+}
+
+
+onChildAgeModel(){
+  //console.log("working ", document.querySelector('#main-register-wrap'));
+  document.querySelector('#main-child-age-wrap')?.setAttribute('style','display:block');
+  this.generateChildAges();
+}
+
+hideChildAgeModel(){
+  document.querySelector('#main-child-age-wrap')?.setAttribute('style','display:none')
+}
+
+onChildAgeModelClose(){
+  document.querySelector('#main-child-age-wrap')?.setAttribute('style','display:none');
+}
+
+// Getter for accessing child ages form array
+get childAgesArray() {
+  return this.childForm?.get('childAges') as FormArray;
+}
+
+// Method to generate child age form controls based on the selected number of children
+generateChildAges() {
+  const childArray = JSON.parse(localStorage.getItem('child_age') || '[]');
+  if(childArray.length > 0 && this.childrenQuantity !=0) {
+    //console.log("working age ", this.childrenQuantity);
+    const formArray = this.childForm?.get('childAges') as FormArray;
+    formArray.clear();
+    // Patch the retrieved child age values into the form array
+    for(let i=0; i< this.childrenQuantity; i++){
+      formArray.push(this.fb.control(childArray[i], [Validators.required, Validators.max(17)]));
+    }
+  } else {
+    // Clear existing form controls if no child age values are found
+    const formArray = this.childForm.get('childAges') as FormArray;
+    formArray.clear();
+
+    // Add form control for each child age
+    for (let i = 0; i < this.childrenQuantity; i++) {
+      formArray.push(this.fb.control(null, [Validators.required, Validators.max(17)]));
+    }
+  }
+}
+
+// Method to handle change in the number of children
+onNumberOfChildrenChange() {
+  this.generateChildAges(); // Generate child age form controls
+}
+
+  save_child(){
+    const child = this.childAgesArray?.value;
+    console.log("child ages ", this.childAgesArray, child)
+    localStorage.setItem("child_age", JSON.stringify(child));
+    this.onChildAgeModelClose();
+  }
 
 }
 
